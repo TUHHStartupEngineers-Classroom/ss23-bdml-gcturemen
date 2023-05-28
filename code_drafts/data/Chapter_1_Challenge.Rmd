@@ -1,13 +1,15 @@
 ---
 title: "Session 6 - Challenge - Company Segmentation"
 date: "7/24/2020"
-output: 
-    html_document:
-        toc: TRUE
-        theme: flatly
-        highlight: tango
-        code_folding: hide
-        df_print: paged
+output:
+  html_document:
+    toc: yes
+    theme: flatly
+    highlight: tango
+    code_folding: hide
+    df_print: paged
+  pdf_document:
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
