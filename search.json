@@ -49,95 +49,172 @@
     "text": "Step 6 - Combine K-Means and UMAP\nNext, we combine the K-Means clusters and the UMAP 2D representation\nWe’re going to import the correct results first (just in case you were not able to complete the last step).\n\nk_means_mapped_tbl <- read_rds(\"k_means_mapped_tbl.rds\")\numap_results_tbl   <- read_rds(\"umap_results_tbl.rds\")\n\nFirst, pull out the K-Means for 10 Centers. Use this since beyond this value the Scree Plot flattens. Have a look at the business case to recall how that works.\n\n# Get the k_means_obj from the 10th center\n\n# Store as k_means_obj\n\nNext, we’ll combine the clusters from the k_means_obj with the umap_results_tbl.\n\nBegin with the k_means_obj\nAugment the k_means_obj with the stock_date_matrix_tbl to get the clusters added to the end of the tibble\nSelect just the symbol and .cluster columns\nLeft join the result with the umap_results_tbl by the symbol column\nLeft join the result with the result of sp_500_index_tbl %>% select(symbol, company, sector) by the symbol column.\nStore the output as umap_kmeans_results_tbl\n\n\n# Use your dplyr & broom skills to combine the k_means_obj with the umap_results_tbl\n\n\n# Output: umap_kmeans_results_tbl \n\nPlot the K-Means and UMAP results.\n\nBegin with the umap_kmeans_results_tbl\nUse ggplot() mapping V1, V2 and color = .cluster\nAdd the geom_point() geometry with alpha = 0.5\nApply colors as you desire (e.g. scale_color_manual(values = palette_light() %>% rep(3)))\n\n\n# Visualize the combined K-Means and UMAP results\n\nCongratulations! You are done with the 1st challenge!"
   },
   {
-    "objectID": "content/01_journal/01_tidyverse.html",
-    "href": "content/01_journal/01_tidyverse.html",
-    "title": "Tidyverse",
-    "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh.\nThis is a .qmd file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
-  },
-  {
-    "objectID": "content/01_journal/01_tidyverse.html#header-2",
-    "href": "content/01_journal/01_tidyverse.html#header-2",
-    "title": "Tidyverse",
-    "section": "\n2.1 Header 2",
-    "text": "2.1 Header 2\nHeader 3\nHeader 4\nHeader 5\nHeader 6"
-  },
-  {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html",
     "title": "Machine Learning Fundamentals",
     "section": "",
     "text": "Your organization wants to know which companies are similar to each other to help in identifying potential customers of a SAAS software solution (e.g. Salesforce CRM or equivalent) in various segments of the market. The Sales Department is very interested in this analysis, which will help them more easily penetrate various market segments."
   },
   {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html#import-libraries",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html#import-libraries",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html#import-libraries",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html#import-libraries",
     "title": "Machine Learning Fundamentals",
     "section": "\n3.1 Import Libraries",
-    "text": "3.1 Import Libraries\n\nlibrary(dplyr)\nlibrary(tidyverse)\nlibrary(tidyquant)\nlibrary(broom)\nlibrary(umap)\nlibrary(ggrepel)\n\n#> Warning: package 'ggrepel' was built under R version 4.2.3"
+    "text": "3.1 Import Libraries\n\nlibrary(dplyr)\nlibrary(tidyverse)\nlibrary(tidyquant)\nlibrary(broom)\nlibrary(umap)\nlibrary(ggrepel)"
   },
   {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html#read-data",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html#read-data",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html#read-data",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html#read-data",
     "title": "Machine Learning Fundamentals",
     "section": "\n3.2 Read Data",
     "text": "3.2 Read Data\n\nsp_500_prices_tbl <- read_rds(\"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/sp_500_prices_tbl.rds\")\nsp_500_index_tbl <- read_rds(\"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/sp_500_index_tbl.rds\")"
   },
   {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html#convert-stock-prices-to-a-standardized-format-daily-returns",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html#convert-stock-prices-to-a-standardized-format-daily-returns",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html#convert-stock-prices-to-a-standardized-format-daily-returns",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html#convert-stock-prices-to-a-standardized-format-daily-returns",
     "title": "Machine Learning Fundamentals",
     "section": "\n3.3 Convert stock prices to a standardized format (daily returns)",
     "text": "3.3 Convert stock prices to a standardized format (daily returns)\n\nsp_500_prices_tbl <- sp_500_prices_tbl %>% \n  filter(date >= '2018-01-01') %>%\n  group_by(symbol) %>%\n  mutate(lag = lag(adjusted)) %>%\n  na.omit() %>%\n  mutate(diff = adjusted - lag) %>%\n  mutate(pct_return = diff / lag)\n\nsp_500_daily_returns_tbl <- sp_500_prices_tbl %>% \n  select(symbol, date, pct_return)\n\nsp_500_daily_returns_tbl %>% \n  glimpse()\n\n#> Rows: 141,340\n#> Columns: 3\n#> Groups: symbol [502]\n#> $ symbol     <chr> \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT\", \"MS…\n#> $ date       <date> 2018-01-03, 2018-01-04, 2018-01-05, 2018-01-08, 2018-01-09…\n#> $ pct_return <dbl> 0.0046539123, 0.0088014214, 0.0123981290, 0.0010204489, -0.…"
   },
   {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html#convert-to-user-item-format",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html#convert-to-user-item-format",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html#convert-to-user-item-format",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html#convert-to-user-item-format",
     "title": "Machine Learning Fundamentals",
     "section": "\n3.4 Convert to User-Item Format",
     "text": "3.4 Convert to User-Item Format\n\nstock_date_matrix_tbl <- sp_500_daily_returns_tbl %>% \n  pivot_wider(names_from = date, values_from = pct_return, values_fill = 0) %>%\n  ungroup()\n\nstock_date_matrix_tbl"
   },
   {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html#perform-k-means-clustering",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html#perform-k-means-clustering",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html#perform-k-means-clustering",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html#perform-k-means-clustering",
     "title": "Machine Learning Fundamentals",
     "section": "\n3.5 Perform K-Means Clustering",
     "text": "3.5 Perform K-Means Clustering\n\nkmeans_obj <- stock_date_matrix_tbl %>%\n  select(-symbol) %>%\n  kmeans(centers = 4, nstart = 20)\n\nkmeans_obj %>% \n  glance()"
   },
   {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html#find-the-optimal-value-of-k",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html#find-the-optimal-value-of-k",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html#find-the-optimal-value-of-k",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html#find-the-optimal-value-of-k",
     "title": "Machine Learning Fundamentals",
     "section": "\n3.6 Find the optimal value of K",
     "text": "3.6 Find the optimal value of K\nCustom function kmeans_mapper():\n\nkmeans_mapper <- function(center = 3) {\n    stock_date_matrix_tbl %>%\n        select(-symbol) %>%\n        kmeans(centers = center, nstart = 20)\n}\n\nApplying kmeans_mapper() and glance() functions iteratively:\n\nk_means_mapped_tbl <- tibble(centers = 1:30) %>%\n  mutate(k_means = centers %>% map(kmeans_mapper)) %>%\n  mutate(glance  = k_means %>% map(glance))\n\nVisualizing the result as a Scree Plot:\n\nk_means_mapped_tbl %>%\n  unnest(glance) %>%\n  select(centers, tot.withinss) %>%\n  \n  ggplot(aes(centers, tot.withinss)) +\n  geom_point(color = \"#2DC6D6\", size = 2) +\n  geom_line(color = \"#2DC6D6\", linewidth = 1) +\n  ggrepel::geom_label_repel(aes(label = centers), color = \"#FF8014\", fill = \"#282A36\", size = 3, label.padding = 0.10, nudge_x = 0.75, nudge_y = 1) + \n  \n  labs(title = \"Scree Plot\",\n       subtitle = \"Total within-cluster sum of squares for various number of centers\",\n       caption = \"Conclusion: Based on the Scree Plot, a value between 5-10 can be chosen for the number of centers.\") +\n  theme(\n    panel.background = element_rect(fill = \"#222222\"),\n    panel.border = element_rect(color = \"white\", fill = NA),\n    plot.background = element_rect(fill = \"#222222\"),\n    #panel.grid = element_line(color = \"white\"),\n    #legend.background = element_rect(fill='transparent'),\n    #legend.box.background = element_rect(fill='transparent')\n    line = element_line(color = \"white\"),\n    text = element_text(color = \"white\"),\n    axis.ticks = element_line(color = \"white\"),\n    axis.text = element_text(color = \"white\")\n  )"
   },
   {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html#apply-umap",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html#apply-umap",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html#apply-umap",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html#apply-umap",
     "title": "Machine Learning Fundamentals",
     "section": "\n3.7 Apply UMAP",
     "text": "3.7 Apply UMAP\nApplying umap() function to the stock_date_matrix_tbl:\n\numap_results <- stock_date_matrix_tbl %>% \n  select(-symbol) %>% \n  umap()\n\nCombining the layout from the umap_results with the symbol column from the stock_date_matrix_tbl:\n\numap_results_tbl <- umap_results$layout %>%\n  as_tibble(.name_repair = \"unique\") %>%\n  set_names(c(\"x\", \"y\")) %>%\n  bind_cols(stock_date_matrix_tbl %>% select(symbol))\n\nVisualizing the umap_results_tbl:\n\numap_results_tbl %>%\n  ggplot(aes(x, y)) +\n  geom_point(alpha = 0.5, size = 0.5, color = '#2DC6D6') + \n  geom_label_repel(aes(label = symbol), size = 1, max.overlaps = 20, label.padding = 0.10, color = '#FF8014', seed = 777, nudge_x = 0.25, nudge_y = 0.05, fill = \"#282A36\") + \n  #theme_tq() + \n  labs(title = 'UMAP 2D Projection') +\n  theme(\n    panel.background = element_rect(fill = \"#222222\"),\n    panel.border = element_rect(color = \"white\", fill = NA),\n    plot.background = element_rect(fill = \"#222222\"),\n    line = element_line(color = \"white\"),\n    text = element_text(color = \"white\"),\n    axis.ticks = element_line(color = \"white\"),\n    axis.text = element_text(color = \"white\")\n  )"
   },
   {
-    "objectID": "content/01_journal/02_machine_learning_fundamentals.html#combine-k-means-and-umap",
-    "href": "content/01_journal/02_machine_learning_fundamentals.html#combine-k-means-and-umap",
+    "objectID": "content/01_journal/01_machine_learning_fundamentals.html#combine-k-means-and-umap",
+    "href": "content/01_journal/01_machine_learning_fundamentals.html#combine-k-means-and-umap",
     "title": "Machine Learning Fundamentals",
     "section": "\n3.8 Combine K-Means and UMAP",
     "text": "3.8 Combine K-Means and UMAP\nPulling out the K-Means for 10 centers:\n\nk_means_obj <- k_means_mapped_tbl %>%\n  pull(k_means) %>%\n  pluck(10)\n\nCombining the clusters from k_means_obj with umap_results_tbl:\n\nk_means_10_clusters_tbl <- k_means_obj %>% \n  augment(stock_date_matrix_tbl) %>%\n  select(symbol, .cluster)\n\numap_kmeans_results_tbl <-  k_means_10_clusters_tbl %>%\n  left_join(umap_results_tbl, by = 'symbol') %>% \n  left_join(sp_500_index_tbl %>% select(symbol, company, sector), by = 'symbol')\n\nVisualizing the K-Means and UMAP results:\n\numap_kmeans_results_tbl %>%\n  mutate(label_text = str_glue(\"Symbol: {symbol}\n                                 Cluster: {.cluster}\")) %>%\n  \n  ggplot(aes(x, y, color = .cluster)) +\n  \n  # Geometries\n  geom_point(alpha = 0.5, size = 0.5) +\n  geom_label_repel(aes(label = label_text), size = 1,max.overlaps = 20, fill = \"#282A36\", label.padding = 0.10, nudge_x = 0.25, nudge_y = 0.05) +\n  \n  # Formatting\n  scale_color_discrete() +\n  labs(title = \"Company Segmentation: 2D Projection\",\n       subtitle = \"UMAP 2D Projection with K-Means Cluster Assignment\") +\n  theme(\n    legend.position = \"none\",\n    #legend.key = element_rect(fill = umap_kmeans_results_tbl$.cluster),\n    panel.background = element_rect(fill = \"#222222\"),\n    panel.border = element_rect(color = \"white\", fill = NA),\n    legend.background = element_rect(fill = \"#222222\"),\n    plot.background = element_rect(fill = \"#222222\"),\n    line = element_line(color = \"white\"),\n    text = element_text(color = \"white\"),\n    axis.ticks = element_line(color = \"white\"),\n    axis.text = element_text(color = \"white\")\n  )"
   },
   {
-    "objectID": "content/01_journal/03_regression_ii.html",
-    "href": "content/01_journal/03_regression_ii.html",
-    "title": "Data Wrangling",
+    "objectID": "content/01_journal/02_regression_ii.html",
+    "href": "content/01_journal/02_regression_ii.html",
+    "title": "Regression (II)",
+    "section": "",
+    "text": "Our goal is to figure out what gaps exist in the products of a bike manufacturer and come up with a pricing algorithm that will help us to determine a price, if we were to come up with products in that product category."
+  },
+  {
+    "objectID": "content/01_journal/02_regression_ii.html#import-libraries",
+    "href": "content/01_journal/02_regression_ii.html#import-libraries",
+    "title": "Regression (II)",
+    "section": "\n3.1 Import Libraries",
+    "text": "3.1 Import Libraries\n\nlibrary(tidyverse)  \nlibrary(parsnip)  \nlibrary(recipes)  \nlibrary(rsample)\nlibrary(workflows)\nlibrary(yardstick)"
+  },
+  {
+    "objectID": "content/01_journal/02_regression_ii.html#read-data",
+    "href": "content/01_journal/02_regression_ii.html#read-data",
+    "title": "Regression (II)",
+    "section": "\n3.2 Read Data",
+    "text": "3.2 Read Data\n\nbike_orderlines_tbl <- readRDS(\n  \"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/bike_orderlines.rds\")\n\nbike_features_tbl <- readRDS(\n  \"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/bike_features_tbl.rds\")\n\nbike_orderlines_tbl %>% glimpse()\n\n#> Rows: 15,644\n#> Columns: 18\n#> $ order_id       <dbl> 1, 1, 2, 2, 3, 3, 3, 3, 3, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7…\n#> $ order_line     <dbl> 1, 2, 1, 2, 1, 2, 3, 4, 5, 1, 1, 2, 3, 4, 1, 2, 3, 4, 1…\n#> $ order_date     <dttm> 2015-01-07, 2015-01-07, 2015-01-10, 2015-01-10, 2015-0…\n#> $ model          <chr> \"Spectral CF 7 WMN\", \"Ultimate CF SLX Disc 8.0 ETAP\", \"…\n#> $ model_year     <dbl> 2021, 2020, 2021, 2019, 2020, 2020, 2020, 2021, 2020, 2…\n#> $ category_1     <chr> \"Mountain\", \"Road\", \"Mountain\", \"Road\", \"Mountain\", \"Hy…\n#> $ category_2     <chr> \"Trail\", \"Race\", \"Trail\", \"Triathlon Bike\", \"Dirt Jump\"…\n#> $ category_3     <chr> \"Spectral\", \"Ultimate\", \"Neuron\", \"Speedmax\", \"Stitched…\n#> $ price          <dbl> 3119, 5359, 2729, 1749, 1219, 1359, 2529, 1559, 3899, 6…\n#> $ quantity       <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1…\n#> $ total_price    <dbl> 3119, 5359, 2729, 1749, 1219, 1359, 2529, 1559, 3899, 6…\n#> $ frame_material <chr> \"carbon\", \"carbon\", \"carbon\", \"carbon\", \"aluminium\", \"c…\n#> $ weight         <dbl> 13.80, 7.44, 14.06, 8.80, 11.50, 8.80, 8.20, 8.85, 14.4…\n#> $ url            <chr> \"https://www.canyon.com/en-de/mountain-bikes/trail-bike…\n#> $ bikeshop       <chr> \"AlexandeRad\", \"AlexandeRad\", \"WITT-RAD\", \"WITT-RAD\", \"…\n#> $ location       <chr> \"Hamburg, Hamburg\", \"Hamburg, Hamburg\", \"Bremen, Bremen…\n#> $ lat            <dbl> 53.57532, 53.57532, 53.07379, 53.07379, 48.78234, 48.78…\n#> $ lng            <dbl> 10.015340, 10.015340, 8.826754, 8.826754, 9.180819, 9.1…"
+  },
+  {
+    "objectID": "content/01_journal/02_regression_ii.html#data-exploration",
+    "href": "content/01_journal/02_regression_ii.html#data-exploration",
+    "title": "Regression (II)",
+    "section": "\n3.3 Data Exploration",
+    "text": "3.3 Data Exploration\nWe will visualize the data to determine possible product gaps. It would be interesting to see the sales for each category_2 separated by the frame material. However, we do not have the sales number. Instead, we will use the stock numbers as a proxy:\n\nmodel_num_sold_tbl <- bike_orderlines_tbl %>% \n  select(quantity, model) %>%\n  group_by(model) %>%\n  summarise(num_sold = sum(quantity)) %>%\n  ungroup() %>%\n  arrange(desc(num_sold))\n\nmodel_sales_tbl <- bike_orderlines_tbl %>% \n  select(total_price, model, category_2, frame_material) %>% \n  group_by(model, category_2, frame_material) %>%\n  summarise(revenue = sum(total_price)) %>%\n  ungroup() %>%\n  arrange(desc(revenue))\n\nmodel_sales_tbl <- model_sales_tbl %>% \n  inner_join(model_num_sold_tbl)\n\nmodel_sales_tbl\n\n\n\n\n\n  \n\n\n\nVisualizing the model_sales_tbl:\n\nmodel_sales_tbl %>% \n  mutate(category_2 = as_factor(category_2) %>% \n           fct_reorder(revenue, .fun = max) %>% \n           fct_rev()) %>% \n  ggplot(aes(frame_material, revenue)) +\n  geom_violin() +\n  geom_jitter(width = 0.1, alpha = 0.5, color = \"#2DC6D6\") +\n  facet_wrap(~ category_2) +\n  scale_y_continuous(labels = scales::dollar_format(scale = 1e-6, \n                                                    suffix = \"M\", \n                                                    accuracy = 0.1)) +\n  labs(title = \"Total Sales for Each Model\",\n    x = \"Frame Material\", y = \"Revenue\") +\n  theme(\n    panel.background = element_rect(fill = \"#222222\"),\n    panel.border = element_rect(color = \"white\", fill = NA),\n    plot.background = element_rect(fill = \"#222222\"),\n    line = element_line(color = \"white\"),\n    text = element_text(color = \"white\"),\n    axis.ticks = element_line(color = \"white\"),\n    axis.text = element_text(color = \"white\")\n  )"
+  },
+  {
+    "objectID": "content/01_journal/02_regression_ii.html#create-the-model",
+    "href": "content/01_journal/02_regression_ii.html#create-the-model",
+    "title": "Regression (II)",
+    "section": "\n3.4 Create the model",
+    "text": "3.4 Create the model\n\nlinear_model <- \n  linear_reg(\"regression\") %>%\n  set_engine(\"lm\")"
+  },
+  {
+    "objectID": "content/01_journal/02_regression_ii.html#split-the-data",
+    "href": "content/01_journal/02_regression_ii.html#split-the-data",
+    "title": "Regression (II)",
+    "section": "\n3.5 Split the data",
+    "text": "3.5 Split the data\n\nset.seed(1036)\nsplit_obj <- initial_split(bike_features_tbl, prop = 0.80, strata = \"category_2\")\n\ntrain_tbl <- training(split_obj)\ntest_tbl  <- testing(split_obj)\n\ntrain_tbl <- train_tbl %>%\n  set_names(str_replace_all(names(train_tbl), \" |-\", \"_\"))\ntest_tbl  <- test_tbl  %>% \n  set_names(str_replace_all(names(test_tbl),  \" |-\", \"_\"))"
+  },
+  {
+    "objectID": "content/01_journal/02_regression_ii.html#create-the-recipe",
+    "href": "content/01_journal/02_regression_ii.html#create-the-recipe",
+    "title": "Regression (II)",
+    "section": "\n3.6 Create the recipe",
+    "text": "3.6 Create the recipe\n\nsales_rec <- \n  recipe(price ~ ., data = train_tbl %>% \n           select(-c(bike_id:model_year),\n                  -weight,\n                  -category_1,\n                  -c(category_3:Fork),\n                  -c(Front_Derailleur:Brake_Rotor))) %>%\n  step_novel(all_predictors(), -all_numeric()) %>%\n  step_dummy(all_nominal(), -all_outcomes(), one_hot = T) %>%\n  step_zv(all_predictors()) %>%\n  prep()\n\nsales_rec\n\n#> \n\n\n#> ── Recipe ──────────────────────────────────────────────────────────────────────\n\n\n#> \n\n\n#> ── Inputs\n\n\n#> Number of variables by role\n\n\n#> outcome:   1\n#> predictor: 3\n\n\n#> \n\n\n#> ── Training information\n\n\n#> Training data contained 184 data points and no incomplete rows.\n\n\n#> \n\n\n#> ── Operations\n\n\n#> • Novel factor level assignment for: frame_material, category_2, ... | Trained\n\n\n#> • Dummy variables from: frame_material, category_2, Rear_Derailleur | Trained\n\n\n#> • Zero variance filter removed: frame_material_new, ... | Trained"
+  },
+  {
+    "objectID": "content/01_journal/02_regression_ii.html#create-the-workflow",
+    "href": "content/01_journal/02_regression_ii.html#create-the-workflow",
+    "title": "Regression (II)",
+    "section": "\n3.7 Create the workflow",
+    "text": "3.7 Create the workflow\nBundle the linear_model and sales_rec together:\n\nsales_wflow <- \n  workflow() %>% \n  add_model(linear_model) %>% \n  add_recipe(sales_rec)\n\nsales_wflow\n\n#> ══ Workflow ════════════════════════════════════════════════════════════════════\n#> Preprocessor: Recipe\n#> Model: linear_reg()\n#> \n#> ── Preprocessor ────────────────────────────────────────────────────────────────\n#> 3 Recipe Steps\n#> \n#> • step_novel()\n#> • step_dummy()\n#> • step_zv()\n#> \n#> ── Model ───────────────────────────────────────────────────────────────────────\n#> Linear Regression Model Specification (regression)\n#> \n#> Computational engine: lm\n\n\nFit the model to the training data:\n\nsales_fit <- \n  sales_wflow %>% \n  fit(data = train_tbl)"
+  },
+  {
+    "objectID": "content/01_journal/02_regression_ii.html#evaluate-the-model",
+    "href": "content/01_journal/02_regression_ii.html#evaluate-the-model",
+    "title": "Regression (II)",
+    "section": "\n3.8 Evaluate the model",
+    "text": "3.8 Evaluate the model\n\nsales_fit %>% \n  calc_metrics(test_tbl)"
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html",
+    "href": "content/01_journal/03_aml_with_h2o_i.html",
+    "title": "Automated Machine Learning with H2O (I)",
     "section": "",
     "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
   },
   {
-    "objectID": "content/01_journal/04_data_visualization.html",
-    "href": "content/01_journal/04_data_visualization.html",
+    "objectID": "content/01_journal/04_aml_with_h2o_ii.html",
+    "href": "content/01_journal/04_aml_with_h2o_ii.html",
     "title": "Data Visualization",
     "section": "",
     "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html",
+    "href": "content/01_journal/05_performance_measures.html",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+  },
+  {
+    "objectID": "content/01_journal/06_lime.html",
+    "href": "content/01_journal/06_lime.html",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+  },
+  {
+    "objectID": "content/01_journal/tidyverse.html",
+    "href": "content/01_journal/tidyverse.html",
+    "title": "Tidyverse",
+    "section": "",
+    "text": "Note\n\n\n\nYou can delete everything in here and start fresh.\nThis is a .qmd file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "content/01_journal/tidyverse.html#header-2",
+    "href": "content/01_journal/tidyverse.html#header-2",
+    "title": "Tidyverse",
+    "section": "\n2.1 Header 2",
+    "text": "2.1 Header 2\nHeader 3\nHeader 4\nHeader 5\nHeader 6"
   },
   {
     "objectID": "content/02_notes/05_class_notes.html",
