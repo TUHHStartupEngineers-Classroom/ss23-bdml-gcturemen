@@ -13,15 +13,19 @@ website:
       - href: index.qmd
         text: Home
       - text: "Journal"
-        menu: 
-          - text: "Tidyverse"
-            file: content/01_journal/01_tidyverse.qmd
+        menu:
           - text: "Machine Learning Fundamentals"
-            file: content/01_journal/02_machine_learning_fundamentals.qmd
+            file: content/01_journal/01_machine_learning_fundamentals.qmd
           - text: "Regression (II)"
-            file: content/01_journal/03_regression_ii.qmd
-          - text: "Data Visualization"
-            file: content/01_journal/04_data_visualization.qmd
+            file: content/01_journal/02_regression_ii.qmd
+          - text: "Automated Machine Learning with H2O (I)"
+            file: content/01_journal/03_aml_with_h2o_i.qmd
+          - text: "Automated Machine Learning with H2O (II)"
+            file: content/01_journal/04_aml_with_h2o_ii.qmd
+          - text: "Performance Measures"
+            file: content/01_journal/05_performance_measures.qmd
+          - text: "Explaining Black-Box Models with LIME"
+            file: content/01_journal/06_lime.qmd
       - text: "Class notes"
         file: content/02_notes/05_class_notes.qmd
       - text: "Links"
