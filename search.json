@@ -179,21 +179,217 @@
     "href": "content/01_journal/03_aml_with_h2o_i.html",
     "title": "Automated Machine Learning with H2O (I)",
     "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+    "text": "Attrition is a problem that impacts all businesses, irrespective of geography, industry and size of the company. Employee attrition leads to significant costs for a business, including the cost of business disruption, hiring new staff and training new staff.\nOur goal is to use classification models to predict if an employee is likely to quit so that the situation can be intervened on time and remedied to prevent attrition."
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html#import-libraries",
+    "href": "content/01_journal/03_aml_with_h2o_i.html#import-libraries",
+    "title": "Automated Machine Learning with H2O (I)",
+    "section": "\n3.1 Import Libraries",
+    "text": "3.1 Import Libraries\n\nlibrary(tidyverse)\nlibrary(GGally)"
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html#read-data",
+    "href": "content/01_journal/03_aml_with_h2o_i.html#read-data",
+    "title": "Automated Machine Learning with H2O (I)",
+    "section": "\n3.2 Read Data",
+    "text": "3.2 Read Data\n\nemployee_attrition_tbl <- read_csv(\n  \"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/datasets-1067-1925-WA_Fn-UseC_-HR-Employee-Attrition.csv\")\n\n\n\n#> Rows: 1,470\n#> Columns: 35\n#> $ Age                      <dbl> 41, 49, 37, 33, 27, 32, 59, 30, 38, 36, 35, 2…\n#> $ Attrition                <chr> \"Yes\", \"No\", \"Yes\", \"No\", \"No\", \"No\", \"No\", \"…\n#> $ BusinessTravel           <chr> \"Travel_Rarely\", \"Travel_Frequently\", \"Travel…\n#> $ DailyRate                <dbl> 1102, 279, 1373, 1392, 591, 1005, 1324, 1358,…\n#> $ Department               <chr> \"Sales\", \"Research & Development\", \"Research …\n#> $ DistanceFromHome         <dbl> 1, 8, 2, 3, 2, 2, 3, 24, 23, 27, 16, 15, 26, …\n#> $ Education                <dbl> 2, 1, 2, 4, 1, 2, 3, 1, 3, 3, 3, 2, 1, 2, 3, …\n#> $ EducationField           <chr> \"Life Sciences\", \"Life Sciences\", \"Other\", \"L…\n#> $ EmployeeCount            <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …\n#> $ EmployeeNumber           <dbl> 1, 2, 4, 5, 7, 8, 10, 11, 12, 13, 14, 15, 16,…\n#> $ EnvironmentSatisfaction  <dbl> 2, 3, 4, 4, 1, 4, 3, 4, 4, 3, 1, 4, 1, 2, 3, …\n#> $ Gender                   <chr> \"Female\", \"Male\", \"Male\", \"Female\", \"Male\", \"…\n#> $ HourlyRate               <dbl> 94, 61, 92, 56, 40, 79, 81, 67, 44, 94, 84, 4…\n#> $ JobInvolvement           <dbl> 3, 2, 2, 3, 3, 3, 4, 3, 2, 3, 4, 2, 3, 3, 2, …\n#> $ JobLevel                 <dbl> 2, 2, 1, 1, 1, 1, 1, 1, 3, 2, 1, 2, 1, 1, 1, …\n#> $ JobRole                  <chr> \"Sales Executive\", \"Research Scientist\", \"Lab…\n#> $ JobSatisfaction          <dbl> 4, 2, 3, 3, 2, 4, 1, 3, 3, 3, 2, 3, 3, 4, 3, …\n#> $ MaritalStatus            <chr> \"Single\", \"Married\", \"Single\", \"Married\", \"Ma…\n#> $ MonthlyIncome            <dbl> 5993, 5130, 2090, 2909, 3468, 3068, 2670, 269…\n#> $ MonthlyRate              <dbl> 19479, 24907, 2396, 23159, 16632, 11864, 9964…\n#> $ NumCompaniesWorked       <dbl> 8, 1, 6, 1, 9, 0, 4, 1, 0, 6, 0, 0, 1, 0, 5, …\n#> $ Over18                   <chr> \"Y\", \"Y\", \"Y\", \"Y\", \"Y\", \"Y\", \"Y\", \"Y\", \"Y\", …\n#> $ OverTime                 <chr> \"Yes\", \"No\", \"Yes\", \"Yes\", \"No\", \"No\", \"Yes\",…\n#> $ PercentSalaryHike        <dbl> 11, 23, 15, 11, 12, 13, 20, 22, 21, 13, 13, 1…\n#> $ PerformanceRating        <dbl> 3, 4, 3, 3, 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 3, …\n#> $ RelationshipSatisfaction <dbl> 1, 4, 2, 3, 4, 3, 1, 2, 2, 2, 3, 4, 4, 3, 2, …\n#> $ StandardHours            <dbl> 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 8…\n#> $ StockOptionLevel         <dbl> 0, 1, 0, 0, 1, 0, 3, 1, 0, 2, 1, 0, 1, 1, 0, …\n#> $ TotalWorkingYears        <dbl> 8, 10, 7, 8, 6, 8, 12, 1, 10, 17, 6, 10, 5, 3…\n#> $ TrainingTimesLastYear    <dbl> 0, 3, 3, 3, 3, 2, 3, 2, 2, 3, 5, 3, 1, 2, 4, …\n#> $ WorkLifeBalance          <dbl> 1, 3, 3, 3, 3, 2, 2, 3, 3, 2, 3, 3, 2, 3, 3, …\n#> $ YearsAtCompany           <dbl> 6, 10, 0, 8, 2, 7, 1, 1, 9, 7, 5, 9, 5, 2, 4,…\n#> $ YearsInCurrentRole       <dbl> 4, 7, 0, 7, 2, 7, 0, 0, 7, 7, 4, 5, 2, 2, 2, …\n#> $ YearsSinceLastPromotion  <dbl> 0, 1, 0, 3, 2, 3, 0, 0, 1, 7, 0, 0, 4, 1, 0, …\n#> $ YearsWithCurrManager     <dbl> 5, 7, 0, 0, 2, 6, 0, 0, 8, 7, 3, 8, 3, 2, 3, …"
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html#compensation-features",
+    "href": "content/01_journal/03_aml_with_h2o_i.html#compensation-features",
+    "title": "Automated Machine Learning with H2O (I)",
+    "section": "\n3.3 Compensation Features",
+    "text": "3.3 Compensation Features\n\n\n\n\n\n\n\n\nQuestion: What can you deduce about the interaction between Monthly Income and Attrition?\na. Those that are leaving the company have a higher Monthly Income\nb. That those are staying have a lower Monthly Income\nc. Those that are leaving have a lower Monthly Income\nd. It's difficult to deduce anything based on the visualization\nAnswer: From the figure it can be seen that the employees that are leaving have a lower Monthly income. The answer is c.\nQuestion: What can you deduce about the interaction between Percent Salary Hike and Attrition?\na. Those that are leaving the company have a higher Percent Salary Hike\nb. Those that are staying have a lower Percent Salary Hike\nc. Those that are leaving have lower Percent Salary Hike\nd. It's difficult to deduce anything based on the visualization\nAnswer: Since the curves in the figure are similar, it is difficult to make any comments. The answer is d.\nQuestion: What can you deduce about the interaction between Stock Option Level and Attrition?\na. Those that are leaving the company have a higher stock option level\nb. Those that are staying have a higher stock option level\nc. It's difficult to deduce anything based on the visualization\nAnswer: Since the number of staying employees are higher at high stock option levels (1, 2) the answer is b."
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html#survey-results",
+    "href": "content/01_journal/03_aml_with_h2o_i.html#survey-results",
+    "title": "Automated Machine Learning with H2O (I)",
+    "section": "\n3.4 Survey results",
+    "text": "3.4 Survey results\n\n\n\n\n\n\n\n\nQuestion: What can you deduce about the interaction between Environment Satisfaction and Attrition?\na. A higher proportion of those leaving have a low environment satisfaction level\nb. A higher proportion of those leaving have a high environment satisfaction level\nc. It's difficult to deduce anything based on the visualization\nAnswer: It is difficult to make a comment since it is not clearly defined what ‘high’ and ‘low’ satisfaction are. The answer is c.\nQuestion: What can you deduce about the interaction between Work Life Balance and Attrition\na. Those that are leaving have higher density of 2's and 3's\nb. Those that are staying have a higher density of 2's and 3's\nc. Those that are staying have a lower density of 2's and 3's\nd. It's difficult to deduce anything based on the visualization\nAnswer: From the figure, it can be seen that staying employees have a higher density of 2’s and 3’s. The answer is b."
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html#performance-data",
+    "href": "content/01_journal/03_aml_with_h2o_i.html#performance-data",
+    "title": "Automated Machine Learning with H2O (I)",
+    "section": "\n3.5 Performance Data",
+    "text": "3.5 Performance Data\n\n\n\n\n\n\n\n\nQuestion: What Can you deduce about the interaction between Job Involvement and Attrition?\na. Those that are leaving have a lower density of 3's and 4's\nb. Those that are leaving have a lower density of 1's and 2's\nc. Those that are staying have a lower density of 2's and 3's\nd. It's difficult to deduce anything based on the visualization\nAnswer: From the figure, it can be seen that leaving employees have a lower density of 3’s and 4’s. The answer is a."
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html#work-life-features",
+    "href": "content/01_journal/03_aml_with_h2o_i.html#work-life-features",
+    "title": "Automated Machine Learning with H2O (I)",
+    "section": "\n3.6 Work-Life Features",
+    "text": "3.6 Work-Life Features\n\n\n\n\n\n\n\n\nQuestion: What can you deduce about the interaction between Over Time and Attrition?\na. The proportion of those leaving that are working Over Time are high compared to those that are not leaving\nb. The proportion of those staying that are working Over Time are high compared to those that are not staying\nAnswer: Regarding Over Time, proportion of staying employees is higher in both groups. The answer is b."
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html#training-and-education",
+    "href": "content/01_journal/03_aml_with_h2o_i.html#training-and-education",
+    "title": "Automated Machine Learning with H2O (I)",
+    "section": "\n3.7 Training and Education",
+    "text": "3.7 Training and Education\n\n\n\n\n\n\n\n\nQuestion: What can you deduce about the interaction between Training Times Last Year and Attrition\na. People that leave tend to have more annual trainings\nb. People that leave tend to have less annual trainings\nc. It's difficult to deduce anything based on the visualization\nAnswer: From the figure it can be seen that people that leave tend to have less annual trainings. The answer is b."
+  },
+  {
+    "objectID": "content/01_journal/03_aml_with_h2o_i.html#time-based-features",
+    "href": "content/01_journal/03_aml_with_h2o_i.html#time-based-features",
+    "title": "Automated Machine Learning with H2O (I)",
+    "section": "\n3.8 Time-Based Features",
+    "text": "3.8 Time-Based Features\n\n\n\n\n\n\n\n\nQuestion: What can you deduce about the interaction between Years At Company and Attrition\na. People that leave tend to have more working years at the company\nb. People that leave tend to have less working years at the company\nc. It's difficult to deduce anything based on the visualization\nAnswer: It is apparent that people that leave tend to have less working years at the company. The answer is b.\nQuestion: What can you deduce about the interaction between Years Since Last Promotion and Attrition?\na. Those that are leaving have more years since last promotion than those that are staying\nb. Those that are leaving have fewer years since last promotion than those that are staying\nc. It's difficult to deduce anything based on the visualization\nAnswer: Since both curves are similar in the figure it is hard to make a decision. The answer is c."
   },
   {
     "objectID": "content/01_journal/04_aml_with_h2o_ii.html",
     "href": "content/01_journal/04_aml_with_h2o_ii.html",
-    "title": "Data Visualization",
+    "title": "Automated Machine Learning with H2O (II)",
     "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+    "text": "For the challenge, we shall be working with a Product Backorders dataset. The goal here is to predict whether or not a product will be put on backorder status, given a number of product metrics such as current inventory, transit time, demand forecasts and prior sales. It’s a classic Binary Classification problem."
+  },
+  {
+    "objectID": "content/01_journal/04_aml_with_h2o_ii.html#import-libraries",
+    "href": "content/01_journal/04_aml_with_h2o_ii.html#import-libraries",
+    "title": "Automated Machine Learning with H2O (II)",
+    "section": "\n3.1 Import Libraries",
+    "text": "3.1 Import Libraries\n\nlibrary(tidyverse)\nlibrary(recipes)\nlibrary(rsample)\nlibrary(readxl)\nlibrary(h2o)"
+  },
+  {
+    "objectID": "content/01_journal/04_aml_with_h2o_ii.html#load-the-training-test-dataset",
+    "href": "content/01_journal/04_aml_with_h2o_ii.html#load-the-training-test-dataset",
+    "title": "Automated Machine Learning with H2O (II)",
+    "section": "\n3.2 Load the training & test dataset",
+    "text": "3.2 Load the training & test dataset\n\nproduct_backorders_tbl <- read_csv(\"data/product_backorders.csv\")\n\nproduct_backorders_tbl %>% glimpse()\n\n\n\n#> Rows: 19,053\n#> Columns: 23\n#> $ sku               <dbl> 1113121, 1113268, 1113874, 1114222, 1114823, 1115453…\n#> $ national_inv      <dbl> 0, 0, 20, 0, 0, 55, -34, 4, 2, -7, 1, 2, 0, 0, 0, 0,…\n#> $ lead_time         <dbl> 8, 8, 2, 8, 12, 8, 8, 9, 8, 8, 8, 8, 12, 2, 12, 4, 2…\n#> $ in_transit_qty    <dbl> 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0…\n#> $ forecast_3_month  <dbl> 6, 2, 45, 9, 31, 216, 120, 43, 4, 56, 2, 5, 5, 54, 4…\n#> $ forecast_6_month  <dbl> 6, 3, 99, 14, 31, 360, 240, 67, 6, 96, 4, 9, 6, 72, …\n#> $ forecast_9_month  <dbl> 6, 4, 153, 21, 31, 492, 240, 115, 9, 112, 6, 13, 9, …\n#> $ sales_1_month     <dbl> 0, 1, 16, 5, 7, 30, 83, 5, 1, 13, 0, 1, 0, 0, 1, 0, …\n#> $ sales_3_month     <dbl> 4, 2, 42, 17, 15, 108, 122, 22, 5, 30, 2, 5, 4, 0, 3…\n#> $ sales_6_month     <dbl> 9, 3, 80, 36, 33, 275, 144, 40, 6, 56, 3, 8, 5, 0, 4…\n#> $ sales_9_month     <dbl> 12, 3, 111, 43, 47, 340, 165, 58, 9, 76, 4, 11, 6, 0…\n#> $ min_bank          <dbl> 0, 0, 10, 0, 2, 51, 33, 4, 2, 0, 0, 0, 3, 4, 0, 0, 0…\n#> $ potential_issue   <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\"…\n#> $ pieces_past_due   <dbl> 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…\n#> $ perf_6_month_avg  <dbl> 0.90, 0.96, 0.81, 0.96, 0.98, 0.00, 1.00, 0.69, 1.00…\n#> $ perf_12_month_avg <dbl> 0.89, 0.97, 0.88, 0.98, 0.98, 0.00, 0.97, 0.68, 0.95…\n#> $ local_bo_qty      <dbl> 0, 0, 0, 0, 0, 0, 34, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, …\n#> $ deck_risk         <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\"…\n#> $ oe_constraint     <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\"…\n#> $ ppap_risk         <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"Yes\", \"No\", \"No\", \"No…\n#> $ stop_auto_buy     <chr> \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Ye…\n#> $ rev_stop          <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\"…\n#> $ went_on_backorder <chr> \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Ye…\n\n\n\nset.seed(seed = 777)\nsplit_obj <- initial_split(product_backorders_tbl, prop = 0.80)\n\ntrain_set_tbl <- training(split_obj)\ntest_set_tbl  <- testing(split_obj)\n\n\nrecipe_obj <- recipe(went_on_backorder ~., data = train_set_tbl) %>% \n  step_zv(all_predictors()) %>% \n  step_mutate_at(potential_issue,\n                 deck_risk,\n                 oe_constraint,\n                 ppap_risk,\n                 stop_auto_buy,\n                 rev_stop,\n                 went_on_backorder,\n                 fn = as.factor) %>% \n  prep()\n\ntrain_tbl <- bake(recipe_obj, new_data = train_set_tbl)\ntest_tbl  <- bake(recipe_obj, new_data = test_set_tbl)\n\ntrain_tbl %>% glimpse()\n\n#> Rows: 15,242\n#> Columns: 23\n#> $ sku               <dbl> 1370478, 1423347, 1704266, 2258894, 3000725, 2888766…\n#> $ national_inv      <dbl> 4, 59, 1, 9, 151, 6, 195, 66, 52, 0, 25, 1, 4, 2, 10…\n#> $ lead_time         <dbl> 12, NA, 8, 2, 8, 2, 8, 8, 14, 2, 4, 4, 8, 8, 2, 8, 5…\n#> $ in_transit_qty    <dbl> 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, …\n#> $ forecast_3_month  <dbl> 0, 0, 0, 0, 0, 0, 0, 122, 20, 0, 9, 15, 0, 28, 0, 0,…\n#> $ forecast_6_month  <dbl> 0, 0, 0, 0, 0, 0, 0, 214, 35, 0, 18, 15, 0, 61, 0, 0…\n#> $ forecast_9_month  <dbl> 1, 0, 0, 0, 0, 0, 0, 306, 65, 0, 18, 21, 0, 94, 0, 0…\n#> $ sales_1_month     <dbl> 1, 0, 1, 0, 0, 0, 2, 36, 13, 0, 9, 4, 0, 3, 0, 0, 0,…\n#> $ sales_3_month     <dbl> 1, 7, 1, 0, 15, 0, 4, 119, 31, 0, 24, 9, 0, 26, 0, 0…\n#> $ sales_6_month     <dbl> 3, 20, 1, 0, 27, 0, 12, 209, 78, 0, 43, 15, 0, 56, 0…\n#> $ sales_9_month     <dbl> 3, 28, 1, 3, 43, 0, 16, 322, 121, 0, 75, 22, 1, 82, …\n#> $ min_bank          <dbl> 0, 0, 0, 0, 7, 0, 1, 45, 21, 1, 0, 2, 1, 6, 0, 0, 1,…\n#> $ potential_issue   <fct> No, No, No, No, No, No, No, No, No, No, No, No, No, …\n#> $ pieces_past_due   <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…\n#> $ perf_6_month_avg  <dbl> 0.87, -99.00, 0.99, 0.99, 0.98, 0.98, 0.88, 0.98, 0.…\n#> $ perf_12_month_avg <dbl> 0.67, -99.00, 0.98, 0.99, 0.96, 0.99, 0.91, 0.99, 0.…\n#> $ local_bo_qty      <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…\n#> $ deck_risk         <fct> No, Yes, No, Yes, No, No, No, No, No, No, No, No, No…\n#> $ oe_constraint     <fct> No, No, No, No, No, No, No, No, No, No, No, No, No, …\n#> $ ppap_risk         <fct> No, Yes, No, No, No, No, No, No, Yes, No, No, No, No…\n#> $ stop_auto_buy     <fct> Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Ye…\n#> $ rev_stop          <fct> No, No, No, No, No, No, No, No, No, No, No, No, No, …\n#> $ went_on_backorder <fct> No, No, Yes, No, No, No, No, No, No, No, No, Yes, No…"
+  },
+  {
+    "objectID": "content/01_journal/04_aml_with_h2o_ii.html#specify-the-response-and-predictor-variables",
+    "href": "content/01_journal/04_aml_with_h2o_ii.html#specify-the-response-and-predictor-variables",
+    "title": "Automated Machine Learning with H2O (II)",
+    "section": "\n3.3 Specify the response and predictor variables",
+    "text": "3.3 Specify the response and predictor variables\n\nh2o.init()\n\nsplit_h2o <- h2o.splitFrame(as.h2o(train_tbl), ratios = c(0.80), seed = 767)\ntrain_h2o <- split_h2o[[1]]\nvalid_h2o <- split_h2o[[2]]\ntest_h2o  <- as.h2o(test_tbl)\n\ny <- \"went_on_backorder\"\nx <- setdiff(names(train_h2o), y)"
+  },
+  {
+    "objectID": "content/01_journal/04_aml_with_h2o_ii.html#run-automl-specifying-the-stopping-criterion",
+    "href": "content/01_journal/04_aml_with_h2o_ii.html#run-automl-specifying-the-stopping-criterion",
+    "title": "Automated Machine Learning with H2O (II)",
+    "section": "\n3.4 Run AutoML specifying the stopping criterion",
+    "text": "3.4 Run AutoML specifying the stopping criterion\n\nautoml_models_h2o <- h2o.automl(\n  x = x,\n  y = y,\n  training_frame    = train_h2o,\n  validation_frame  = valid_h2o,\n  leaderboard_frame = test_h2o,\n  max_runtime_secs  = 60,\n  nfolds            = 5 \n)"
+  },
+  {
+    "objectID": "content/01_journal/04_aml_with_h2o_ii.html#view-the-leaderboard",
+    "href": "content/01_journal/04_aml_with_h2o_ii.html#view-the-leaderboard",
+    "title": "Automated Machine Learning with H2O (II)",
+    "section": "\n3.5 View the leaderboard",
+    "text": "3.5 View the leaderboard\n\nautoml_models_h2o@leaderboard\n\n#>                                                  model_id       auc   logloss\n#> 1    StackedEnsemble_AllModels_1_AutoML_1_20230602_153206 0.9434092 0.1814100\n#> 2 StackedEnsemble_BestOfFamily_2_AutoML_1_20230602_153206 0.9424741 0.1830483\n#> 3                          GBM_1_AutoML_1_20230602_153206 0.9421039 0.1849211\n#> 4 StackedEnsemble_BestOfFamily_1_AutoML_1_20230602_153206 0.9420608 0.1835529\n#> 5                          GBM_4_AutoML_1_20230602_153206 0.9414669 0.1969647\n#> 6                          GBM_3_AutoML_1_20230602_153206 0.9360941 0.2023744\n#>       aucpr mean_per_class_error      rmse        mse\n#> 1 0.7360194            0.1644997 0.2312126 0.05345927\n#> 2 0.7314111            0.1658739 0.2325972 0.05410147\n#> 3 0.7299478            0.1671278 0.2336671 0.05460032\n#> 4 0.7297099            0.1674267 0.2328884 0.05423702\n#> 5 0.7381370            0.1552414 0.2371925 0.05626029\n#> 6 0.7176308            0.1699963 0.2421208 0.05862246\n#> \n#> [10 rows x 7 columns]"
+  },
+  {
+    "objectID": "content/01_journal/04_aml_with_h2o_ii.html#predicting-using-leader-model",
+    "href": "content/01_journal/04_aml_with_h2o_ii.html#predicting-using-leader-model",
+    "title": "Automated Machine Learning with H2O (II)",
+    "section": "\n3.6 Predicting using Leader Model",
+    "text": "3.6 Predicting using Leader Model\n\nleader_model <- automl_models_h2o@leaderboard %>% \n  extract_h2o_model_name_by_position(1) %>% \n  h2o.getModel()\n\n#> StackedEnsemble_AllModels_1_AutoML_1_20230602_153206\n\n\n\npredictions <- h2o.predict(leader_model, newdata = as.h2o(test_tbl))\n\npredictions_tbl <- predictions %>% as_tibble()\n\npredictions_tbl %>% glimpse()\n\n\n\n#> Rows: 3,811\n#> Columns: 3\n#> $ predict <fct> Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Ye…\n#> $ No      <dbl> 0.46939312, 0.10956838, 0.12959951, 0.44516257, 0.56051457, 0.…\n#> $ Yes     <dbl> 0.53060688, 0.89043162, 0.87040049, 0.55483743, 0.43948543, 0.…"
+  },
+  {
+    "objectID": "content/01_journal/04_aml_with_h2o_ii.html#save-the-leader-model",
+    "href": "content/01_journal/04_aml_with_h2o_ii.html#save-the-leader-model",
+    "title": "Automated Machine Learning with H2O (II)",
+    "section": "\n3.7 Save the leader model",
+    "text": "3.7 Save the leader model\n\nleader_model %>% h2o.saveModel(path = \"h2o_models/\")"
   },
   {
     "objectID": "content/01_journal/05_performance_measures.html",
     "href": "content/01_journal/05_performance_measures.html",
-    "title": "Data Visualization",
+    "title": "Performance Measures",
     "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+    "text": "For the challenge, we will continue working on the Product Backorders dataset. The goal here is to visualize various performance metrics of H2O models to simplify evaluation of them."
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#import-libraries",
+    "href": "content/01_journal/05_performance_measures.html#import-libraries",
+    "title": "Performance Measures",
+    "section": "\n3.1 Import Libraries",
+    "text": "3.1 Import Libraries\n\nlibrary(tidyverse)\nlibrary(readxl)\nlibrary(rsample)\nlibrary(h2o)\nlibrary(recipes)\nlibrary(cowplot)\nlibrary(glue)"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#load-the-training-test-dataset",
+    "href": "content/01_journal/05_performance_measures.html#load-the-training-test-dataset",
+    "title": "Performance Measures",
+    "section": "\n3.2 Load the training & test dataset",
+    "text": "3.2 Load the training & test dataset\n\nproduct_backorders_tbl <- read_csv(\"data/product_backorders.csv\")\n\nproduct_backorders_tbl %>% glimpse()\n\n\n\n#> Rows: 19,053\n#> Columns: 23\n#> $ sku               <dbl> 1113121, 1113268, 1113874, 1114222, 1114823, 1115453…\n#> $ national_inv      <dbl> 0, 0, 20, 0, 0, 55, -34, 4, 2, -7, 1, 2, 0, 0, 0, 0,…\n#> $ lead_time         <dbl> 8, 8, 2, 8, 12, 8, 8, 9, 8, 8, 8, 8, 12, 2, 12, 4, 2…\n#> $ in_transit_qty    <dbl> 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0…\n#> $ forecast_3_month  <dbl> 6, 2, 45, 9, 31, 216, 120, 43, 4, 56, 2, 5, 5, 54, 4…\n#> $ forecast_6_month  <dbl> 6, 3, 99, 14, 31, 360, 240, 67, 6, 96, 4, 9, 6, 72, …\n#> $ forecast_9_month  <dbl> 6, 4, 153, 21, 31, 492, 240, 115, 9, 112, 6, 13, 9, …\n#> $ sales_1_month     <dbl> 0, 1, 16, 5, 7, 30, 83, 5, 1, 13, 0, 1, 0, 0, 1, 0, …\n#> $ sales_3_month     <dbl> 4, 2, 42, 17, 15, 108, 122, 22, 5, 30, 2, 5, 4, 0, 3…\n#> $ sales_6_month     <dbl> 9, 3, 80, 36, 33, 275, 144, 40, 6, 56, 3, 8, 5, 0, 4…\n#> $ sales_9_month     <dbl> 12, 3, 111, 43, 47, 340, 165, 58, 9, 76, 4, 11, 6, 0…\n#> $ min_bank          <dbl> 0, 0, 10, 0, 2, 51, 33, 4, 2, 0, 0, 0, 3, 4, 0, 0, 0…\n#> $ potential_issue   <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\"…\n#> $ pieces_past_due   <dbl> 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…\n#> $ perf_6_month_avg  <dbl> 0.90, 0.96, 0.81, 0.96, 0.98, 0.00, 1.00, 0.69, 1.00…\n#> $ perf_12_month_avg <dbl> 0.89, 0.97, 0.88, 0.98, 0.98, 0.00, 0.97, 0.68, 0.95…\n#> $ local_bo_qty      <dbl> 0, 0, 0, 0, 0, 0, 34, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, …\n#> $ deck_risk         <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\"…\n#> $ oe_constraint     <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\"…\n#> $ ppap_risk         <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"Yes\", \"No\", \"No\", \"No…\n#> $ stop_auto_buy     <chr> \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Ye…\n#> $ rev_stop          <chr> \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\", \"No\"…\n#> $ went_on_backorder <chr> \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Yes\", \"Ye…\n\n\n\nset.seed(seed = 777)\nsplit_obj <- initial_split(product_backorders_tbl, prop = 0.80)\n\ntrain_set_tbl <- training(split_obj)\ntest_set_tbl  <- testing(split_obj)\n\n\nrecipe_obj <- recipe(went_on_backorder ~., data = train_set_tbl) %>% \n  step_zv(all_predictors()) %>% \n  step_mutate_at(potential_issue,\n                 deck_risk,\n                 oe_constraint,\n                 ppap_risk,\n                 stop_auto_buy,\n                 rev_stop,\n                 went_on_backorder,\n                 fn = as.factor) %>% \n  prep()\n\ntrain_tbl <- bake(recipe_obj, new_data = train_set_tbl)\ntest_tbl  <- bake(recipe_obj, new_data = test_set_tbl)\n\ntrain_tbl %>% glimpse()\n\n#> Rows: 15,242\n#> Columns: 23\n#> $ sku               <dbl> 1370478, 1423347, 1704266, 2258894, 3000725, 2888766…\n#> $ national_inv      <dbl> 4, 59, 1, 9, 151, 6, 195, 66, 52, 0, 25, 1, 4, 2, 10…\n#> $ lead_time         <dbl> 12, NA, 8, 2, 8, 2, 8, 8, 14, 2, 4, 4, 8, 8, 2, 8, 5…\n#> $ in_transit_qty    <dbl> 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, …\n#> $ forecast_3_month  <dbl> 0, 0, 0, 0, 0, 0, 0, 122, 20, 0, 9, 15, 0, 28, 0, 0,…\n#> $ forecast_6_month  <dbl> 0, 0, 0, 0, 0, 0, 0, 214, 35, 0, 18, 15, 0, 61, 0, 0…\n#> $ forecast_9_month  <dbl> 1, 0, 0, 0, 0, 0, 0, 306, 65, 0, 18, 21, 0, 94, 0, 0…\n#> $ sales_1_month     <dbl> 1, 0, 1, 0, 0, 0, 2, 36, 13, 0, 9, 4, 0, 3, 0, 0, 0,…\n#> $ sales_3_month     <dbl> 1, 7, 1, 0, 15, 0, 4, 119, 31, 0, 24, 9, 0, 26, 0, 0…\n#> $ sales_6_month     <dbl> 3, 20, 1, 0, 27, 0, 12, 209, 78, 0, 43, 15, 0, 56, 0…\n#> $ sales_9_month     <dbl> 3, 28, 1, 3, 43, 0, 16, 322, 121, 0, 75, 22, 1, 82, …\n#> $ min_bank          <dbl> 0, 0, 0, 0, 7, 0, 1, 45, 21, 1, 0, 2, 1, 6, 0, 0, 1,…\n#> $ potential_issue   <fct> No, No, No, No, No, No, No, No, No, No, No, No, No, …\n#> $ pieces_past_due   <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…\n#> $ perf_6_month_avg  <dbl> 0.87, -99.00, 0.99, 0.99, 0.98, 0.98, 0.88, 0.98, 0.…\n#> $ perf_12_month_avg <dbl> 0.67, -99.00, 0.98, 0.99, 0.96, 0.99, 0.91, 0.99, 0.…\n#> $ local_bo_qty      <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…\n#> $ deck_risk         <fct> No, Yes, No, Yes, No, No, No, No, No, No, No, No, No…\n#> $ oe_constraint     <fct> No, No, No, No, No, No, No, No, No, No, No, No, No, …\n#> $ ppap_risk         <fct> No, Yes, No, No, No, No, No, No, Yes, No, No, No, No…\n#> $ stop_auto_buy     <fct> Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Ye…\n#> $ rev_stop          <fct> No, No, No, No, No, No, No, No, No, No, No, No, No, …\n#> $ went_on_backorder <fct> No, No, Yes, No, No, No, No, No, No, No, No, Yes, No…"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#specify-the-response-and-predictor-variables",
+    "href": "content/01_journal/05_performance_measures.html#specify-the-response-and-predictor-variables",
+    "title": "Performance Measures",
+    "section": "\n3.3 Specify the response and predictor variables",
+    "text": "3.3 Specify the response and predictor variables\n\nh2o.init()\n\nsplit_h2o <- h2o.splitFrame(as.h2o(train_tbl), ratios = c(0.80), seed = 767)\ntrain_h2o <- split_h2o[[1]]\nvalid_h2o <- split_h2o[[2]]\ntest_h2o  <- as.h2o(test_tbl)\n\ny <- \"went_on_backorder\"\nx <- setdiff(names(train_h2o), y)"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#run-automl-specifying-the-stopping-criterion",
+    "href": "content/01_journal/05_performance_measures.html#run-automl-specifying-the-stopping-criterion",
+    "title": "Performance Measures",
+    "section": "\n3.4 Run AutoML specifying the stopping criterion",
+    "text": "3.4 Run AutoML specifying the stopping criterion\n\nautoml_models_h2o <- h2o.automl(\n  x = x,\n  y = y,\n  training_frame    = train_h2o,\n  validation_frame  = valid_h2o,\n  leaderboard_frame = test_h2o,\n  max_runtime_secs  = 60,\n  nfolds            = 5 \n)"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#view-the-leaderboard",
+    "href": "content/01_journal/05_performance_measures.html#view-the-leaderboard",
+    "title": "Performance Measures",
+    "section": "\n3.5 View the leaderboard",
+    "text": "3.5 View the leaderboard\n\nautoml_models_h2o@leaderboard\n\n#>                                                  model_id       auc   logloss\n#> 1    StackedEnsemble_AllModels_1_AutoML_1_20230603_232725 0.9450212 0.1804094\n#> 2 StackedEnsemble_BestOfFamily_2_AutoML_1_20230603_232725 0.9446927 0.1810745\n#> 3                          GBM_1_AutoML_1_20230603_232725 0.9442833 0.1822440\n#> 4 StackedEnsemble_BestOfFamily_1_AutoML_1_20230603_232725 0.9442798 0.1816096\n#> 5                          GBM_4_AutoML_1_20230603_232725 0.9352965 0.2162264\n#> 6                          GBM_3_AutoML_1_20230603_232725 0.9325110 0.2084508\n#>       aucpr mean_per_class_error      rmse        mse\n#> 1 0.7399996            0.1391773 0.2311003 0.05340736\n#> 2 0.7314874            0.1733098 0.2316515 0.05366240\n#> 3 0.7303754            0.1734592 0.2323764 0.05399879\n#> 4 0.7301131            0.1734592 0.2319166 0.05378531\n#> 5 0.7177510            0.1789265 0.2486873 0.06184535\n#> 6 0.7292422            0.1781501 0.2444128 0.05973761\n#> \n#> [9 rows x 7 columns]"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#leaderboard-visualization",
+    "href": "content/01_journal/05_performance_measures.html#leaderboard-visualization",
+    "title": "Performance Measures",
+    "section": "\n3.6 Leaderboard visualization",
+    "text": "3.6 Leaderboard visualization\n\nmodel_leaderboard <- automl_models_h2o@leaderboard %>%\n  as_tibble() %>%\n  select(-c(aucpr, mean_per_class_error, rmse, mse)) %>%\n  mutate(model_type = str_extract(model_id, \"[^_]+\")) %>%\n  rownames_to_column(var = \"row_name\") %>%\n  mutate(model_id   = as_factor(model_id) %>% reorder(auc), \n         model_type = as.factor(model_type)\n  ) %>% \n  pivot_longer(cols = -c(model_id, model_type, row_name), \n               names_to = \"key\", \n               values_to = \"value\", \n               names_transform = list(key = forcats::fct_inorder)\n  ) %>% \n  mutate(model_id = paste0(row_name, \". \", model_id) %>% as_factor() %>% fct_rev())\n\nmodel_leaderboard %>%\n  ggplot(aes(value, model_id, color = model_type)) +\n  geom_point(size = 3) +\n  geom_label(aes(label = round(value, 2), hjust = \"inward\")) +\n  \n  # Facet to break out logloss and auc\n  facet_wrap(~ key, scales = \"free_x\") +\n  labs(title = \"Leaderboard Metrics\",\n       subtitle = paste0(\"Ordered by: \", \"auc\"),\n       y = \"Model Position, Model ID\", x = \"\") + \n  theme(legend.position = \"bottom\")"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#tune-a-model-with-grid-search",
+    "href": "content/01_journal/05_performance_measures.html#tune-a-model-with-grid-search",
+    "title": "Performance Measures",
+    "section": "\n3.7 Tune a model with grid search",
+    "text": "3.7 Tune a model with grid search\n\nmodel <- automl_models_h2o@leaderboard %>% \n  extract_h2o_model_name_by_position(9) %>% \n  h2o.getModel()\n\n#> GLM_1_AutoML_1_20230603_232725\n\nh2o.performance(model, newdata = as.h2o(test_tbl))\n\n#> \n  |                                                                            \n  |                                                                      |   0%\n  |                                                                            \n  |======================================================================| 100%\n\n\n#> H2OBinomialMetrics: glm\n#> \n#> MSE:  0.09817608\n#> RMSE:  0.3133306\n#> LogLoss:  0.3303213\n#> Mean Per-Class Error:  0.3237555\n#> AUC:  0.7403997\n#> AUCPR:  0.2842939\n#> Gini:  0.4807994\n#> R^2:  0.08355864\n#> Residual Deviance:  2517.709\n#> AIC:  2575.709\n#> \n#> Confusion Matrix (vertical: actual; across: predicted) for F1-optimal threshold:\n#>          No  Yes    Error        Rate\n#> No     2230 1116 0.333533  =1116/3346\n#> Yes     146  319 0.313978    =146/465\n#> Totals 2376 1435 0.331147  =1262/3811\n#> \n#> Maximum Metrics: Maximum metrics at their respective thresholds\n#>                         metric threshold       value idx\n#> 1                       max f1  0.130969    0.335789 221\n#> 2                       max f2  0.100363    0.508274 265\n#> 3                 max f0point5  0.228856    0.319582 102\n#> 4                 max accuracy  0.421982    0.880609  16\n#> 5                max precision  1.000000    1.000000   0\n#> 6                   max recall  0.000054    1.000000 399\n#> 7              max specificity  1.000000    1.000000   0\n#> 8             max absolute_mcc  0.100363    0.239662 265\n#> 9   max min_per_class_accuracy  0.132503    0.671847 219\n#> 10 max mean_per_class_accuracy  0.100363    0.683015 265\n#> 11                     max tns  1.000000 3346.000000   0\n#> 12                     max fns  1.000000  464.000000   0\n#> 13                     max fps  0.000054 3346.000000 399\n#> 14                     max tps  0.000054  465.000000 399\n#> 15                     max tnr  1.000000    1.000000   0\n#> 16                     max fnr  1.000000    0.997849   0\n#> 17                     max fpr  0.000054    1.000000 399\n#> 18                     max tpr  0.000054    1.000000 399\n#> \n#> Gains/Lift Table: Extract with `h2o.gainsLift(<model>, <data>)` or `h2o.gainsLift(<model>, valid=<T/F>, xval=<T/F>)`\n\n\n\nmodel_grid <- h2o.grid(\n  algorithm = \"glm\",\n  grid_id = \"model_grid\",\n  x = x,\n  y = y,\n  training_frame = train_h2o,\n  validation_frame = valid_h2o,\n  nfolds = 5,\n  hyper_params = list(\n    alpha = c(0, 0.25, 0.50, 0.75, 1.00),\n    lambda = c(0, 0.01, 0.1, 1, 10)\n  )\n)\n\n#> \n  |                                                                            \n  |                                                                      |   0%\n  |                                                                            \n  |======================================================================| 100%\n\nh2o.getGrid(grid_id = \"model_grid\", sort_by = \"auc\", decreasing = TRUE)\n\n#> H2O Grid Details\n#> ================\n#> \n#> Grid ID: model_grid \n#> Used hyper parameters: \n#>   -  alpha \n#>   -  lambda \n#> Number of models: 25 \n#> Number of failed models: 0 \n#> \n#> Hyper-Parameter Search Summary: ordered by decreasing auc\n#>   alpha lambda          model_ids     auc\n#> 1   0.0    0.0 model_grid_model_1 0.79015\n#> 2   1.0    0.0 model_grid_model_5 0.78835\n#> 3  0.25    0.0 model_grid_model_2 0.78667\n#> 4  0.75    0.0 model_grid_model_4 0.78667\n#> 5   0.5    0.0 model_grid_model_3 0.78573\n#> \n#> ---\n#>    alpha lambda           model_ids     auc\n#> 20   0.5   10.0 model_grid_model_23 0.48927\n#> 21  0.25   10.0 model_grid_model_22 0.48640\n#> 22  0.75    0.1 model_grid_model_14 0.48377\n#> 23   0.5    1.0 model_grid_model_18 0.48296\n#> 24  0.75    1.0 model_grid_model_19 0.48241\n#> 25   1.0   10.0 model_grid_model_25 0.48057\n\nmodel_grid_5 <- h2o.getModel(\"model_grid_model_5\")\nmodel_grid_5 %>% h2o.auc(train = T, valid = T, xval = T)\n\n#>     train     valid      xval \n#> 0.7866092 0.7827733 0.7883548\n\n\n\nmodel_grid_5 %>% h2o.performance(newdata = as.h2o(test_tbl))\n\n#> \n  |                                                                            \n  |                                                                      |   0%\n  |                                                                            \n  |======================================================================| 100%\n\n\n#> H2OBinomialMetrics: glm\n#> \n#> MSE:  0.09534117\n#> RMSE:  0.3087737\n#> LogLoss:  0.3223601\n#> Mean Per-Class Error:  0.313812\n#> AUC:  0.7742565\n#> AUCPR:  0.3253347\n#> Gini:  0.5485131\n#> R^2:  0.1100216\n#> Residual Deviance:  2457.029\n#> AIC:  2503.029\n#> \n#> Confusion Matrix (vertical: actual; across: predicted) for F1-optimal threshold:\n#>          No  Yes    Error       Rate\n#> No     2534  812 0.242678  =812/3346\n#> Yes     179  286 0.384946   =179/465\n#> Totals 2713 1098 0.260037  =991/3811\n#> \n#> Maximum Metrics: Maximum metrics at their respective thresholds\n#>                         metric threshold       value idx\n#> 1                       max f1  0.158004    0.365963 193\n#> 2                       max f2  0.101413    0.535378 262\n#> 3                 max f0point5  0.234898    0.363489 111\n#> 4                 max accuracy  0.399793    0.881134  31\n#> 5                max precision  0.680566    0.750000   9\n#> 6                   max recall  0.000019    1.000000 399\n#> 7              max specificity  0.999834    0.999701   0\n#> 8             max absolute_mcc  0.117944    0.279256 240\n#> 9   max min_per_class_accuracy  0.136795    0.695158 216\n#> 10 max mean_per_class_accuracy  0.107751    0.711258 254\n#> 11                     max tns  0.999834 3345.000000   0\n#> 12                     max fns  0.999834  463.000000   0\n#> 13                     max fps  0.000019 3346.000000 399\n#> 14                     max tps  0.000019  465.000000 399\n#> 15                     max tnr  0.999834    0.999701   0\n#> 16                     max fnr  0.999834    0.995699   0\n#> 17                     max fpr  0.000019    1.000000 399\n#> 18                     max tpr  0.000019    1.000000 399\n#> \n#> Gains/Lift Table: Extract with `h2o.gainsLift(<model>, <data>)` or `h2o.gainsLift(<model>, valid=<T/F>, xval=<T/F>)`"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold",
+    "href": "content/01_journal/05_performance_measures.html#visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold",
+    "title": "Performance Measures",
+    "section": "\n3.8 Visualize the trade-off between the precision and the recall and the optimal threshold",
+    "text": "3.8 Visualize the trade-off between the precision and the recall and the optimal threshold\n\np_model_grid_5 <- model_grid_5 %>% \n  h2o.performance(newdata = as.h2o(test_tbl))\n\np_model_grid_5_tbl <- p_model_grid_5 %>% \n  h2o.metric() %>%\n  as_tibble() %>%\n  mutate(auc = h2o.auc(p_model_grid_5))\n\np_model_grid_5_tbl %>%\n  ggplot(aes(x = threshold)) +\n  geom_line(aes(y = precision), color = \"blue\", size = 1) +\n  geom_line(aes(y = recall), color = \"red\", size = 1) +\n  geom_vline(xintercept = h2o.find_threshold_by_max_metric(p_model_grid_5, \"f1\")) +\n  labs(title = \"Precision vs Recall\", y = \"value\")"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#roc-plot",
+    "href": "content/01_journal/05_performance_measures.html#roc-plot",
+    "title": "Performance Measures",
+    "section": "\n3.9 ROC Plot",
+    "text": "3.9 ROC Plot\n\nroc_plot <- p_model_grid_5_tbl %>% \n  mutate(auc  = auc %>% round(3) %>% as.character() %>% as_factor()) %>%\n  ggplot(aes(fpr, tpr, linetype = auc)) +\n  geom_line(size = 1) +\n  geom_abline(color = \"red\", linetype = \"dotted\") +\n  labs(\n    title = \"ROC Plot\",\n    subtitle = \"-\"\n  )\n\nroc_plot"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#precision-vs-recall-plot",
+    "href": "content/01_journal/05_performance_measures.html#precision-vs-recall-plot",
+    "title": "Performance Measures",
+    "section": "\n3.10 Precision vs Recall Plot",
+    "text": "3.10 Precision vs Recall Plot\n\npr_plot <- p_model_grid_5_tbl %>%\n  mutate(auc  = auc %>% round(3) %>% as.character() %>% as_factor()) %>%\n  ggplot(aes(recall, precision, linetype = auc)) +\n  geom_line(size = 1) +\n  labs(\n    title = \"Precision vs Recall Plot\",\n    subtitle = \"-\"\n  )\n\npr_plot"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#gain-plot",
+    "href": "content/01_journal/05_performance_measures.html#gain-plot",
+    "title": "Performance Measures",
+    "section": "\n3.11 Gain Plot",
+    "text": "3.11 Gain Plot\n\ngain_lift_tbl <- p_model_grid_5 %>%\n  h2o.gainsLift() %>%\n  as_tibble()\n\ngain_transformed_tbl <- gain_lift_tbl %>% \n  select(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) %>%\n  select(-contains(\"lift\")) %>%\n  mutate(baseline = cumulative_data_fraction) %>%\n  rename(gain     = cumulative_capture_rate) %>%\n  # prepare the data for the plotting (for the color and group aesthetics)\n  pivot_longer(cols = c(gain, baseline), values_to = \"value\", names_to = \"key\")\n\ngain_plot <- gain_transformed_tbl %>%\n  ggplot(aes(x = cumulative_data_fraction, y = value, color = key)) +\n  geom_line(size = 1.5) +\n  labs(\n    title = \"Gain Chart\",\n    x = \"Cumulative Data Fraction\",\n    y = \"Gain\"\n  )\n\ngain_plot"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#lift-plot",
+    "href": "content/01_journal/05_performance_measures.html#lift-plot",
+    "title": "Performance Measures",
+    "section": "\n3.12 Lift Plot",
+    "text": "3.12 Lift Plot\n\nlift_transformed_tbl <- gain_lift_tbl %>% \n  select(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) %>%\n  select(-contains(\"capture\")) %>%\n  mutate(baseline = 1) %>%\n  rename(lift = cumulative_lift) %>%\n  pivot_longer(cols = c(lift, baseline), values_to = \"value\", names_to = \"key\")\n\nlift_plot <- lift_transformed_tbl %>%\n  ggplot(aes(x = cumulative_data_fraction, y = value, color = key)) +\n  geom_line(size = 1.5) +\n  labs(\n    title = \"Lift Chart\",\n    x = \"Cumulative Data Fraction\",\n    y = \"Lift\"\n  )\n\nlift_plot"
+  },
+  {
+    "objectID": "content/01_journal/05_performance_measures.html#dashboard-with-cowplot",
+    "href": "content/01_journal/05_performance_measures.html#dashboard-with-cowplot",
+    "title": "Performance Measures",
+    "section": "\n3.13 Dashboard with cowplot",
+    "text": "3.13 Dashboard with cowplot\n\np_legend <- get_legend(roc_plot)\n\nroc_plot <- roc_plot + theme(legend.position = \"none\")\n\np <- plot_grid(roc_plot, pr_plot, gain_plot, lift_plot, ncol = 2)\n\np_title <- ggdraw() + \n  draw_label(\"H2O Model Metrics\", size = 18, fontface = \"bold\", color = \"#2C3E50\")\n  \np_subtitle <- ggdraw() + draw_label(glue(\"-\"), size = 10, color = \"#2C3E50\")\n  \ncombined_plot <- plot_grid(p_title, \n                           p_subtitle, \n                           p, \n                           p_legend, \n                           ncol = 1, \n                           rel_heights = c(0.05, 0.05, 1, 0.05 * 4))\ncombined_plot"
   },
   {
     "objectID": "content/01_journal/06_lime.html",
@@ -201,6 +397,55 @@
     "title": "Data Visualization",
     "section": "",
     "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+  },
+  {
+    "objectID": "content/01_journal/data/Chapter_1_Challenge.html",
+    "href": "content/01_journal/data/Chapter_1_Challenge.html",
+    "title": "Session 6 - Challenge - Company Segmentation",
+    "section": "",
+    "text": "Your organization wants to know which companies are similar to each other to help in identifying potential customers of a SAAS software solution (e.g. Salesforce CRM or equivalent) in various segments of the market. The Sales Department is very interested in this analysis, which will help them more easily penetrate various market segments.\nYou will be using stock prices in this analysis. You come up with a method to classify companies based on how their stocks trade using their daily stock returns (percentage movement from one day to the next). This analysis will help your organization determine which companies are related to each other (competitors and have similar attributes).\nYou can analyze the stock prices using what you’ve learned in the unsupervised learning tools including K-Means and UMAP. You will use a combination of kmeans() to find groups and umap() to visualize similarity of daily stock returns."
+  },
+  {
+    "objectID": "content/01_journal/data/Chapter_1_Challenge.html#step-1---convert-stock-prices-to-a-standardized-format-daily-returns",
+    "href": "content/01_journal/data/Chapter_1_Challenge.html#step-1---convert-stock-prices-to-a-standardized-format-daily-returns",
+    "title": "Session 6 - Challenge - Company Segmentation",
+    "section": "\n5.1 Step 1 - Convert stock prices to a standardized format (daily returns)",
+    "text": "5.1 Step 1 - Convert stock prices to a standardized format (daily returns)\nWhat you first need to do is get the data in a format that can be converted to a “user-item” style matrix. The challenge here is to connect the dots between what we have and what we need to do to format it properly.\nWe know that in order to compare the data, it needs to be standardized or normalized. Why? Because we cannot compare values (stock prices) that are of completely different magnitudes. In order to standardize, we will convert from adjusted stock price (dollar value) to daily returns (percent change from previous day). Here is the formula.\n\\[\nreturn_{daily} = \\frac{price_{i}-price_{i-1}}{price_{i-1}}\n\\]\nFirst, what do we have? We have stock prices for every stock in the SP 500 Index, which is the daily stock prices for over 500 stocks. The data set is over 1.2M observations.\n\nsp_500_prices_tbl %>% glimpse()\n\n#> Rows: 1,225,765\n#> Columns: 8\n#> $ symbol   <chr> \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT\", \"MSFT…\n#> $ date     <date> 2009-01-02, 2009-01-05, 2009-01-06, 2009-01-07, 2009-01-08, …\n#> $ open     <dbl> 19.53, 20.20, 20.75, 20.19, 19.63, 20.17, 19.71, 19.52, 19.53…\n#> $ high     <dbl> 20.40, 20.67, 21.00, 20.29, 20.19, 20.30, 19.79, 19.99, 19.68…\n#> $ low      <dbl> 19.37, 20.06, 20.61, 19.48, 19.55, 19.41, 19.30, 19.52, 19.01…\n#> $ close    <dbl> 20.33, 20.52, 20.76, 19.51, 20.12, 19.52, 19.47, 19.82, 19.09…\n#> $ volume   <dbl> 50084000, 61475200, 58083400, 72709900, 70255400, 49815300, 5…\n#> $ adjusted <dbl> 15.86624, 16.01451, 16.20183, 15.22628, 15.70234, 15.23408, 1…\n\n\nYour first task is to convert to a tibble named sp_500_daily_returns_tbl by performing the following operations:\n\nSelect the symbol, date and adjusted columns\nFilter to dates beginning in the year 2018 and beyond.\nCompute a Lag of 1 day on the adjusted stock price. Be sure to group by symbol first, otherwise we will have lags computed using values from the previous stock in the data frame.\nRemove a NA values from the lagging operation\nCompute the difference between adjusted and the lag\nCompute the percentage difference by dividing the difference by that lag. Name this column pct_return.\nReturn only the symbol, date, and pct_return columns\nSave as a variable named sp_500_daily_returns_tbl\n\n\n\n# Apply your data transformation skills!\n\n# Output: sp_500_daily_returns_tbl"
+  },
+  {
+    "objectID": "content/01_journal/data/Chapter_1_Challenge.html#step-2---convert-to-user-item-format",
+    "href": "content/01_journal/data/Chapter_1_Challenge.html#step-2---convert-to-user-item-format",
+    "title": "Session 6 - Challenge - Company Segmentation",
+    "section": "\n5.2 Step 2 - Convert to User-Item Format",
+    "text": "5.2 Step 2 - Convert to User-Item Format\nThe next step is to convert to a user-item format with the symbol in the first column and every other column the value of the daily returns (pct_return) for every stock at each date.\nWe’re going to import the correct results first (just in case you were not able to complete the last step).\n\nsp_500_daily_returns_tbl <- read_rds(\"sp_500_daily_returns_tbl.rds\")\nsp_500_daily_returns_tbl\n\n\n\n  \n\n\n\nNow that we have the daily returns (percentage change from one day to the next), we can convert to a user-item format. The user in this case is the symbol (company), and the item in this case is the pct_return at each date.\n\nSpread the date column to get the values as percentage returns. Make sure to fill an NA values with zeros.\nSave the result as stock_date_matrix_tbl\n\n\n\n# Convert to User-Item Format\n\n# Output: stock_date_matrix_tbl"
+  },
+  {
+    "objectID": "content/01_journal/data/Chapter_1_Challenge.html#step-3---perform-k-means-clustering",
+    "href": "content/01_journal/data/Chapter_1_Challenge.html#step-3---perform-k-means-clustering",
+    "title": "Session 6 - Challenge - Company Segmentation",
+    "section": "\n5.3 Step 3 - Perform K-Means Clustering",
+    "text": "5.3 Step 3 - Perform K-Means Clustering\nNext, we’ll perform K-Means clustering.\nWe’re going to import the correct results first (just in case you were not able to complete the last step).\n\nstock_date_matrix_tbl <- read_rds(\"stock_date_matrix_tbl.rds\")\n\nBeginning with the stock_date_matrix_tbl, perform the following operations:\n\nDrop the non-numeric column, symbol\n\nPerform kmeans() with centers = 4 and nstart = 20\n\nSave the result as kmeans_obj\n\n\n\n# Create kmeans_obj for 4 centers\n\nUse glance() to get the tot.withinss.\n\n# Apply glance() to get the tot.withinss"
+  },
+  {
+    "objectID": "content/01_journal/data/Chapter_1_Challenge.html#step-4---find-the-optimal-value-of-k",
+    "href": "content/01_journal/data/Chapter_1_Challenge.html#step-4---find-the-optimal-value-of-k",
+    "title": "Session 6 - Challenge - Company Segmentation",
+    "section": "\n5.4 Step 4 - Find the optimal value of K",
+    "text": "5.4 Step 4 - Find the optimal value of K\nNow that we are familiar with the process for calculating kmeans(), let’s use purrr to iterate over many values of “k” using the centers argument.\nWe’ll use this custom function called kmeans_mapper():\n\nkmeans_mapper <- function(center = 3) {\n    stock_date_matrix_tbl %>%\n        select(-symbol) %>%\n        kmeans(centers = center, nstart = 20)\n}\n\nApply the kmeans_mapper() and glance() functions iteratively using purrr.\n\nCreate a tibble containing column called centers that go from 1 to 30\nAdd a column named k_means with the kmeans_mapper() output. Use mutate() to add the column and map() to map centers to the kmeans_mapper() function.\nAdd a column named glance with the glance() output. Use mutate() and map() again to iterate over the column of k_means.\nSave the output as k_means_mapped_tbl\n\n\n\n# Use purrr to map\n\n\n# Output: k_means_mapped_tbl \n\nNext, let’s visualize the “tot.withinss” from the glance output as a Scree Plot.\n\nBegin with the k_means_mapped_tbl\n\nUnnest the glance column\nPlot the centers column (x-axis) versus the tot.withinss column (y-axis) using geom_point() and geom_line()\n\nAdd a title “Scree Plot” and feel free to style it with your favorite theme\n\n\n# Visualize Scree Plot\n\nWe can see that the Scree Plot becomes linear (constant rate of change) between 5 and 10 centers for K."
+  },
+  {
+    "objectID": "content/01_journal/data/Chapter_1_Challenge.html#step-5---apply-umap",
+    "href": "content/01_journal/data/Chapter_1_Challenge.html#step-5---apply-umap",
+    "title": "Session 6 - Challenge - Company Segmentation",
+    "section": "\n5.5 Step 5 - Apply UMAP",
+    "text": "5.5 Step 5 - Apply UMAP\nNext, let’s plot the UMAP 2D visualization to help us investigate cluster assignments.\nWe’re going to import the correct results first (just in case you were not able to complete the last step).\n\nk_means_mapped_tbl <- read_rds(\"k_means_mapped_tbl.rds\")\n\nFirst, let’s apply the umap() function to the stock_date_matrix_tbl, which contains our user-item matrix in tibble format.\n\nStart with stock_date_matrix_tbl\n\nDe-select the symbol column\nUse the umap() function storing the output as umap_results\n\n\n\n# Apply UMAP\n\n# Store results as: umap_results \n\nNext, we want to combine the layout from the umap_results with the symbol column from the stock_date_matrix_tbl.\n\nStart with umap_results$layout\n\nConvert from a matrix data type to a tibble with as_tibble()\n\nBind the columns of the umap tibble with the symbol column from the stock_date_matrix_tbl.\nSave the results as umap_results_tbl.\n\n\n# Convert umap results to tibble with symbols\n\n# Output: umap_results_tbl\n\nFinally, let’s make a quick visualization of the umap_results_tbl.\n\nPipe the umap_results_tbl into ggplot() mapping the columns to x-axis and y-axis\nAdd a geom_point() geometry with an alpha = 0.5\n\nApply theme_tq() and add a title “UMAP Projection”\n\n\n# Visualize UMAP results\n\nWe can now see that we have some clusters. However, we still need to combine the K-Means clusters and the UMAP 2D representation."
+  },
+  {
+    "objectID": "content/01_journal/data/Chapter_1_Challenge.html#step-6---combine-k-means-and-umap",
+    "href": "content/01_journal/data/Chapter_1_Challenge.html#step-6---combine-k-means-and-umap",
+    "title": "Session 6 - Challenge - Company Segmentation",
+    "section": "\n5.6 Step 6 - Combine K-Means and UMAP",
+    "text": "5.6 Step 6 - Combine K-Means and UMAP\nNext, we combine the K-Means clusters and the UMAP 2D representation\nWe’re going to import the correct results first (just in case you were not able to complete the last step).\n\nk_means_mapped_tbl <- read_rds(\"k_means_mapped_tbl.rds\")\numap_results_tbl   <- read_rds(\"umap_results_tbl.rds\")\n\nFirst, pull out the K-Means for 10 Centers. Use this since beyond this value the Scree Plot flattens. Have a look at the business case to recall how that works.\n\n# Get the k_means_obj from the 10th center\n\n# Store as k_means_obj\n\nNext, we’ll combine the clusters from the k_means_obj with the umap_results_tbl.\n\nBegin with the k_means_obj\n\nAugment the k_means_obj with the stock_date_matrix_tbl to get the clusters added to the end of the tibble\nSelect just the symbol and .cluster columns\nLeft join the result with the umap_results_tbl by the symbol column\nLeft join the result with the result of sp_500_index_tbl %>% select(symbol, company, sector) by the symbol column.\nStore the output as umap_kmeans_results_tbl\n\n\n\n# Use your dplyr & broom skills to combine the k_means_obj with the umap_results_tbl\n\n\n# Output: umap_kmeans_results_tbl \n\nPlot the K-Means and UMAP results.\n\nBegin with the umap_kmeans_results_tbl\n\nUse ggplot() mapping V1, V2 and color = .cluster\n\nAdd the geom_point() geometry with alpha = 0.5\n\nApply colors as you desire (e.g. scale_color_manual(values = palette_light() %>% rep(3)))\n\n\n# Visualize the combined K-Means and UMAP results\n\nCongratulations! You are done with the 1st challenge!"
   },
   {
     "objectID": "content/01_journal/tidyverse.html",
