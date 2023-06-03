@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.335">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<meta name="author" content="Joschka Schwarz">
-
-<title>MyLabJournal - Data Visualization</title>
+<meta name="author" content="Gani Cem Türemen">
+<title>MyLabJournal - Performance Measures</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,8 +18,70 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
-
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
@@ -43,7 +102,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script id="quarto-search-options" type="application/json">{
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
@@ -61,17 +122,13 @@ ul.task-list li input[type="checkbox"] {
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit"
   }
-}</script>
-
-
+}</script><link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 </head>
-
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
-      <div class="navbar-container container-fluid">
+  <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg navbar-dark "><div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">MyLabJournal</span>
@@ -82,7 +139,7 @@ ul.task-list li input[type="checkbox"] {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
+<li class="nav-item">
     <a class="nav-link" href="../../index.html">
  <span class="menu-text">Home</span></a>
   </li>  
@@ -90,8 +147,8 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-journal" role="button" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Journal</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-journal">    
-        <li>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-journal">
+<li>
     <a class="dropdown-item" href="../../content/01_journal/01_machine_learning_fundamentals.html">
  <span class="dropdown-text">Machine Learning Fundamentals</span></a>
   </li>  
@@ -116,7 +173,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">Explaining Black-Box Models with LIME</span></a>
   </li>  
     </ul>
-  </li>
+</li>
   <li class="nav-item">
     <a class="nav-link" href="../../content/02_notes/05_class_notes.html">
  <span class="menu-text">Class notes</span></a>
@@ -126,27 +183,44 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Links</span></a>
   </li>  
 </ul>
-              <div class="quarto-toggle-container">
+<div class="quarto-toggle-container">
                   <a href="" class="quarto-color-scheme-toggle nav-link" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
               </div>
               <div id="quarto-search" class="" title="Search"></div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
-    </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+    </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+<li><a href="#challenge-summary" id="toc-challenge-summary" class="nav-link active" data-scroll-target="#challenge-summary"><span class="toc-section-number">1</span>  Challenge Summary</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives"><span class="toc-section-number">2</span>  Objectives</a></li>
+  <li>
+<a href="#solution" id="toc-solution" class="nav-link" data-scroll-target="#solution"><span class="toc-section-number">3</span>  Solution</a>
+  <ul class="collapse">
+<li><a href="#import-libraries" id="toc-import-libraries" class="nav-link" data-scroll-target="#import-libraries"><span class="toc-section-number">3.1</span>  Import Libraries</a></li>
+  <li><a href="#load-the-training-test-dataset" id="toc-load-the-training-test-dataset" class="nav-link" data-scroll-target="#load-the-training-test-dataset"><span class="toc-section-number">3.2</span>  Load the training &amp; test dataset</a></li>
+  <li><a href="#specify-the-response-and-predictor-variables" id="toc-specify-the-response-and-predictor-variables" class="nav-link" data-scroll-target="#specify-the-response-and-predictor-variables"><span class="toc-section-number">3.3</span>  Specify the response and predictor variables</a></li>
+  <li><a href="#run-automl-specifying-the-stopping-criterion" id="toc-run-automl-specifying-the-stopping-criterion" class="nav-link" data-scroll-target="#run-automl-specifying-the-stopping-criterion"><span class="toc-section-number">3.4</span>  Run AutoML specifying the stopping criterion</a></li>
+  <li><a href="#view-the-leaderboard" id="toc-view-the-leaderboard" class="nav-link" data-scroll-target="#view-the-leaderboard"><span class="toc-section-number">3.5</span>  View the leaderboard</a></li>
+  <li><a href="#leaderboard-visualization" id="toc-leaderboard-visualization" class="nav-link" data-scroll-target="#leaderboard-visualization"><span class="toc-section-number">3.6</span>  Leaderboard visualization</a></li>
+  <li><a href="#tune-a-model-with-grid-search" id="toc-tune-a-model-with-grid-search" class="nav-link" data-scroll-target="#tune-a-model-with-grid-search"><span class="toc-section-number">3.7</span>  Tune a model with grid search</a></li>
+  <li><a href="#visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold" id="toc-visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold" class="nav-link" data-scroll-target="#visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold"><span class="toc-section-number">3.8</span>  Visualize the trade-off between the precision and the recall and the optimal threshold</a></li>
+  <li><a href="#roc-plot" id="toc-roc-plot" class="nav-link" data-scroll-target="#roc-plot"><span class="toc-section-number">3.9</span>  ROC Plot</a></li>
+  <li><a href="#precision-vs-recall-plot" id="toc-precision-vs-recall-plot" class="nav-link" data-scroll-target="#precision-vs-recall-plot"><span class="toc-section-number">3.10</span>  Precision vs Recall Plot</a></li>
+  <li><a href="#gain-plot" id="toc-gain-plot" class="nav-link" data-scroll-target="#gain-plot"><span class="toc-section-number">3.11</span>  Gain Plot</a></li>
+  <li><a href="#lift-plot" id="toc-lift-plot" class="nav-link" data-scroll-target="#lift-plot"><span class="toc-section-number">3.12</span>  Lift Plot</a></li>
+  <li><a href="#dashboard-with-cowplot" id="toc-dashboard-with-cowplot" class="nav-link" data-scroll-target="#dashboard-with-cowplot"><span class="toc-section-number">3.13</span>  Dashboard with cowplot</a></li>
+  </ul>
+</li>
+  </ul></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Data Visualization</h1>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title">Performance Measures</h1>
 </div>
 
 
@@ -156,7 +230,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Joschka Schwarz </p>
+             <p>Gani Cem Türemen </p>
           </div>
   </div>
     
@@ -165,26 +239,526 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
-</header>
+</header><section id="challenge-summary" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Challenge Summary</h1>
+<p>For the challenge, we will continue working on the Product Backorders dataset. The goal here is to visualize various performance metrics of H2O models to simplify evaluation of them.</p>
+</section><section id="objectives" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Objectives</h1>
+<p>Apply your learning of H2O Automated Machine Learning to predict backorder status and visualize performance metrics to evaluate models.</p>
+</section><section id="solution" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Solution</h1>
+<section id="import-libraries" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="import-libraries">
+<span class="header-section-number">3.1</span> Import Libraries</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-1_d98d3c219efbbbc61564abc925bc85e8">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(h2o)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(recipes)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">library</span>(glue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="load-the-training-test-dataset" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="load-the-training-test-dataset">
+<span class="header-section-number">3.2</span> Load the training &amp; test dataset</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-2_c09413e5328f6766b6a45d795889b268">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>product_backorders_tbl <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/product_backorders.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>product_backorders_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-3_88219ec31f74a06191d1e95572947cfe">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 19,053
+#&gt; Columns: 23
+#&gt; $ sku               &lt;dbl&gt; 1113121, 1113268, 1113874, 1114222, 1114823, 1115453…
+#&gt; $ national_inv      &lt;dbl&gt; 0, 0, 20, 0, 0, 55, -34, 4, 2, -7, 1, 2, 0, 0, 0, 0,…
+#&gt; $ lead_time         &lt;dbl&gt; 8, 8, 2, 8, 12, 8, 8, 9, 8, 8, 8, 8, 12, 2, 12, 4, 2…
+#&gt; $ in_transit_qty    &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0…
+#&gt; $ forecast_3_month  &lt;dbl&gt; 6, 2, 45, 9, 31, 216, 120, 43, 4, 56, 2, 5, 5, 54, 4…
+#&gt; $ forecast_6_month  &lt;dbl&gt; 6, 3, 99, 14, 31, 360, 240, 67, 6, 96, 4, 9, 6, 72, …
+#&gt; $ forecast_9_month  &lt;dbl&gt; 6, 4, 153, 21, 31, 492, 240, 115, 9, 112, 6, 13, 9, …
+#&gt; $ sales_1_month     &lt;dbl&gt; 0, 1, 16, 5, 7, 30, 83, 5, 1, 13, 0, 1, 0, 0, 1, 0, …
+#&gt; $ sales_3_month     &lt;dbl&gt; 4, 2, 42, 17, 15, 108, 122, 22, 5, 30, 2, 5, 4, 0, 3…
+#&gt; $ sales_6_month     &lt;dbl&gt; 9, 3, 80, 36, 33, 275, 144, 40, 6, 56, 3, 8, 5, 0, 4…
+#&gt; $ sales_9_month     &lt;dbl&gt; 12, 3, 111, 43, 47, 340, 165, 58, 9, 76, 4, 11, 6, 0…
+#&gt; $ min_bank          &lt;dbl&gt; 0, 0, 10, 0, 2, 51, 33, 4, 2, 0, 0, 0, 3, 4, 0, 0, 0…
+#&gt; $ potential_issue   &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No", "No"…
+#&gt; $ pieces_past_due   &lt;dbl&gt; 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+#&gt; $ perf_6_month_avg  &lt;dbl&gt; 0.90, 0.96, 0.81, 0.96, 0.98, 0.00, 1.00, 0.69, 1.00…
+#&gt; $ perf_12_month_avg &lt;dbl&gt; 0.89, 0.97, 0.88, 0.98, 0.98, 0.00, 0.97, 0.68, 0.95…
+#&gt; $ local_bo_qty      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 34, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, …
+#&gt; $ deck_risk         &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No", "No"…
+#&gt; $ oe_constraint     &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No", "No"…
+#&gt; $ ppap_risk         &lt;chr&gt; "No", "No", "No", "No", "No", "Yes", "No", "No", "No…
+#&gt; $ stop_auto_buy     &lt;chr&gt; "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Ye…
+#&gt; $ rev_stop          &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No", "No"…
+#&gt; $ went_on_backorder &lt;chr&gt; "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Ye…</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-4_1d285e883fa3acb237edefbd406a2538">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">set.seed</span>(<span class="at">seed =</span> <span class="dv">777</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>split_obj <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(product_backorders_tbl, <span class="at">prop =</span> <span class="fl">0.80</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>train_set_tbl <span class="ot">&lt;-</span> <span class="fu">training</span>(split_obj)</span>
+<span id="cb4-5"><a href="#cb4-5"></a>test_set_tbl  <span class="ot">&lt;-</span> <span class="fu">testing</span>(split_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-5_d2e7380d8ba3b0d54f27e94174f418c2">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>recipe_obj <span class="ot">&lt;-</span> <span class="fu">recipe</span>(went_on_backorder <span class="sc">~</span>., <span class="at">data =</span> train_set_tbl) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="fu">step_mutate_at</span>(potential_issue,</span>
+<span id="cb5-4"><a href="#cb5-4"></a>                 deck_risk,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>                 oe_constraint,</span>
+<span id="cb5-6"><a href="#cb5-6"></a>                 ppap_risk,</span>
+<span id="cb5-7"><a href="#cb5-7"></a>                 stop_auto_buy,</span>
+<span id="cb5-8"><a href="#cb5-8"></a>                 rev_stop,</span>
+<span id="cb5-9"><a href="#cb5-9"></a>                 went_on_backorder,</span>
+<span id="cb5-10"><a href="#cb5-10"></a>                 <span class="at">fn =</span> as.factor) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-11"><a href="#cb5-11"></a>  <span class="fu">prep</span>()</span>
+<span id="cb5-12"><a href="#cb5-12"></a></span>
+<span id="cb5-13"><a href="#cb5-13"></a>train_tbl <span class="ot">&lt;-</span> <span class="fu">bake</span>(recipe_obj, <span class="at">new_data =</span> train_set_tbl)</span>
+<span id="cb5-14"><a href="#cb5-14"></a>test_tbl  <span class="ot">&lt;-</span> <span class="fu">bake</span>(recipe_obj, <span class="at">new_data =</span> test_set_tbl)</span>
+<span id="cb5-15"><a href="#cb5-15"></a></span>
+<span id="cb5-16"><a href="#cb5-16"></a>train_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 15,242
+#&gt; Columns: 23
+#&gt; $ sku               &lt;dbl&gt; 1370478, 1423347, 1704266, 2258894, 3000725, 2888766…
+#&gt; $ national_inv      &lt;dbl&gt; 4, 59, 1, 9, 151, 6, 195, 66, 52, 0, 25, 1, 4, 2, 10…
+#&gt; $ lead_time         &lt;dbl&gt; 12, NA, 8, 2, 8, 2, 8, 8, 14, 2, 4, 4, 8, 8, 2, 8, 5…
+#&gt; $ in_transit_qty    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+#&gt; $ forecast_3_month  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 122, 20, 0, 9, 15, 0, 28, 0, 0,…
+#&gt; $ forecast_6_month  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 214, 35, 0, 18, 15, 0, 61, 0, 0…
+#&gt; $ forecast_9_month  &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 306, 65, 0, 18, 21, 0, 94, 0, 0…
+#&gt; $ sales_1_month     &lt;dbl&gt; 1, 0, 1, 0, 0, 0, 2, 36, 13, 0, 9, 4, 0, 3, 0, 0, 0,…
+#&gt; $ sales_3_month     &lt;dbl&gt; 1, 7, 1, 0, 15, 0, 4, 119, 31, 0, 24, 9, 0, 26, 0, 0…
+#&gt; $ sales_6_month     &lt;dbl&gt; 3, 20, 1, 0, 27, 0, 12, 209, 78, 0, 43, 15, 0, 56, 0…
+#&gt; $ sales_9_month     &lt;dbl&gt; 3, 28, 1, 3, 43, 0, 16, 322, 121, 0, 75, 22, 1, 82, …
+#&gt; $ min_bank          &lt;dbl&gt; 0, 0, 0, 0, 7, 0, 1, 45, 21, 1, 0, 2, 1, 6, 0, 0, 1,…
+#&gt; $ potential_issue   &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No, No, …
+#&gt; $ pieces_past_due   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+#&gt; $ perf_6_month_avg  &lt;dbl&gt; 0.87, -99.00, 0.99, 0.99, 0.98, 0.98, 0.88, 0.98, 0.…
+#&gt; $ perf_12_month_avg &lt;dbl&gt; 0.67, -99.00, 0.98, 0.99, 0.96, 0.99, 0.91, 0.99, 0.…
+#&gt; $ local_bo_qty      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+#&gt; $ deck_risk         &lt;fct&gt; No, Yes, No, Yes, No, No, No, No, No, No, No, No, No…
+#&gt; $ oe_constraint     &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No, No, …
+#&gt; $ ppap_risk         &lt;fct&gt; No, Yes, No, No, No, No, No, No, Yes, No, No, No, No…
+#&gt; $ stop_auto_buy     &lt;fct&gt; Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Ye…
+#&gt; $ rev_stop          &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No, No, …
+#&gt; $ went_on_backorder &lt;fct&gt; No, No, Yes, No, No, No, No, No, No, No, No, Yes, No…</code></pre>
+</div>
+</div>
+</section><section id="specify-the-response-and-predictor-variables" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="specify-the-response-and-predictor-variables">
+<span class="header-section-number">3.3</span> Specify the response and predictor variables</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-6_26762db09980bba87a3ee5216a3226cf">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">h2o.init</span>()</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a>split_h2o <span class="ot">&lt;-</span> <span class="fu">h2o.splitFrame</span>(<span class="fu">as.h2o</span>(train_tbl), <span class="at">ratios =</span> <span class="fu">c</span>(<span class="fl">0.80</span>), <span class="at">seed =</span> <span class="dv">767</span>)</span>
+<span id="cb7-4"><a href="#cb7-4"></a>train_h2o <span class="ot">&lt;-</span> split_h2o[[<span class="dv">1</span>]]</span>
+<span id="cb7-5"><a href="#cb7-5"></a>valid_h2o <span class="ot">&lt;-</span> split_h2o[[<span class="dv">2</span>]]</span>
+<span id="cb7-6"><a href="#cb7-6"></a>test_h2o  <span class="ot">&lt;-</span> <span class="fu">as.h2o</span>(test_tbl)</span>
+<span id="cb7-7"><a href="#cb7-7"></a></span>
+<span id="cb7-8"><a href="#cb7-8"></a>y <span class="ot">&lt;-</span> <span class="st">"went_on_backorder"</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>x <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(train_h2o), y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="run-automl-specifying-the-stopping-criterion" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="run-automl-specifying-the-stopping-criterion">
+<span class="header-section-number">3.4</span> Run AutoML specifying the stopping criterion</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-7_c363991dde88324ae735e8b58651fab6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>automl_models_h2o <span class="ot">&lt;-</span> <span class="fu">h2o.automl</span>(</span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="at">x =</span> x,</span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="at">y =</span> y,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="at">training_frame    =</span> train_h2o,</span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="at">validation_frame  =</span> valid_h2o,</span>
+<span id="cb8-6"><a href="#cb8-6"></a>  <span class="at">leaderboard_frame =</span> test_h2o,</span>
+<span id="cb8-7"><a href="#cb8-7"></a>  <span class="at">max_runtime_secs  =</span> <span class="dv">60</span>,</span>
+<span id="cb8-8"><a href="#cb8-8"></a>  <span class="at">nfolds            =</span> <span class="dv">5</span> </span>
+<span id="cb8-9"><a href="#cb8-9"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="view-the-leaderboard" class="level2" data-number="3.5"><h2 data-number="3.5" class="anchored" data-anchor-id="view-the-leaderboard">
+<span class="header-section-number">3.5</span> View the leaderboard</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-8_c1556bfaf53b0454fe10563a63287890">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>automl_models_h2o<span class="sc">@</span>leaderboard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;                                                  model_id       auc   logloss
+#&gt; 1    StackedEnsemble_AllModels_1_AutoML_1_20230603_232725 0.9450212 0.1804094
+#&gt; 2 StackedEnsemble_BestOfFamily_2_AutoML_1_20230603_232725 0.9446927 0.1810745
+#&gt; 3                          GBM_1_AutoML_1_20230603_232725 0.9442833 0.1822440
+#&gt; 4 StackedEnsemble_BestOfFamily_1_AutoML_1_20230603_232725 0.9442798 0.1816096
+#&gt; 5                          GBM_4_AutoML_1_20230603_232725 0.9352965 0.2162264
+#&gt; 6                          GBM_3_AutoML_1_20230603_232725 0.9325110 0.2084508
+#&gt;       aucpr mean_per_class_error      rmse        mse
+#&gt; 1 0.7399996            0.1391773 0.2311003 0.05340736
+#&gt; 2 0.7314874            0.1733098 0.2316515 0.05366240
+#&gt; 3 0.7303754            0.1734592 0.2323764 0.05399879
+#&gt; 4 0.7301131            0.1734592 0.2319166 0.05378531
+#&gt; 5 0.7177510            0.1789265 0.2486873 0.06184535
+#&gt; 6 0.7292422            0.1781501 0.2444128 0.05973761
+#&gt; 
+#&gt; [9 rows x 7 columns]</code></pre>
+</div>
+</div>
+</section><section id="leaderboard-visualization" class="level2" data-number="3.6"><h2 data-number="3.6" class="anchored" data-anchor-id="leaderboard-visualization">
+<span class="header-section-number">3.6</span> Leaderboard visualization</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-9_2d5d49960cbcf5020d56725e3965afa9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>model_leaderboard <span class="ot">&lt;-</span> automl_models_h2o<span class="sc">@</span>leaderboard <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(aucpr, mean_per_class_error, rmse, mse)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>  <span class="fu">mutate</span>(<span class="at">model_type =</span> <span class="fu">str_extract</span>(model_id, <span class="st">"[^_]+"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">"row_name"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a>  <span class="fu">mutate</span>(<span class="at">model_id   =</span> <span class="fu">as_factor</span>(model_id) <span class="sc">%&gt;%</span> <span class="fu">reorder</span>(auc), </span>
+<span id="cb11-7"><a href="#cb11-7"></a>         <span class="at">model_type =</span> <span class="fu">as.factor</span>(model_type)</span>
+<span id="cb11-8"><a href="#cb11-8"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-9"><a href="#cb11-9"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(model_id, model_type, row_name), </span>
+<span id="cb11-10"><a href="#cb11-10"></a>               <span class="at">names_to =</span> <span class="st">"key"</span>, </span>
+<span id="cb11-11"><a href="#cb11-11"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>, </span>
+<span id="cb11-12"><a href="#cb11-12"></a>               <span class="at">names_transform =</span> <span class="fu">list</span>(<span class="at">key =</span> forcats<span class="sc">::</span>fct_inorder)</span>
+<span id="cb11-13"><a href="#cb11-13"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-14"><a href="#cb11-14"></a>  <span class="fu">mutate</span>(<span class="at">model_id =</span> <span class="fu">paste0</span>(row_name, <span class="st">". "</span>, model_id) <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>() <span class="sc">%&gt;%</span> <span class="fu">fct_rev</span>())</span>
+<span id="cb11-15"><a href="#cb11-15"></a></span>
+<span id="cb11-16"><a href="#cb11-16"></a>model_leaderboard <span class="sc">%&gt;%</span></span>
+<span id="cb11-17"><a href="#cb11-17"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value, model_id, <span class="at">color =</span> model_type)) <span class="sc">+</span></span>
+<span id="cb11-18"><a href="#cb11-18"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-19"><a href="#cb11-19"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(value, <span class="dv">2</span>), <span class="at">hjust =</span> <span class="st">"inward"</span>)) <span class="sc">+</span></span>
+<span id="cb11-20"><a href="#cb11-20"></a>  </span>
+<span id="cb11-21"><a href="#cb11-21"></a>  <span class="co"># Facet to break out logloss and auc</span></span>
+<span id="cb11-22"><a href="#cb11-22"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> key, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb11-23"><a href="#cb11-23"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Leaderboard Metrics"</span>,</span>
+<span id="cb11-24"><a href="#cb11-24"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Ordered by: "</span>, <span class="st">"auc"</span>),</span>
+<span id="cb11-25"><a href="#cb11-25"></a>       <span class="at">y =</span> <span class="st">"Model Position, Model ID"</span>, <span class="at">x =</span> <span class="st">""</span>) <span class="sc">+</span> </span>
+<span id="cb11-26"><a href="#cb11-26"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-9-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="05_performance_measures_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="tune-a-model-with-grid-search" class="level2" data-number="3.7"><h2 data-number="3.7" class="anchored" data-anchor-id="tune-a-model-with-grid-search">
+<span class="header-section-number">3.7</span> Tune a model with grid search</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-11_b11c06a892126ed384e69447ae3e7055">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>model <span class="ot">&lt;-</span> automl_models_h2o<span class="sc">@</span>leaderboard <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2"></a>  <span class="fu">extract_h2o_model_name_by_position</span>(<span class="dv">9</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3"></a>  <span class="fu">h2o.getModel</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; GLM_1_AutoML_1_20230603_232725</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">h2o.performance</span>(model, <span class="at">newdata =</span> <span class="fu">as.h2o</span>(test_tbl))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; H2OBinomialMetrics: glm
+#&gt; 
+#&gt; MSE:  0.09817608
+#&gt; RMSE:  0.3133306
+#&gt; LogLoss:  0.3303213
+#&gt; Mean Per-Class Error:  0.3237555
+#&gt; AUC:  0.7403997
+#&gt; AUCPR:  0.2842939
+#&gt; Gini:  0.4807994
+#&gt; R^2:  0.08355864
+#&gt; Residual Deviance:  2517.709
+#&gt; AIC:  2575.709
+#&gt; 
+#&gt; Confusion Matrix (vertical: actual; across: predicted) for F1-optimal threshold:
+#&gt;          No  Yes    Error        Rate
+#&gt; No     2230 1116 0.333533  =1116/3346
+#&gt; Yes     146  319 0.313978    =146/465
+#&gt; Totals 2376 1435 0.331147  =1262/3811
+#&gt; 
+#&gt; Maximum Metrics: Maximum metrics at their respective thresholds
+#&gt;                         metric threshold       value idx
+#&gt; 1                       max f1  0.130969    0.335789 221
+#&gt; 2                       max f2  0.100363    0.508274 265
+#&gt; 3                 max f0point5  0.228856    0.319582 102
+#&gt; 4                 max accuracy  0.421982    0.880609  16
+#&gt; 5                max precision  1.000000    1.000000   0
+#&gt; 6                   max recall  0.000054    1.000000 399
+#&gt; 7              max specificity  1.000000    1.000000   0
+#&gt; 8             max absolute_mcc  0.100363    0.239662 265
+#&gt; 9   max min_per_class_accuracy  0.132503    0.671847 219
+#&gt; 10 max mean_per_class_accuracy  0.100363    0.683015 265
+#&gt; 11                     max tns  1.000000 3346.000000   0
+#&gt; 12                     max fns  1.000000  464.000000   0
+#&gt; 13                     max fps  0.000054 3346.000000 399
+#&gt; 14                     max tps  0.000054  465.000000 399
+#&gt; 15                     max tnr  1.000000    1.000000   0
+#&gt; 16                     max fnr  1.000000    0.997849   0
+#&gt; 17                     max fpr  0.000054    1.000000 399
+#&gt; 18                     max tpr  0.000054    1.000000 399
+#&gt; 
+#&gt; Gains/Lift Table: Extract with `h2o.gainsLift(&lt;model&gt;, &lt;data&gt;)` or `h2o.gainsLift(&lt;model&gt;, valid=&lt;T/F&gt;, xval=&lt;T/F&gt;)`</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-12_a882ff1adb90fcf387bf76d7a362ed3d">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>model_grid <span class="ot">&lt;-</span> <span class="fu">h2o.grid</span>(</span>
+<span id="cb17-2"><a href="#cb17-2"></a>  <span class="at">algorithm =</span> <span class="st">"glm"</span>,</span>
+<span id="cb17-3"><a href="#cb17-3"></a>  <span class="at">grid_id =</span> <span class="st">"model_grid"</span>,</span>
+<span id="cb17-4"><a href="#cb17-4"></a>  <span class="at">x =</span> x,</span>
+<span id="cb17-5"><a href="#cb17-5"></a>  <span class="at">y =</span> y,</span>
+<span id="cb17-6"><a href="#cb17-6"></a>  <span class="at">training_frame =</span> train_h2o,</span>
+<span id="cb17-7"><a href="#cb17-7"></a>  <span class="at">validation_frame =</span> valid_h2o,</span>
+<span id="cb17-8"><a href="#cb17-8"></a>  <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
+<span id="cb17-9"><a href="#cb17-9"></a>  <span class="at">hyper_params =</span> <span class="fu">list</span>(</span>
+<span id="cb17-10"><a href="#cb17-10"></a>    <span class="at">alpha =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="fl">1.00</span>),</span>
+<span id="cb17-11"><a href="#cb17-11"></a>    <span class="at">lambda =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="dv">1</span>, <span class="dv">10</span>)</span>
+<span id="cb17-12"><a href="#cb17-12"></a>  )</span>
+<span id="cb17-13"><a href="#cb17-13"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">h2o.getGrid</span>(<span class="at">grid_id =</span> <span class="st">"model_grid"</span>, <span class="at">sort_by =</span> <span class="st">"auc"</span>, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; H2O Grid Details
+#&gt; ================
+#&gt; 
+#&gt; Grid ID: model_grid 
+#&gt; Used hyper parameters: 
+#&gt;   -  alpha 
+#&gt;   -  lambda 
+#&gt; Number of models: 25 
+#&gt; Number of failed models: 0 
+#&gt; 
+#&gt; Hyper-Parameter Search Summary: ordered by decreasing auc
+#&gt;   alpha lambda          model_ids     auc
+#&gt; 1   0.0    0.0 model_grid_model_1 0.79015
+#&gt; 2   1.0    0.0 model_grid_model_5 0.78835
+#&gt; 3  0.25    0.0 model_grid_model_2 0.78667
+#&gt; 4  0.75    0.0 model_grid_model_4 0.78667
+#&gt; 5   0.5    0.0 model_grid_model_3 0.78573
+#&gt; 
+#&gt; ---
+#&gt;    alpha lambda           model_ids     auc
+#&gt; 20   0.5   10.0 model_grid_model_23 0.48927
+#&gt; 21  0.25   10.0 model_grid_model_22 0.48640
+#&gt; 22  0.75    0.1 model_grid_model_14 0.48377
+#&gt; 23   0.5    1.0 model_grid_model_18 0.48296
+#&gt; 24  0.75    1.0 model_grid_model_19 0.48241
+#&gt; 25   1.0   10.0 model_grid_model_25 0.48057</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>model_grid_5 <span class="ot">&lt;-</span> <span class="fu">h2o.getModel</span>(<span class="st">"model_grid_model_5"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2"></a>model_grid_5 <span class="sc">%&gt;%</span> <span class="fu">h2o.auc</span>(<span class="at">train =</span> T, <span class="at">valid =</span> T, <span class="at">xval =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     train     valid      xval 
+#&gt; 0.7866092 0.7827733 0.7883548</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-13_563c409233f5ce19a49b972da79463a3">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>model_grid_5 <span class="sc">%&gt;%</span> <span class="fu">h2o.performance</span>(<span class="at">newdata =</span> <span class="fu">as.h2o</span>(test_tbl))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; H2OBinomialMetrics: glm
+#&gt; 
+#&gt; MSE:  0.09534117
+#&gt; RMSE:  0.3087737
+#&gt; LogLoss:  0.3223601
+#&gt; Mean Per-Class Error:  0.313812
+#&gt; AUC:  0.7742565
+#&gt; AUCPR:  0.3253347
+#&gt; Gini:  0.5485131
+#&gt; R^2:  0.1100216
+#&gt; Residual Deviance:  2457.029
+#&gt; AIC:  2503.029
+#&gt; 
+#&gt; Confusion Matrix (vertical: actual; across: predicted) for F1-optimal threshold:
+#&gt;          No  Yes    Error       Rate
+#&gt; No     2534  812 0.242678  =812/3346
+#&gt; Yes     179  286 0.384946   =179/465
+#&gt; Totals 2713 1098 0.260037  =991/3811
+#&gt; 
+#&gt; Maximum Metrics: Maximum metrics at their respective thresholds
+#&gt;                         metric threshold       value idx
+#&gt; 1                       max f1  0.158004    0.365963 193
+#&gt; 2                       max f2  0.101413    0.535378 262
+#&gt; 3                 max f0point5  0.234898    0.363489 111
+#&gt; 4                 max accuracy  0.399793    0.881134  31
+#&gt; 5                max precision  0.680566    0.750000   9
+#&gt; 6                   max recall  0.000019    1.000000 399
+#&gt; 7              max specificity  0.999834    0.999701   0
+#&gt; 8             max absolute_mcc  0.117944    0.279256 240
+#&gt; 9   max min_per_class_accuracy  0.136795    0.695158 216
+#&gt; 10 max mean_per_class_accuracy  0.107751    0.711258 254
+#&gt; 11                     max tns  0.999834 3345.000000   0
+#&gt; 12                     max fns  0.999834  463.000000   0
+#&gt; 13                     max fps  0.000019 3346.000000 399
+#&gt; 14                     max tps  0.000019  465.000000 399
+#&gt; 15                     max tnr  0.999834    0.999701   0
+#&gt; 16                     max fnr  0.999834    0.995699   0
+#&gt; 17                     max fpr  0.000019    1.000000 399
+#&gt; 18                     max tpr  0.000019    1.000000 399
+#&gt; 
+#&gt; Gains/Lift Table: Extract with `h2o.gainsLift(&lt;model&gt;, &lt;data&gt;)` or `h2o.gainsLift(&lt;model&gt;, valid=&lt;T/F&gt;, xval=&lt;T/F&gt;)`</code></pre>
+</div>
+</div>
+</section><section id="visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold" class="level2" data-number="3.8"><h2 data-number="3.8" class="anchored" data-anchor-id="visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold">
+<span class="header-section-number">3.8</span> Visualize the trade-off between the precision and the recall and the optimal threshold</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-14_92d0bb8cdf81d622af661d74d06f9fe0">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>p_model_grid_5 <span class="ot">&lt;-</span> model_grid_5 <span class="sc">%&gt;%</span> </span>
+<span id="cb26-2"><a href="#cb26-2"></a>  <span class="fu">h2o.performance</span>(<span class="at">newdata =</span> <span class="fu">as.h2o</span>(test_tbl))</span>
+<span id="cb26-3"><a href="#cb26-3"></a></span>
+<span id="cb26-4"><a href="#cb26-4"></a>p_model_grid_5_tbl <span class="ot">&lt;-</span> p_model_grid_5 <span class="sc">%&gt;%</span> </span>
+<span id="cb26-5"><a href="#cb26-5"></a>  <span class="fu">h2o.metric</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-6"><a href="#cb26-6"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-7"><a href="#cb26-7"></a>  <span class="fu">mutate</span>(<span class="at">auc =</span> <span class="fu">h2o.auc</span>(p_model_grid_5))</span>
+<span id="cb26-8"><a href="#cb26-8"></a></span>
+<span id="cb26-9"><a href="#cb26-9"></a>p_model_grid_5_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb26-10"><a href="#cb26-10"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> threshold)) <span class="sc">+</span></span>
+<span id="cb26-11"><a href="#cb26-11"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> precision), <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb26-12"><a href="#cb26-12"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> recall), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb26-13"><a href="#cb26-13"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">h2o.find_threshold_by_max_metric</span>(p_model_grid_5, <span class="st">"f1"</span>)) <span class="sc">+</span></span>
+<span id="cb26-14"><a href="#cb26-14"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Precision vs Recall"</span>, <span class="at">y =</span> <span class="st">"value"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-15_3b8b3fff8e8a9138c4b9acc983bd37bc">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-15-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="05_performance_measures_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="roc-plot" class="level2" data-number="3.9"><h2 data-number="3.9" class="anchored" data-anchor-id="roc-plot">
+<span class="header-section-number">3.9</span> ROC Plot</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-16_4cb57d27fb02143052fcf26b26b791c2">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>roc_plot <span class="ot">&lt;-</span> p_model_grid_5_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2"></a>  <span class="fu">mutate</span>(<span class="at">auc  =</span> auc <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">as.character</span>() <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(fpr, tpr, <span class="at">linetype =</span> auc)) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5"></a>  <span class="fu">geom_abline</span>(<span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6"></a>  <span class="fu">labs</span>(</span>
+<span id="cb27-7"><a href="#cb27-7"></a>    <span class="at">title =</span> <span class="st">"ROC Plot"</span>,</span>
+<span id="cb27-8"><a href="#cb27-8"></a>    <span class="at">subtitle =</span> <span class="st">"-"</span></span>
+<span id="cb27-9"><a href="#cb27-9"></a>  )</span>
+<span id="cb27-10"><a href="#cb27-10"></a></span>
+<span id="cb27-11"><a href="#cb27-11"></a>roc_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-16-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="05_performance_measures_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="precision-vs-recall-plot" class="level2" data-number="3.10"><h2 data-number="3.10" class="anchored" data-anchor-id="precision-vs-recall-plot">
+<span class="header-section-number">3.10</span> Precision vs Recall Plot</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-17_5d53c38e699df2546e2823eae0330205">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>pr_plot <span class="ot">&lt;-</span> p_model_grid_5_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a>  <span class="fu">mutate</span>(<span class="at">auc  =</span> auc <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">as.character</span>() <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(recall, precision, <span class="at">linetype =</span> auc)) <span class="sc">+</span></span>
+<span id="cb28-4"><a href="#cb28-4"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb28-5"><a href="#cb28-5"></a>  <span class="fu">labs</span>(</span>
+<span id="cb28-6"><a href="#cb28-6"></a>    <span class="at">title =</span> <span class="st">"Precision vs Recall Plot"</span>,</span>
+<span id="cb28-7"><a href="#cb28-7"></a>    <span class="at">subtitle =</span> <span class="st">"-"</span></span>
+<span id="cb28-8"><a href="#cb28-8"></a>  )</span>
+<span id="cb28-9"><a href="#cb28-9"></a></span>
+<span id="cb28-10"><a href="#cb28-10"></a>pr_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-17-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="05_performance_measures_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="gain-plot" class="level2" data-number="3.11"><h2 data-number="3.11" class="anchored" data-anchor-id="gain-plot">
+<span class="header-section-number">3.11</span> Gain Plot</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-18_c55c5652cba923aa6fa96150e6a14c43">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>gain_lift_tbl <span class="ot">&lt;-</span> p_model_grid_5 <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a>  <span class="fu">h2o.gainsLift</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="#cb29-3"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb29-4"><a href="#cb29-4"></a></span>
+<span id="cb29-5"><a href="#cb29-5"></a>gain_transformed_tbl <span class="ot">&lt;-</span> gain_lift_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb29-6"><a href="#cb29-6"></a>  <span class="fu">select</span>(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb29-7"><a href="#cb29-7"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"lift"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-8"><a href="#cb29-8"></a>  <span class="fu">mutate</span>(<span class="at">baseline =</span> cumulative_data_fraction) <span class="sc">%&gt;%</span></span>
+<span id="cb29-9"><a href="#cb29-9"></a>  <span class="fu">rename</span>(<span class="at">gain     =</span> cumulative_capture_rate) <span class="sc">%&gt;%</span></span>
+<span id="cb29-10"><a href="#cb29-10"></a>  <span class="co"># prepare the data for the plotting (for the color and group aesthetics)</span></span>
+<span id="cb29-11"><a href="#cb29-11"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(gain, baseline), <span class="at">values_to =</span> <span class="st">"value"</span>, <span class="at">names_to =</span> <span class="st">"key"</span>)</span>
+<span id="cb29-12"><a href="#cb29-12"></a></span>
+<span id="cb29-13"><a href="#cb29-13"></a>gain_plot <span class="ot">&lt;-</span> gain_transformed_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb29-14"><a href="#cb29-14"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> key)) <span class="sc">+</span></span>
+<span id="cb29-15"><a href="#cb29-15"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb29-16"><a href="#cb29-16"></a>  <span class="fu">labs</span>(</span>
+<span id="cb29-17"><a href="#cb29-17"></a>    <span class="at">title =</span> <span class="st">"Gain Chart"</span>,</span>
+<span id="cb29-18"><a href="#cb29-18"></a>    <span class="at">x =</span> <span class="st">"Cumulative Data Fraction"</span>,</span>
+<span id="cb29-19"><a href="#cb29-19"></a>    <span class="at">y =</span> <span class="st">"Gain"</span></span>
+<span id="cb29-20"><a href="#cb29-20"></a>  )</span>
+<span id="cb29-21"><a href="#cb29-21"></a></span>
+<span id="cb29-22"><a href="#cb29-22"></a>gain_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-18-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="05_performance_measures_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="lift-plot" class="level2" data-number="3.12"><h2 data-number="3.12" class="anchored" data-anchor-id="lift-plot">
+<span class="header-section-number">3.12</span> Lift Plot</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-19_ee2bf4f89e1e5aa30ce6abd0ef9ae53a">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>lift_transformed_tbl <span class="ot">&lt;-</span> gain_lift_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2"></a>  <span class="fu">select</span>(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"capture"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb30-4"><a href="#cb30-4"></a>  <span class="fu">mutate</span>(<span class="at">baseline =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a>  <span class="fu">rename</span>(<span class="at">lift =</span> cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb30-6"><a href="#cb30-6"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(lift, baseline), <span class="at">values_to =</span> <span class="st">"value"</span>, <span class="at">names_to =</span> <span class="st">"key"</span>)</span>
+<span id="cb30-7"><a href="#cb30-7"></a></span>
+<span id="cb30-8"><a href="#cb30-8"></a>lift_plot <span class="ot">&lt;-</span> lift_transformed_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb30-9"><a href="#cb30-9"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> key)) <span class="sc">+</span></span>
+<span id="cb30-10"><a href="#cb30-10"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb30-11"><a href="#cb30-11"></a>  <span class="fu">labs</span>(</span>
+<span id="cb30-12"><a href="#cb30-12"></a>    <span class="at">title =</span> <span class="st">"Lift Chart"</span>,</span>
+<span id="cb30-13"><a href="#cb30-13"></a>    <span class="at">x =</span> <span class="st">"Cumulative Data Fraction"</span>,</span>
+<span id="cb30-14"><a href="#cb30-14"></a>    <span class="at">y =</span> <span class="st">"Lift"</span></span>
+<span id="cb30-15"><a href="#cb30-15"></a>  )</span>
+<span id="cb30-16"><a href="#cb30-16"></a></span>
+<span id="cb30-17"><a href="#cb30-17"></a>lift_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-19-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="05_performance_measures_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="dashboard-with-cowplot" class="level2" data-number="3.13"><h2 data-number="3.13" class="anchored" data-anchor-id="dashboard-with-cowplot">
+<span class="header-section-number">3.13</span> Dashboard with cowplot</h2>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-20_504e5a5c9b3fad5cdee6c8478d5e6148">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>p_legend <span class="ot">&lt;-</span> <span class="fu">get_legend</span>(roc_plot)</span>
+<span id="cb31-2"><a href="#cb31-2"></a></span>
+<span id="cb31-3"><a href="#cb31-3"></a>roc_plot <span class="ot">&lt;-</span> roc_plot <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb31-4"><a href="#cb31-4"></a></span>
+<span id="cb31-5"><a href="#cb31-5"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(roc_plot, pr_plot, gain_plot, lift_plot, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb31-6"><a href="#cb31-6"></a></span>
+<span id="cb31-7"><a href="#cb31-7"></a>p_title <span class="ot">&lt;-</span> <span class="fu">ggdraw</span>() <span class="sc">+</span> </span>
+<span id="cb31-8"><a href="#cb31-8"></a>  <span class="fu">draw_label</span>(<span class="st">"H2O Model Metrics"</span>, <span class="at">size =</span> <span class="dv">18</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">color =</span> <span class="st">"#2C3E50"</span>)</span>
+<span id="cb31-9"><a href="#cb31-9"></a>  </span>
+<span id="cb31-10"><a href="#cb31-10"></a>p_subtitle <span class="ot">&lt;-</span> <span class="fu">ggdraw</span>() <span class="sc">+</span> <span class="fu">draw_label</span>(<span class="fu">glue</span>(<span class="st">"-"</span>), <span class="at">size =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">"#2C3E50"</span>)</span>
+<span id="cb31-11"><a href="#cb31-11"></a>  </span>
+<span id="cb31-12"><a href="#cb31-12"></a>combined_plot <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(p_title, </span>
+<span id="cb31-13"><a href="#cb31-13"></a>                           p_subtitle, </span>
+<span id="cb31-14"><a href="#cb31-14"></a>                           p, </span>
+<span id="cb31-15"><a href="#cb31-15"></a>                           p_legend, </span>
+<span id="cb31-16"><a href="#cb31-16"></a>                           <span class="at">ncol =</span> <span class="dv">1</span>, </span>
+<span id="cb31-17"><a href="#cb31-17"></a>                           <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="dv">1</span>, <span class="fl">0.05</span> <span class="sc">*</span> <span class="dv">4</span>))</span>
+<span id="cb31-18"><a href="#cb31-18"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-20-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="05_performance_measures_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
 
-<div class="callout-note callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>You can delete everything in here and start fresh.</p>
-</div>
-</div>
 
-
-
-</main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -433,7 +1007,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":true,"selector":".lightbox","openEffect":"zoom"});</script>
 
 
 </body></html>

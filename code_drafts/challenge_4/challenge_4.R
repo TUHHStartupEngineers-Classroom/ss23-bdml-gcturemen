@@ -58,7 +58,7 @@ automl_models_h2o <- h2o.automl(
   training_frame    = train_h2o,
   validation_frame  = valid_h2o,
   leaderboard_frame = test_h2o,
-  max_runtime_secs  = 60,
+  max_runtime_secs  = 30,
   nfolds            = 5 
 )
 
