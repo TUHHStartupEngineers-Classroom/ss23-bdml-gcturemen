@@ -131,7 +131,17 @@ model_leaderboard %>%
   labs(title = "Leaderboard Metrics",
        subtitle = paste0("Ordered by: ", "auc"),
        y = "Model Position, Model ID", x = "") + 
-  theme(legend.position = "bottom")
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = "#222222", color = "white"),
+    panel.background = element_rect(fill = "#222222"),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
 ```
 
 ## Tune a model with grid search
@@ -157,12 +167,23 @@ extract_h2o_model_name_by_position <- function(h2o_leaderboard, n = 1, verbose =
 model <- automl_models_h2o@leaderboard %>% 
   extract_h2o_model_name_by_position(9) %>% 
   h2o.getModel()
+```
 
-h2o.performance(model, newdata = as.h2o(test_tbl))
+```{r}
+#| output: false
+p_model <- h2o.performance(model, newdata = as.h2o(test_tbl))
+
+p_model
+```
+
+```{r}
+#| echo: false
+p_model
 ```
 
 ```{r}
 #| warning: false
+#| output : false
 model_grid <- h2o.grid(
   algorithm = "glm",
   grid_id = "model_grid",
@@ -176,14 +197,28 @@ model_grid <- h2o.grid(
     lambda = c(0, 0.01, 0.1, 1, 10)
   )
 )
+```
 
+```{r}
+#| warning: false
 h2o.getGrid(grid_id = "model_grid", sort_by = "auc", decreasing = TRUE)
+```
+
+```{r}
 model_grid_5 <- h2o.getModel("model_grid_model_5")
 model_grid_5 %>% h2o.auc(train = T, valid = T, xval = T)
 ```
 
 ```{r}
-model_grid_5 %>% h2o.performance(newdata = as.h2o(test_tbl))
+#| output: false
+p_model_grid_5 <- model_grid_5 %>% h2o.performance(newdata = as.h2o(test_tbl))
+
+p_model_grid_5
+```
+
+```{r}
+#| echo: false
+p_model_grid_5
 ```
 
 ## Visualize the trade-off between the precision and the recall and the optimal threshold
@@ -191,9 +226,6 @@ model_grid_5 %>% h2o.performance(newdata = as.h2o(test_tbl))
 ```{r}
 #| warning: false
 #| output: false
-p_model_grid_5 <- model_grid_5 %>% 
-  h2o.performance(newdata = as.h2o(test_tbl))
-
 p_model_grid_5_tbl <- p_model_grid_5 %>% 
   h2o.metric() %>%
   as_tibble() %>%
@@ -201,10 +233,21 @@ p_model_grid_5_tbl <- p_model_grid_5 %>%
 
 p_model_grid_5_tbl %>%
   ggplot(aes(x = threshold)) +
-  geom_line(aes(y = precision), color = "blue", size = 1) +
-  geom_line(aes(y = recall), color = "red", size = 1) +
-  geom_vline(xintercept = h2o.find_threshold_by_max_metric(p_model_grid_5, "f1")) +
-  labs(title = "Precision vs Recall", y = "value")
+  geom_line(aes(y = precision), color = "#2DC6D6", size = 1) +
+  geom_line(aes(y = recall), color = "#FF8014", size = 1) +
+  geom_vline(xintercept = h2o.find_threshold_by_max_metric(p_model_grid_5, "f1"), 
+             color = "red") +
+  labs(title = "Precision vs Recall", y = "value") +
+  theme(
+    legend.background = element_rect(fill = "#222222", color = "white"),
+    panel.background = element_rect(fill = "#222222"),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
 ```
 
 ```{r}
@@ -217,10 +260,21 @@ p_model_grid_5_tbl <- p_model_grid_5 %>%
 
 p_model_grid_5_tbl %>%
   ggplot(aes(x = threshold)) +
-  geom_line(aes(y = precision), color = "blue", size = 1) +
-  geom_line(aes(y = recall), color = "red", size = 1) +
-  geom_vline(xintercept = h2o.find_threshold_by_max_metric(p_model_grid_5, "f1")) +
-  labs(title = "Precision vs Recall", y = "value")
+  geom_line(aes(y = precision), color = "#2DC6D6", size = 1) +
+  geom_line(aes(y = recall), color = "#FF8014", size = 1) +
+  geom_vline(xintercept = h2o.find_threshold_by_max_metric(p_model_grid_5, "f1"), 
+             color = 'red') +
+  labs(title = "Precision vs Recall", y = "value") +
+  theme(
+    legend.background = element_rect(fill = "#222222", color = "white"),
+    panel.background = element_rect(fill = "#222222"),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
 ```
 
 ## ROC Plot
@@ -229,11 +283,18 @@ p_model_grid_5_tbl %>%
 roc_plot <- p_model_grid_5_tbl %>% 
   mutate(auc  = auc %>% round(3) %>% as.character() %>% as_factor()) %>%
   ggplot(aes(fpr, tpr, linetype = auc)) +
-  geom_line(size = 1) +
-  geom_abline(color = "red", linetype = "dotted") +
-  labs(
-    title = "ROC Plot",
-    subtitle = "-"
+  geom_line(color = "#2DC6D6", size = 1) +
+  geom_abline(color = "#FF8014", linetype = "dotted") +
+  labs(title = "ROC Plot", subtitle = "-") +
+  theme(
+    legend.background = element_rect(fill = "#222222", color = "white"),
+    panel.background = element_rect(fill = "#222222"),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
   )
 
 roc_plot
@@ -245,10 +306,17 @@ roc_plot
 pr_plot <- p_model_grid_5_tbl %>%
   mutate(auc  = auc %>% round(3) %>% as.character() %>% as_factor()) %>%
   ggplot(aes(recall, precision, linetype = auc)) +
-  geom_line(size = 1) +
-  labs(
-    title = "Precision vs Recall Plot",
-    subtitle = "-"
+  geom_line(color = "#2DC6D6", size = 1) +
+  labs(title = "Precision vs Recall Plot", subtitle = "-") +
+  theme(
+    legend.background = element_rect(fill = "#222222", color = "white"),
+    panel.background = element_rect(fill = "#222222"),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
   )
 
 pr_plot
@@ -272,10 +340,16 @@ gain_transformed_tbl <- gain_lift_tbl %>%
 gain_plot <- gain_transformed_tbl %>%
   ggplot(aes(x = cumulative_data_fraction, y = value, color = key)) +
   geom_line(size = 1.5) +
-  labs(
-    title = "Gain Chart",
-    x = "Cumulative Data Fraction",
-    y = "Gain"
+  labs(title = "Gain Chart", x = "Cumulative Data Fraction", y = "Gain") +
+  theme(
+    legend.background = element_rect(fill = "#222222", color = "white"),
+    panel.background = element_rect(fill = "#222222"),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
   )
 
 gain_plot
@@ -294,10 +368,16 @@ lift_transformed_tbl <- gain_lift_tbl %>%
 lift_plot <- lift_transformed_tbl %>%
   ggplot(aes(x = cumulative_data_fraction, y = value, color = key)) +
   geom_line(size = 1.5) +
-  labs(
-    title = "Lift Chart",
-    x = "Cumulative Data Fraction",
-    y = "Lift"
+  labs(title = "Lift Chart", x = "Cumulative Data Fraction", y = "Lift") +
+  theme(
+    legend.background = element_rect(fill = "#222222", color = "white"),
+    panel.background = element_rect(fill = "#222222"),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
   )
 
 lift_plot
@@ -313,15 +393,26 @@ roc_plot <- roc_plot + theme(legend.position = "none")
 p <- plot_grid(roc_plot, pr_plot, gain_plot, lift_plot, ncol = 2)
 
 p_title <- ggdraw() + 
-  draw_label("H2O Model Metrics", size = 18, fontface = "bold", color = "#2C3E50")
+  draw_label("H2O Model Metrics", size = 18, fontface = "bold", color = "white")
   
-p_subtitle <- ggdraw() + draw_label(glue("-"), size = 10, color = "#2C3E50")
+p_subtitle <- ggdraw() + draw_label(glue("-"), size = 10, color = "white")
   
 combined_plot <- plot_grid(p_title, 
                            p_subtitle, 
                            p, 
                            p_legend, 
                            ncol = 1, 
-                           rel_heights = c(0.05, 0.05, 1, 0.05 * 4))
+                           rel_heights = c(0.05, 0.05, 1, 0.05 * 4)) +
+  theme(
+    legend.background = element_rect(fill = "#222222", color = "white"),
+    panel.background = element_rect(fill = "#222222"),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+
 combined_plot
 ```

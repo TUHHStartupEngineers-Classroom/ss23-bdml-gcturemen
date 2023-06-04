@@ -1,8 +1,301 @@
 ---
-title: "Data Visualization"
-author: "Joschka Schwarz"
+title: "Explaining Black-Box Models with LIME"
+author: "Gani Cem Türemen"
 ---
 
-::: callout-note
-You can delete everything in here and start fresh.
-:::
+# Challenge Summary
+
+In this challenge, we take the models we’ve developed and explain their localized prediction results to understand the reasons behind their predictions which will help with the assessment of trust to a model. 
+
+# Objectives
+
+Apply your learning of LIME (Local Interpretable Model-Agnostic Explanations) on H2O models to explain their results.
+
+# Solution
+
+## Import Libraries
+
+```{r}
+#| output: false
+
+library(h2o)
+library(recipes)
+library(readxl)
+library(tidyverse)
+library(tidyquant)
+library(lime)
+```
+
+## Load the training & test dataset
+
+```{r}
+#| output: false
+
+employee_attrition_tbl <- read_csv(
+  "data/datasets-1067-1925-WA_Fn-UseC_-HR-Employee-Attrition.csv")
+
+definitions_raw_tbl <- read_excel("data/data_definitions.xlsx",
+                                  sheet = 1,
+                                  col_names = FALSE)
+```
+
+```{r}
+#| include: false
+
+# import data processing pipeline
+source("data/data_processing_pipeline.R")
+```
+
+```{r}
+#| output: false
+
+employee_attrition_readable_tbl <- process_hr_data_readable(employee_attrition_tbl, 
+                                                            definitions_raw_tbl)
+
+employee_attrition_readable_tbl %>% glimpse()
+```
+
+```{r}
+#| echo: false
+
+employee_attrition_readable_tbl %>% glimpse()
+```
+
+```{r}
+set.seed(seed = 1113)
+split_obj <- rsample::initial_split(employee_attrition_readable_tbl, prop = 0.85)
+
+train_readable_tbl <- rsample::training(split_obj)
+test_readable_tbl  <- rsample::testing(split_obj)
+```
+
+```{r}
+recipe_obj <- recipe(Attrition ~ ., data = train_readable_tbl) %>%
+  step_zv(all_predictors()) %>%
+  step_mutate_at(c("JobLevel", "StockOptionLevel"), fn = as.factor) %>% 
+  prep()
+
+train_tbl <- bake(recipe_obj, new_data = train_readable_tbl)
+test_tbl  <- bake(recipe_obj, new_data = test_readable_tbl)
+
+train_tbl %>% glimpse()
+```
+
+## Specify the response and predictor variables
+
+```{r}
+#| output: false
+
+h2o.init()
+
+split_h2o <- h2o.splitFrame(as.h2o(train_tbl), ratios = c(0.80), seed = 767)
+train_h2o <- split_h2o[[1]]
+valid_h2o <- split_h2o[[2]]
+test_h2o  <- as.h2o(test_tbl)
+
+y <- "Attrition"
+x <- setdiff(names(train_h2o), y)
+```
+
+## Run AutoML specifying the stopping criterion
+
+```{r}
+#| output: false
+
+automl_models_h2o <- h2o.automl(
+  x = x,
+  y = y,
+  training_frame    = train_h2o,
+  validation_frame  = valid_h2o,
+  leaderboard_frame = test_h2o,
+  max_runtime_secs  = 30,
+  nfolds            = 5 
+)
+```
+
+## View the leaderboard
+
+```{r}
+automl_models_h2o@leaderboard
+```
+
+## Predicting using Leader Model
+
+```{r}
+#| include: false
+
+# Extracts and H2O model name by a position so can more easily use h2o.getModel()
+extract_h2o_model_name_by_position <- function(h2o_leaderboard, n = 1, verbose = T) {
+    
+    model_name <- h2o_leaderboard %>%
+        as_tibble() %>%
+        slice(n) %>%
+        pull(model_id)
+    
+    if (verbose) message(model_name)
+    
+    return(model_name)
+    
+}
+```
+
+```{r}
+leader_model <- automl_models_h2o@leaderboard %>% 
+  extract_h2o_model_name_by_position(1) %>% 
+  h2o.getModel()
+```
+
+```{r}
+#| output: false
+
+predictions_tbl <- leader_model %>% 
+  h2o.predict(newdata = as.h2o(test_tbl)) %>%
+  as_tibble() %>%
+  bind_cols(test_tbl %>% select(Attrition, EmployeeNumber)
+  )
+
+predictions_tbl %>% glimpse()
+```
+
+```{r}
+#| echo: false
+
+predictions_tbl %>% glimpse()
+```
+
+## Create Explainer
+
+```{r}
+explainer <- train_tbl %>%
+  select(-Attrition) %>%
+  lime(
+    model           = leader_model,
+    bin_continuous  = TRUE,
+    n_bins          = 4,
+    quantile_bins   = TRUE
+  )
+```
+
+## Single Explanation
+
+```{r}
+#| output: false
+
+explanation <- test_tbl %>%
+  slice(2) %>%
+  select(-Attrition) %>%
+  lime::explain(explainer = explainer, 
+                n_labels   = 1, 
+                n_features = 8, 
+                n_permutations = 5000, 
+                kernel_width   = 1)
+
+explanation %>% glimpse()
+```
+
+```{r}
+#| echo: false
+
+explanation %>% glimpse()
+```
+
+```{r}
+custom_plot_features <- function(expl) {
+  
+  case <- expl$case[1]
+  lab <- expl$label[1]
+  prob <- expl$label_prob[1] %>% round(2)
+  expl_fit <- expl$model_r2[1] %>% round(2)
+  
+  text <- paste(" Case: ", case, "\n", "Label: ", lab, "\n", "Probability: ", prob, "\n", "Explanation Fit: ", expl_fit)
+  
+  g <- expl %>% 
+    arrange(desc(abs(feature_weight))) %>%
+    mutate(feature_type = case_when(
+      (feature_weight) >= 0 ~ "Supports",
+      TRUE ~ "Contradicts") %>% as.factor()) %>%
+    ggplot(aes(x = feature_desc, y = feature_weight, group = feature_weight)) +
+    geom_col(aes(reorder(feature_desc, abs(feature_weight)), fill = feature_type)) + 
+    scale_fill_manual("", values = c("Supports" = "#FF8014", "Contradicts" = "#2DC6D6")) + 
+    coord_flip() +
+    labs(x = "Feature", y = "Weight", subtitle = text) +
+    theme(
+      legend.position = "bottom", 
+      legend.background = element_rect(fill = NA, color = "white"), 
+      panel.background = element_blank(), 
+      panel.border = element_rect(color = "white", fill = NA), 
+      plot.background = element_rect(fill = "#222222"), 
+      line = element_line(color = "white"), 
+      text = element_text(color = "white"), 
+      axis.ticks = element_line(color = "white"), 
+      axis.text = element_text(color = "white"),
+      plot.subtitle = element_text(size = 7)
+  )
+    
+  return(g)
+}
+```
+
+```{r}
+custom_plot_features(explanation)
+```
+
+## Multiple Explanations
+
+```{r}
+#| output: false
+
+explanation_multiple <- test_tbl %>%
+  slice(1:20) %>%
+  select(-Attrition) %>%
+  lime::explain(
+    explainer = explainer,
+    n_labels   = 1,
+    n_features = 8,
+    n_permutations = 5000,
+    kernel_width   = 0.5
+  )
+
+explanation_multiple %>% glimpse()
+```
+
+```{r}
+#| echo: false
+
+explanation_multiple %>% glimpse()
+```
+
+```{r}
+custom_plot_explanations <- function(expl) {
+  
+  expl$case <- as_factor(expl$case)
+  
+  g <- expl %>%
+    ggplot(aes(x = case, y = feature_desc, fill = feature_weight)) +
+    geom_tile() + 
+    facet_wrap(~ label) +
+    scale_fill_gradient2("Feature Weight", 
+                         low = "#2DC6D6", 
+                         high = "#FF8014", 
+                         mid = "white") + 
+    labs(x = "Case", y = "Feature") +
+    theme(
+      legend.background = element_rect(fill = NA, color = "white"), 
+      panel.background = element_blank(),
+      panel.border = element_rect(color = "white", fill = NA),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      plot.background = element_rect(fill = "#222222"), 
+      line = element_line(color = "white"), 
+      text = element_text(color = "white"), 
+      axis.ticks = element_line(color = "white"), 
+      axis.text = element_text(color = "white", size = 5)
+  )
+  
+  return(g)
+}
+```
+
+```{r}
+custom_plot_explanations(explanation_multiple)
+```
