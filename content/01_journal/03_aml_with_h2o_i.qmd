@@ -7,11 +7,11 @@ author: "Gani Cem Türemen"
 
 Attrition is a problem that impacts all businesses, irrespective of geography, industry and size of the company. Employee attrition leads to significant costs for a business, including the cost of business disruption, hiring new staff and training new staff.
 
-Our goal is to use classification models to predict if an employee is likely to quit so that the situation can be intervened on time and remedied to prevent attrition.
+We will use classification models to predict if an employee is likely to quit so that the situation can be intervened on time and remedied to prevent attrition.
 
 # Objectives
 
-Use your learning from descriptive features and `plot_ggpairs()` to further investigate the features and answer the related questions.
+We will use our learning from descriptive features and `plot_ggpairs()` to further investigate the features of the employee attrition dataset and answer the related questions.
 
 # Solution
 
@@ -19,6 +19,7 @@ Use your learning from descriptive features and `plot_ggpairs()` to further inve
 
 ```{r}
 #| warning: false
+
 library(tidyverse)
 library(GGally)
 ```
@@ -27,14 +28,15 @@ library(GGally)
 
 ```{r}
 #| output: false
+
 employee_attrition_tbl <- read_csv(
-  "~/GitHub/ss23-bdml-gcturemen/code_drafts/data/datasets-1067-1925-WA_Fn-UseC_-HR-Employee-Attrition.csv")
+  "data/datasets-1067-1925-WA_Fn-UseC_-HR-Employee-Attrition.csv")
 ```
 
 ```{r}
 #| echo: false
-employee_attrition_tbl %>% 
-  glimpse()
+
+employee_attrition_tbl %>% glimpse()
 ```
 
 ```{r}
@@ -46,19 +48,17 @@ plot_ggpairs <- function(data, color = NULL, density_alpha = 0.5) {
   color_expr <- enquo(color)
   
   if (rlang::quo_is_null(color_expr)) {
-    g <- data %>%
-      ggpairs(lower = "blank") 
+    g <- data %>% ggpairs(lower = "blank") 
   } else {
     color_name <- quo_name(color_expr)
-    g <- data %>%
-      ggpairs(mapping = aes_string(color = color_name), 
-              lower = "blank", legend = 1,
-              diag = list(continuous = wrap("densityDiag", 
-                                            alpha = density_alpha))) +
-      theme(legend.position = "bottom",
-            legend.background = element_rect(fill = "#222222", color = 'white'),
+    g <- data %>% ggpairs(mapping = aes_string(color = color_name), 
+                          lower = "blank", 
+                          legend = 1,
+                          diag = list(continuous = wrap("densityDiag", 
+                                                        alpha = density_alpha))) + 
+      theme(legend.position = "bottom", 
+            legend.background = element_rect(fill = NA, color = 'white'),
             plot.background = element_rect(fill = "#222222"),
-            #line = element_line(color = "white"),
             text = element_text(color = "white"),
             axis.ticks = element_line(color = "white"),
             axis.text = element_text(color = "white"))
@@ -72,12 +72,12 @@ plot_ggpairs <- function(data, color = NULL, density_alpha = 0.5) {
 ```{r}
 #| echo: false
 #| warning: false
-employee_attrition_tbl %>%
-  select(Attrition,
-         contains("income"),
-         contains("rate"),
-         contains("salary"),
-         contains("stock")) %>%
+
+employee_attrition_tbl %>% select(Attrition, 
+                                  contains("income"), 
+                                  contains("rate"), 
+                                  contains("salary"), 
+                                  contains("stock")) %>% 
   plot_ggpairs(Attrition)
 ```
 
@@ -88,7 +88,7 @@ __Question:__ What can you deduce about the interaction between Monthly Income a
     c. Those that are leaving have a lower Monthly Income
     d. It's difficult to deduce anything based on the visualization
 
-__Answer:__ From the figure it can be seen that the employees that are leaving have a lower Monthly income. The answer is c.
+__Answer:__ Looking at the second figure in the diagonal it can be seen that the employees that are leaving have a peak at a lower monthly income value compared to those that are staying. The answer is c.
 
 __Question:__ What can you deduce about the interaction between Percent Salary Hike and Attrition?
 
@@ -97,7 +97,7 @@ __Question:__ What can you deduce about the interaction between Percent Salary H
     c. Those that are leaving have lower Percent Salary Hike
     d. It's difficult to deduce anything based on the visualization
 
-__Answer:__ Since the curves in the figure are similar, it is difficult to make any comments. The answer is d.
+__Answer:__ Looking at the sixth figure in the diagonal, it is seen that distributions for both employee groups are similar so it is difficult to make any comments. The answer is d.
 
 __Question:__ What can you deduce about the interaction between Stock Option Level and Attrition?
 
@@ -105,18 +105,18 @@ __Question:__ What can you deduce about the interaction between Stock Option Lev
     b. Those that are staying have a higher stock option level
     c. It's difficult to deduce anything based on the visualization
 
-__Answer:__ Since the number of staying employees are higher at high stock option levels (1, 2) the answer is b.
+__Answer:__ Since the number of staying employees are concentrated around higher stock option levels (1, 2) compared to the employees that are leaving (0) the answer is b.
 
 ## Survey results
 
 ```{r}
 #| echo: false
 #| warning: false
-employee_attrition_tbl %>%
-    select(Attrition,
-           contains("satisfaction"),
-           contains("life")) %>%
-    plot_ggpairs(Attrition)
+
+employee_attrition_tbl %>% select(Attrition, 
+                                  contains("satisfaction"), 
+                                  contains("life")) %>% 
+  plot_ggpairs(Attrition)
 ```
 
 __Question:__ What can you deduce about the interaction between Environment Satisfaction and Attrition?
@@ -134,18 +134,18 @@ __Question:__ What can you deduce about the interaction between Work Life Balanc
     c. Those that are staying have a lower density of 2's and 3's
     d. It's difficult to deduce anything based on the visualization
     
-__Answer:__ From the figure, it can be seen that staying employees have a higher density of 2's and 3's. The answer is b.
+__Answer:__ From the fifth figure in the diagonal, it can be seen that staying employees have a higher density of 2's and 3's. The answer is b.
 
 ## Performance Data
 
 ```{r}
 #| echo: false
 #| warning: false
-employee_attrition_tbl %>%
-    select(Attrition,
-           contains("performance"),
-           contains("involvement")) %>%
-    plot_ggpairs(Attrition)
+
+employee_attrition_tbl %>% select(Attrition, 
+                                  contains("performance"), 
+                                  contains("involvement")) %>% 
+  plot_ggpairs(Attrition)
 ```
 
 __Question:__ What Can you deduce about the interaction between Job Involvement and Attrition?
@@ -162,11 +162,11 @@ __Answer:__ From the figure, it can be seen that leaving employees have a lower 
 ```{r}
 #| echo: false
 #| warning: false
-employee_attrition_tbl %>%
-    select(Attrition,
-           contains("overtime"),
-           contains("travel")) %>%
-    plot_ggpairs(Attrition)
+
+employee_attrition_tbl %>% select(Attrition, 
+                                  contains("overtime"), 
+                                  contains("travel")) %>% 
+  plot_ggpairs(Attrition)
 ```
 
 __Question:__ What can you deduce about the interaction between Over Time and Attrition?
@@ -181,11 +181,11 @@ __Answer:__ Regarding Over Time, proportion of staying employees is higher in bo
 ```{r}
 #| echo: false
 #| warning: false
-employee_attrition_tbl %>%
-    select(Attrition,
-           contains("training"),
-           contains("education")) %>%
-    plot_ggpairs(Attrition)
+
+employee_attrition_tbl %>% select(Attrition, 
+                                  contains("training"), 
+                                  contains("education")) %>% 
+  plot_ggpairs(Attrition)
 ```
 
 __Question:__ What can you deduce about the interaction between Training Times Last Year and Attrition
@@ -194,17 +194,16 @@ __Question:__ What can you deduce about the interaction between Training Times L
     b. People that leave tend to have less annual trainings
     c. It's difficult to deduce anything based on the visualization
     
-__Answer:__ From the figure it can be seen that people that leave tend to have less annual trainings. The answer is b.
+__Answer:__ From the figure it is seen that distributions of both groups concentrate around similar values. The answer is c.
 
 ## Time-Based Features
 
 ```{r}
 #| echo: false
 #| warning: false
-employee_attrition_tbl %>%
-    select(Attrition,
-           contains("years")) %>%
-    plot_ggpairs(Attrition)
+
+employee_attrition_tbl %>% select(Attrition, contains("years")) %>% 
+  plot_ggpairs(Attrition)
 ```
 
 __Question:__ What can you deduce about the interaction between Years At Company and Attrition
@@ -213,7 +212,7 @@ __Question:__ What can you deduce about the interaction between Years At Company
     b. People that leave tend to have less working years at the company
     c. It's difficult to deduce anything based on the visualization
 
-__Answer:__ It is apparent that people that leave tend to have less working years at the company. The answer is b.
+__Answer:__ It is apparent that people that leave tend to have less working years at the company because corresponding distribution peaks at a smaller value. The answer is b.
 
 __Question:__ What can you deduce about the interaction between Years Since Last Promotion and Attrition?
 
@@ -221,4 +220,4 @@ __Question:__ What can you deduce about the interaction between Years Since Last
     b. Those that are leaving have fewer years since last promotion than those that are staying
     c. It's difficult to deduce anything based on the visualization
     
-__Answer:__ Since both curves are similar in the figure it is hard to make a decision. The answer is c.
+__Answer:__ Since both distributions peak at the lower end of the x axis and they are similar in other parts it is hard to make a decision. The answer is c.

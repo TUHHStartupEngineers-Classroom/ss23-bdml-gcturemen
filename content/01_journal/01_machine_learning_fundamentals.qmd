@@ -5,11 +5,11 @@ author: "Gani Cem Türemen"
 
 # Challenge Summary
 
-Your organization wants to know which companies are similar to each other to help in identifying potential customers of a SAAS software solution (e.g. Salesforce CRM or equivalent) in various segments of the market. The Sales Department is very interested in this analysis, which will help them more easily penetrate various market segments.
+Our organization wants to know which companies are similar to each other to help in identifying potential customers of a SAAS software solution (e.g. Salesforce CRM or equivalent) in various segments of the market. The Sales Department is very interested in this analysis, which will help them more easily penetrate various market segments.
 
 # Objectives
 
-Apply your knowledge on K-Means and UMAP along with `dplyr`, `ggplot2`, and `purrr` to create a visualization that identifies subgroups in the S&P 500 Index. You will specifically apply:
+We will apply our knowledge on K-Means and UMAP along with `dplyr`, `ggplot2`, and `purrr` to create a visualization that identifies subgroups in the S&P 500 Index. We will specifically apply:
 
 - Modeling: `kmeans()` and `umap()`
 - Iteration: `purrr`
@@ -22,6 +22,7 @@ Apply your knowledge on K-Means and UMAP along with `dplyr`, `ggplot2`, and `pur
 
 ```{r}
 #| output: false
+
 library(dplyr)
 library(tidyverse)
 library(tidyquant)
@@ -33,8 +34,8 @@ library(ggrepel)
 ## Read Data
 
 ```{r}
-sp_500_prices_tbl <- read_rds("~/GitHub/ss23-bdml-gcturemen/code_drafts/data/sp_500_prices_tbl.rds")
-sp_500_index_tbl <- read_rds("~/GitHub/ss23-bdml-gcturemen/code_drafts/data/sp_500_index_tbl.rds")
+sp_500_prices_tbl <- read_rds("data/sp_500_prices_tbl.rds")
+sp_500_index_tbl <- read_rds("data/sp_500_index_tbl.rds")
 ```
 
 ## Convert stock prices to a standardized format (daily returns)
@@ -48,11 +49,9 @@ sp_500_prices_tbl <- sp_500_prices_tbl %>%
   mutate(diff = adjusted - lag) %>%
   mutate(pct_return = diff / lag)
 
-sp_500_daily_returns_tbl <- sp_500_prices_tbl %>% 
-  select(symbol, date, pct_return)
+sp_500_daily_returns_tbl <- sp_500_prices_tbl %>% select(symbol, date, pct_return)
 
-sp_500_daily_returns_tbl %>% 
-  glimpse()
+sp_500_daily_returns_tbl %>% glimpse()
 ```
 
 ## Convert to User-Item Format
@@ -72,11 +71,11 @@ kmeans_obj <- stock_date_matrix_tbl %>%
   select(-symbol) %>%
   kmeans(centers = 4, nstart = 20)
 
-kmeans_obj %>% 
-  glance()
+kmeans_obj %>% glance()
 ```
 
 ## Find the optimal value of K
+
 Custom function `kmeans_mapper()`:
 ```{r}
 kmeans_mapper <- function(center = 3) {
@@ -85,13 +84,16 @@ kmeans_mapper <- function(center = 3) {
         kmeans(centers = center, nstart = 20)
 }
 ```
+
 Applying `kmeans_mapper()` and `glance()` functions iteratively:
 ```{r}
 #| warning: false
+
 k_means_mapped_tbl <- tibble(centers = 1:30) %>%
   mutate(k_means = centers %>% map(kmeans_mapper)) %>%
   mutate(glance  = k_means %>% map(glance))
 ```
+
 Visualizing the result as a __Scree Plot:__
 ```{r}
 k_means_mapped_tbl %>%
@@ -107,12 +109,9 @@ k_means_mapped_tbl %>%
        subtitle = "Total within-cluster sum of squares for various number of centers",
        caption = "Conclusion: Based on the Scree Plot, a value between 5-10 can be chosen for the number of centers.") +
   theme(
-    panel.background = element_rect(fill = "#222222"),
+    panel.background = element_blank(),
     panel.border = element_rect(color = "white", fill = NA),
     plot.background = element_rect(fill = "#222222"),
-    #panel.grid = element_line(color = "white"),
-    #legend.background = element_rect(fill='transparent'),
-    #legend.box.background = element_rect(fill='transparent')
     line = element_line(color = "white"),
     text = element_text(color = "white"),
     axis.ticks = element_line(color = "white"),
@@ -128,25 +127,29 @@ umap_results <- stock_date_matrix_tbl %>%
   select(-symbol) %>% 
   umap()
 ```
+
 Combining the `layout` from the `umap_results` with the `symbol` column from the `stock_date_matrix_tbl`:
 ```{r}
 #| output: false
+
 umap_results_tbl <- umap_results$layout %>%
   as_tibble(.name_repair = "unique") %>%
   set_names(c("x", "y")) %>%
   bind_cols(stock_date_matrix_tbl %>% select(symbol))
 ```
+
 Visualizing the `umap_results_tbl`:
 ```{r}
 #| warning: false
+
 umap_results_tbl %>%
+  
   ggplot(aes(x, y)) +
   geom_point(alpha = 0.5, size = 0.5, color = '#2DC6D6') + 
-  geom_label_repel(aes(label = symbol), size = 1, max.overlaps = 20, label.padding = 0.10, color = '#FF8014', seed = 777, nudge_x = 0.25, nudge_y = 0.05, fill = "#282A36") + 
-  #theme_tq() + 
+  geom_label_repel(aes(label = symbol), size = 1, max.overlaps = 15, label.padding = 0.10, color = '#FF8014', seed = 777, nudge_x = 0.25, nudge_y = 0.05, fill = "#282A36") + 
   labs(title = 'UMAP 2D Projection') +
   theme(
-    panel.background = element_rect(fill = "#222222"),
+    panel.background = element_blank(),
     panel.border = element_rect(color = "white", fill = NA),
     plot.background = element_rect(fill = "#222222"),
     line = element_line(color = "white"),
@@ -164,6 +167,7 @@ k_means_obj <- k_means_mapped_tbl %>%
   pull(k_means) %>%
   pluck(10)
 ```
+
 Combining the clusters from `k_means_obj` with `umap_results_tbl`:
 ```{r}
 k_means_10_clusters_tbl <- k_means_obj %>% 
@@ -175,29 +179,26 @@ umap_kmeans_results_tbl <-  k_means_10_clusters_tbl %>%
   left_join(sp_500_index_tbl %>% select(symbol, company, sector), by = 'symbol')
   
 ```
+
 Visualizing the K-Means and UMAP results:
 ```{r}
 #| warning: false
+
 umap_kmeans_results_tbl %>%
   mutate(label_text = str_glue("Symbol: {symbol}
                                  Cluster: {.cluster}")) %>%
   
-  ggplot(aes(x, y, color = .cluster)) +
-  
-  # Geometries
+  ggplot(aes(x, y, color = .cluster)) + 
   geom_point(alpha = 0.5, size = 0.5) +
-  geom_label_repel(aes(label = label_text), size = 1,max.overlaps = 20, fill = "#282A36", label.padding = 0.10, nudge_x = 0.25, nudge_y = 0.05) +
-  
-  # Formatting
+  geom_label_repel(aes(label = label_text), size = 1,max.overlaps = 15, fill = "#282A36", label.padding = 0.10, nudge_x = 0.25, nudge_y = 0.05) +
   scale_color_discrete() +
   labs(title = "Company Segmentation: 2D Projection",
        subtitle = "UMAP 2D Projection with K-Means Cluster Assignment") +
   theme(
     legend.position = "none",
-    #legend.key = element_rect(fill = umap_kmeans_results_tbl$.cluster),
-    panel.background = element_rect(fill = "#222222"),
+    panel.background = element_blank(),
     panel.border = element_rect(color = "white", fill = NA),
-    legend.background = element_rect(fill = "#222222"),
+    legend.background = element_blank(),
     plot.background = element_rect(fill = "#222222"),
     line = element_line(color = "white"),
     text = element_text(color = "white"),

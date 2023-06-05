@@ -9,10 +9,10 @@ Our goal is to figure out what gaps exist in the products of a bike manufacturer
 
 # Objectives
 
-Apply your knowledge on regression on a business case. You will specifically apply:
+We will apply our knowledge on regression on a business case. We will specifically apply:
 
 - Modeling: `parsnip`
-- Pre-processing: `recipes` and `rsample``
+- Pre-processing: `recipes` and `rsample`
 - Bundling the model and recipe: `workflows`
 - Evaluation: `yardstick`
 - Visualization : `ggplot2`
@@ -23,6 +23,7 @@ Apply your knowledge on regression on a business case. You will specifically app
 
 ```{r}
 #| output: false
+
 library(tidyverse)  
 library(parsnip)  
 library(recipes)  
@@ -34,13 +35,15 @@ library(yardstick)
 ## Read Data
 
 ```{r}
-bike_orderlines_tbl <- readRDS(
-  "~/GitHub/ss23-bdml-gcturemen/code_drafts/data/bike_orderlines.rds")
+bike_orderlines_tbl <- readRDS("data/bike_orderlines.rds")
 
-bike_features_tbl <- readRDS(
-  "~/GitHub/ss23-bdml-gcturemen/code_drafts/data/bike_features_tbl.rds")
+bike_features_tbl <- readRDS("data/bike_features_tbl.rds")
 
 bike_orderlines_tbl %>% glimpse()
+```
+
+```{r}
+bike_features_tbl %>% glimpse()
 ```
 
 ## Data Exploration
@@ -48,6 +51,7 @@ bike_orderlines_tbl %>% glimpse()
 We will visualize the data to determine possible product gaps. It would be interesting to see the sales for each `category_2` separated by the frame material. However, we do not have the sales number. Instead, we will use the stock numbers as a proxy:
 ```{r}
 #| output: false
+
 model_num_sold_tbl <- bike_orderlines_tbl %>% 
   select(quantity, model) %>%
   group_by(model) %>%
@@ -70,16 +74,19 @@ model_sales_tbl
 
 ```{r}
 #| echo: false
+
 model_sales_tbl
 ```
 
 Visualizing the `model_sales_tbl`:
 ```{r}
 #| warning: false
+
 model_sales_tbl %>% 
   mutate(category_2 = as_factor(category_2) %>% 
            fct_reorder(revenue, .fun = max) %>% 
            fct_rev()) %>% 
+  
   ggplot(aes(frame_material, revenue)) +
   geom_violin() +
   geom_jitter(width = 0.1, alpha = 0.5, color = "#2DC6D6") +
@@ -90,7 +97,7 @@ model_sales_tbl %>%
   labs(title = "Total Sales for Each Model",
     x = "Frame Material", y = "Revenue") +
   theme(
-    panel.background = element_rect(fill = "#222222"),
+    panel.background = element_blank(),
     panel.border = element_rect(color = "white", fill = NA),
     plot.background = element_rect(fill = "#222222"),
     line = element_line(color = "white"),
@@ -100,16 +107,16 @@ model_sales_tbl %>%
   )
 ```
 
-## Create the model
+## Build the model
 
+Create a `parsnip` specification for linear regression:
 ```{r}
-linear_model <- 
-  linear_reg("regression") %>%
-  set_engine("lm")
+linear_model <- linear_reg("regression") %>% set_engine("lm")
 ```
 
 ## Split the data
 
+Split the data into training and test sets:
 ```{r}
 set.seed(1036)
 split_obj <- initial_split(bike_features_tbl, prop = 0.80, strata = "category_2")
@@ -125,15 +132,14 @@ test_tbl  <- test_tbl  %>%
 
 ## Create the recipe
 
+To determine the `price` of bikes we will use `category_2`, `frame_material` and `Rear_Derailleur`. Since they are not numeric, we will create dummy variables from them:
 ```{r}
-sales_rec <- 
-  recipe(price ~ ., data = train_tbl %>% 
-           select(-c(bike_id:model_year),
-                  -weight,
-                  -category_1,
-                  -c(category_3:Fork),
-                  -c(Front_Derailleur:Brake_Rotor))) %>%
-  step_novel(all_predictors(), -all_numeric()) %>%
+sales_rec <- recipe(price ~ ., data = train_tbl %>% 
+                      select(-c(bike_id:model_year), 
+                             -weight, 
+                             -category_1, 
+                             -c(category_3:Fork), 
+                             -c(Front_Derailleur:Brake_Rotor))) %>% 
   step_dummy(all_nominal(), -all_outcomes(), one_hot = T) %>%
   step_zv(all_predictors()) %>%
   prep()
@@ -145,8 +151,7 @@ sales_rec
 
 Bundle the `linear_model` and `sales_rec` together:
 ```{r}
-sales_wflow <- 
-  workflow() %>% 
+sales_wflow <- workflow() %>% 
   add_model(linear_model) %>% 
   add_recipe(sales_rec)
 
@@ -155,9 +160,7 @@ sales_wflow
 
 Fit the model to the training data:
 ```{r}
-sales_fit <- 
-  sales_wflow %>% 
-  fit(data = train_tbl)
+sales_fit <- sales_wflow %>% fit(data = train_tbl)
 ```
 
 ## Evaluate the model
@@ -177,8 +180,11 @@ calc_metrics <- function(model, new_data = test_tbl) {
 }
 ```
 
+Evaluate the model using `calc_metrics()` helper function:
 ```{r}
 #| warning: false
-sales_fit %>% 
-  calc_metrics(test_tbl)
+
+sales_fit %>% calc_metrics(test_tbl)
 ```
+
+From the metrics, it is seen that our linear regression model has acceptable performance.

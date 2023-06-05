@@ -204,7 +204,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link" data-scroll-target="#import-libraries"><span class="toc-section-number">3.1</span>  Import Libraries</a></li>
   <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data"><span class="toc-section-number">3.2</span>  Read Data</a></li>
   <li><a href="#data-exploration" id="toc-data-exploration" class="nav-link" data-scroll-target="#data-exploration"><span class="toc-section-number">3.3</span>  Data Exploration</a></li>
-  <li><a href="#create-the-model" id="toc-create-the-model" class="nav-link" data-scroll-target="#create-the-model"><span class="toc-section-number">3.4</span>  Create the model</a></li>
+  <li><a href="#build-the-model" id="toc-build-the-model" class="nav-link" data-scroll-target="#build-the-model"><span class="toc-section-number">3.4</span>  Build the model</a></li>
   <li><a href="#split-the-data" id="toc-split-the-data" class="nav-link" data-scroll-target="#split-the-data"><span class="toc-section-number">3.5</span>  Split the data</a></li>
   <li><a href="#create-the-recipe" id="toc-create-the-recipe" class="nav-link" data-scroll-target="#create-the-recipe"><span class="toc-section-number">3.6</span>  Create the recipe</a></li>
   <li><a href="#create-the-workflow" id="toc-create-the-workflow" class="nav-link" data-scroll-target="#create-the-workflow"><span class="toc-section-number">3.7</span>  Create the workflow</a></li>
@@ -239,11 +239,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Our goal is to figure out what gaps exist in the products of a bike manufacturer and come up with a pricing algorithm that will help us to determine a price, if we were to come up with products in that product category.</p>
 </section><section id="objectives" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Objectives</h1>
-<p>Apply your knowledge on regression on a business case. You will specifically apply:</p>
+<p>We will apply our knowledge on regression on a business case. We will specifically apply:</p>
 <ul>
 <li>Modeling: <code>parsnip</code>
 </li>
-<li>Pre-processing: <code>recipes</code> and `rsample``</li>
+<li>Pre-processing: <code>recipes</code> and <code>rsample</code>
+</li>
 <li>Bundling the model and recipe: <code>workflows</code>
 </li>
 <li>Evaluation: <code>yardstick</code>
@@ -254,7 +255,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span class="header-section-number">3</span> Solution</h1>
 <section id="import-libraries" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="import-libraries">
 <span class="header-section-number">3.1</span> Import Libraries</h2>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-1_6edb766cfa011a770837d9766a63fecb">
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-1_810dcb06651716e1700319e17780573b">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)  </span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(parsnip)  </span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(recipes)  </span>
@@ -264,14 +265,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </section><section id="read-data" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="read-data">
 <span class="header-section-number">3.2</span> Read Data</h2>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-2_bb69a74e1bfe4af61754cf4a8aa937db">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>bike_orderlines_tbl <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  <span class="st">"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/bike_orderlines.rds"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3"></a></span>
-<span id="cb2-4"><a href="#cb2-4"></a>bike_features_tbl <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(</span>
-<span id="cb2-5"><a href="#cb2-5"></a>  <span class="st">"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/bike_features_tbl.rds"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6"></a></span>
-<span id="cb2-7"><a href="#cb2-7"></a>bike_orderlines_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-2_16d3dc278950cc04c6761267bf213bcf">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>bike_orderlines_tbl <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/bike_orderlines.rds"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>bike_features_tbl <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/bike_features_tbl.rds"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a>bike_orderlines_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Rows: 15,644
 #&gt; Columns: 18
@@ -295,30 +294,104 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt; $ lng            &lt;dbl&gt; 10.015340, 10.015340, 8.826754, 8.826754, 9.180819, 9.1…</code></pre>
 </div>
 </div>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-3_b62cd3a1814480d84c5171ffcec9f17f">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>bike_features_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 231
+#&gt; Columns: 67
+#&gt; $ bike_id                     &lt;dbl&gt; 2875, 2873, 2874, 2876, 2877, 2225, 2091, …
+#&gt; $ model                       &lt;chr&gt; "Aeroad CF SL Disc 8.0 Di2", "Aeroad CF SL…
+#&gt; $ model_year                  &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2019, 2019, …
+#&gt; $ frame_material              &lt;chr&gt; "carbon", "carbon", "carbon", "carbon", "c…
+#&gt; $ weight                      &lt;dbl&gt; 7.60, 7.27, 7.10, 7.73, 7.83, 6.80, 6.80, …
+#&gt; $ price                       &lt;dbl&gt; 4579, 6919, 6429, 5069, 3609, 6139, 5359, …
+#&gt; $ category_1                  &lt;chr&gt; "Road", "Road", "Road", "Road", "Road", "R…
+#&gt; $ category_2                  &lt;chr&gt; "Race", "Race", "Race", "Race", "Race", "R…
+#&gt; $ category_3                  &lt;chr&gt; "Aeroad", "Aeroad", "Aeroad", "Aeroad", "A…
+#&gt; $ gender                      &lt;chr&gt; "unisex", "unisex", "unisex", "unisex", "u…
+#&gt; $ url                         &lt;chr&gt; "https://www.canyon.com/en-de/road-bikes/r…
+#&gt; $ Frame                       &lt;chr&gt; "Canyon Aeroad CF SL Disc", "Canyon Aeroad…
+#&gt; $ Fork                        &lt;chr&gt; "Canyon FK0041 CF SLX Disc", "Canyon FK004…
+#&gt; $ `Rear Derailleur`           &lt;chr&gt; "Shimano Ultegra Di2 R8050 SS", "SRAM RED …
+#&gt; $ `Front Derailleur`          &lt;chr&gt; "Shimano Ultegra Di2 R8050", "SRAM RED eTa…
+#&gt; $ Cassette                    &lt;chr&gt; "Shimano Ultegra R8000, 11-speed, 11-28T",…
+#&gt; $ Crank                       &lt;chr&gt; "Shimano Ultegra R8000", "SRAM RED D1", "S…
+#&gt; $ `Bottom bracket`            &lt;chr&gt; "Shimano Pressfit BB72", "SRAM Pressfit RE…
+#&gt; $ `Thru Axle`                 &lt;chr&gt; "Canyon Thru Axle", "Canyon Thru Axle", "C…
+#&gt; $ Cockpit                     &lt;chr&gt; "Canyon H36 Aerocockpit CF", "Canyon H36 A…
+#&gt; $ Saddle                      &lt;chr&gt; "Selle Italia SLR", "Selle Italia SLR", "S…
+#&gt; $ Seatpost                    &lt;chr&gt; "Canyon S27 Aero VCLS CF", "Canyon S27 Aer…
+#&gt; $ Pedals                      &lt;chr&gt; "None included", "None included", "None in…
+#&gt; $ `Derailleur hanger`         &lt;chr&gt; "Shop Derailleur Hanger GP0211-01", "Shop …
+#&gt; $ Battery                     &lt;chr&gt; "", "SRAM eTap Powerpack", "", "SRAM eTap …
+#&gt; $ Brake                       &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Shift Lever`               &lt;chr&gt; "", "", "", "", "", "", "Shimano Di2 Remot…
+#&gt; $ Chain                       &lt;chr&gt; "", "", "", "", "", "", "Shimano CN-HG901 …
+#&gt; $ Stem                        &lt;chr&gt; "", "", "", "", "", "", "", "Canyon V13", …
+#&gt; $ Handlebar                   &lt;chr&gt; "", "", "", "", "", "", "", "Canyon H16 Ae…
+#&gt; $ Headset                     &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ Motor                       &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Battery Charger`           &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Flat Pedals`               &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ Chainguard                  &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Aero Bar`                  &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Brake Lever / Master`      &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Wheel Tire System`         &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Suspension Fork`           &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Disc Brake`                &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ Grips                       &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ Chainring                   &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ Display                     &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ Modeswitch                  &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Rear Shock`                &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ Light                       &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ Fender                      &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Bike Racks`                &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Brake 1`                   &lt;chr&gt; "", "", "", "", "", "SRAM S-900 Direct Mou…
+#&gt; $ `Brake 2`                   &lt;chr&gt; "", "", "", "", "", "SRAM S-900 Direct Mou…
+#&gt; $ `Shift-/ Brake Lever 1`     &lt;chr&gt; "Shimano Ultegra Di2 R8070, 11-speed", "SR…
+#&gt; $ `Shift-/ Brake Lever 2`     &lt;chr&gt; "Shimano Ultegra Di2 R8070, 11-speed", "SR…
+#&gt; $ `Wheel 1`                   &lt;chr&gt; "DT Swiss ARC 1400 Dicut", "DT Swiss ARC 1…
+#&gt; $ `Wheel 2`                   &lt;chr&gt; "DT Swiss ARC 1400 Dicut", "DT Swiss ARC 1…
+#&gt; $ `Tyre 1`                    &lt;chr&gt; "Continental Grand Prix 5000 / Attack  23 …
+#&gt; $ `Tyre 2`                    &lt;chr&gt; "Continental Grand Prix 5000, 25 mm", "Con…
+#&gt; $ `Handlebar Tape 1`          &lt;chr&gt; "Canyon Ergospeed Gel", "Canyon Ergospeed …
+#&gt; $ `Handlebar Tape 2`          &lt;chr&gt; "Canyon bar-end plug", "Canyon bar-end plu…
+#&gt; $ `Manuals and Accessories 1` &lt;chr&gt; "Canyon tool case", "Canyon tool case", "C…
+#&gt; $ `Manuals and Accessories 2` &lt;chr&gt; "DT Swiss warranty &amp; intended use manual",…
+#&gt; $ `Manuals and Accessories 3` &lt;chr&gt; "Canyon starter box", "Canyon starter box"…
+#&gt; $ `Manuals and Accessories 4` &lt;chr&gt; "", "", "", "", "", "", "", "", "", "BAG R…
+#&gt; $ `Manuals and Accessories 5` &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Manuals and Accessories 6` &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Manuals and Accessories 7` &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Manuals and Accessories 8` &lt;chr&gt; "", "", "", "", "", "", "", "", "", "", ""…
+#&gt; $ `Brake Rotor`               &lt;list&gt; "Shimano RT800", "SRAM Centerline X", "Sh…</code></pre>
+</div>
+</div>
 </section><section id="data-exploration" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="data-exploration">
 <span class="header-section-number">3.3</span> Data Exploration</h2>
 <p>We will visualize the data to determine possible product gaps. It would be interesting to see the sales for each <code>category_2</code> separated by the frame material. However, we do not have the sales number. Instead, we will use the stock numbers as a proxy:</p>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-3_8d98196e2c2622d2bdf8ae1c0fe6e897">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>model_num_sold_tbl <span class="ot">&lt;-</span> bike_orderlines_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2"></a>  <span class="fu">select</span>(quantity, model) <span class="sc">%&gt;%</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>  <span class="fu">group_by</span>(model) <span class="sc">%&gt;%</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a>  <span class="fu">summarise</span>(<span class="at">num_sold =</span> <span class="fu">sum</span>(quantity)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(num_sold))</span>
-<span id="cb4-7"><a href="#cb4-7"></a></span>
-<span id="cb4-8"><a href="#cb4-8"></a>model_sales_tbl <span class="ot">&lt;-</span> bike_orderlines_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb4-9"><a href="#cb4-9"></a>  <span class="fu">select</span>(total_price, model, category_2, frame_material) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-10"><a href="#cb4-10"></a>  <span class="fu">group_by</span>(model, category_2, frame_material) <span class="sc">%&gt;%</span></span>
-<span id="cb4-11"><a href="#cb4-11"></a>  <span class="fu">summarise</span>(<span class="at">revenue =</span> <span class="fu">sum</span>(total_price)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-12"><a href="#cb4-12"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-13"><a href="#cb4-13"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(revenue))</span>
-<span id="cb4-14"><a href="#cb4-14"></a></span>
-<span id="cb4-15"><a href="#cb4-15"></a>model_sales_tbl <span class="ot">&lt;-</span> model_sales_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb4-16"><a href="#cb4-16"></a>  <span class="fu">inner_join</span>(model_num_sold_tbl)</span>
-<span id="cb4-17"><a href="#cb4-17"></a></span>
-<span id="cb4-18"><a href="#cb4-18"></a>model_sales_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-4_1086f1b5fc5f9ee3381a61f19bf8ce8e">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>model_num_sold_tbl <span class="ot">&lt;-</span> bike_orderlines_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2"></a>  <span class="fu">select</span>(quantity, model) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>  <span class="fu">group_by</span>(model) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>  <span class="fu">summarise</span>(<span class="at">num_sold =</span> <span class="fu">sum</span>(quantity)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(num_sold))</span>
+<span id="cb6-7"><a href="#cb6-7"></a></span>
+<span id="cb6-8"><a href="#cb6-8"></a>model_sales_tbl <span class="ot">&lt;-</span> bike_orderlines_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb6-9"><a href="#cb6-9"></a>  <span class="fu">select</span>(total_price, model, category_2, frame_material) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-10"><a href="#cb6-10"></a>  <span class="fu">group_by</span>(model, category_2, frame_material) <span class="sc">%&gt;%</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>  <span class="fu">summarise</span>(<span class="at">revenue =</span> <span class="fu">sum</span>(total_price)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(revenue))</span>
+<span id="cb6-14"><a href="#cb6-14"></a></span>
+<span id="cb6-15"><a href="#cb6-15"></a>model_sales_tbl <span class="ot">&lt;-</span> model_sales_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb6-16"><a href="#cb6-16"></a>  <span class="fu">inner_join</span>(model_num_sold_tbl)</span>
+<span id="cb6-17"><a href="#cb6-17"></a></span>
+<span id="cb6-18"><a href="#cb6-18"></a>model_sales_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-4_ef6eb9378d0c8fb46a0ad3251e1099c0">
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-5_2ec083a16cee11bc79ae2187d7a2551a">
 <div class="cell-output-display">
 
 <div data-pagedtable="false">
@@ -329,73 +402,73 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <p>Visualizing the <code>model_sales_tbl</code>:</p>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-5_43f60182d1fe9efe4092a12a1710eb61">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>model_sales_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb5-2"><a href="#cb5-2"></a>  <span class="fu">mutate</span>(<span class="at">category_2 =</span> <span class="fu">as_factor</span>(category_2) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-3"><a href="#cb5-3"></a>           <span class="fu">fct_reorder</span>(revenue, <span class="at">.fun =</span> max) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-4"><a href="#cb5-4"></a>           <span class="fu">fct_rev</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-5"><a href="#cb5-5"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(frame_material, revenue)) <span class="sc">+</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#2DC6D6"</span>) <span class="sc">+</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> category_2) <span class="sc">+</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">dollar_format</span>(<span class="at">scale =</span> <span class="fl">1e-6</span>, </span>
-<span id="cb5-10"><a href="#cb5-10"></a>                                                    <span class="at">suffix =</span> <span class="st">"M"</span>, </span>
-<span id="cb5-11"><a href="#cb5-11"></a>                                                    <span class="at">accuracy =</span> <span class="fl">0.1</span>)) <span class="sc">+</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Total Sales for Each Model"</span>,</span>
-<span id="cb5-13"><a href="#cb5-13"></a>    <span class="at">x =</span> <span class="st">"Frame Material"</span>, <span class="at">y =</span> <span class="st">"Revenue"</span>) <span class="sc">+</span></span>
-<span id="cb5-14"><a href="#cb5-14"></a>  <span class="fu">theme</span>(</span>
-<span id="cb5-15"><a href="#cb5-15"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb5-16"><a href="#cb5-16"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb5-17"><a href="#cb5-17"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb5-18"><a href="#cb5-18"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb5-19"><a href="#cb5-19"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb5-20"><a href="#cb5-20"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb5-21"><a href="#cb5-21"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb5-22"><a href="#cb5-22"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-6_1f026e977d08032372bbc8dedf3a54ef">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>model_sales_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2"></a>  <span class="fu">mutate</span>(<span class="at">category_2 =</span> <span class="fu">as_factor</span>(category_2) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3"></a>           <span class="fu">fct_reorder</span>(revenue, <span class="at">.fun =</span> max) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4"></a>           <span class="fu">fct_rev</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5"></a>  </span>
+<span id="cb7-6"><a href="#cb7-6"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(frame_material, revenue)) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#2DC6D6"</span>) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> category_2) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">dollar_format</span>(<span class="at">scale =</span> <span class="fl">1e-6</span>, </span>
+<span id="cb7-11"><a href="#cb7-11"></a>                                                    <span class="at">suffix =</span> <span class="st">"M"</span>, </span>
+<span id="cb7-12"><a href="#cb7-12"></a>                                                    <span class="at">accuracy =</span> <span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Total Sales for Each Model"</span>,</span>
+<span id="cb7-14"><a href="#cb7-14"></a>    <span class="at">x =</span> <span class="st">"Frame Material"</span>, <span class="at">y =</span> <span class="st">"Revenue"</span>) <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a>  <span class="fu">theme</span>(</span>
+<span id="cb7-16"><a href="#cb7-16"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-17"><a href="#cb7-17"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb7-18"><a href="#cb7-18"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb7-19"><a href="#cb7-19"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb7-20"><a href="#cb7-20"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb7-21"><a href="#cb7-21"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb7-22"><a href="#cb7-22"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><a href="02_regression_ii_files/figure-html/unnamed-chunk-5-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="02_regression_ii_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></a></p>
+<figure class="figure"><p><a href="02_regression_ii_files/figure-html/unnamed-chunk-6-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="02_regression_ii_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
-</section><section id="create-the-model" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="create-the-model">
-<span class="header-section-number">3.4</span> Create the model</h2>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-6_17ddbec4f30db98b9741990d67758aa6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>linear_model <span class="ot">&lt;-</span> </span>
-<span id="cb6-2"><a href="#cb6-2"></a>  <span class="fu">linear_reg</span>(<span class="st">"regression"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a>  <span class="fu">set_engine</span>(<span class="st">"lm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section><section id="build-the-model" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="build-the-model">
+<span class="header-section-number">3.4</span> Build the model</h2>
+<p>Create a <code>parsnip</code> specification for linear regression:</p>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-7_5073f8db36b6cafebeafe1f03a60a4f2">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>linear_model <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>(<span class="st">"regression"</span>) <span class="sc">%&gt;%</span> <span class="fu">set_engine</span>(<span class="st">"lm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="split-the-data" class="level2" data-number="3.5"><h2 data-number="3.5" class="anchored" data-anchor-id="split-the-data">
 <span class="header-section-number">3.5</span> Split the data</h2>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-7_cab9739f9a8096a466d1263cb49b9a84">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">set.seed</span>(<span class="dv">1036</span>)</span>
-<span id="cb7-2"><a href="#cb7-2"></a>split_obj <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(bike_features_tbl, <span class="at">prop =</span> <span class="fl">0.80</span>, <span class="at">strata =</span> <span class="st">"category_2"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3"></a></span>
-<span id="cb7-4"><a href="#cb7-4"></a>train_tbl <span class="ot">&lt;-</span> <span class="fu">training</span>(split_obj)</span>
-<span id="cb7-5"><a href="#cb7-5"></a>test_tbl  <span class="ot">&lt;-</span> <span class="fu">testing</span>(split_obj)</span>
-<span id="cb7-6"><a href="#cb7-6"></a></span>
-<span id="cb7-7"><a href="#cb7-7"></a>train_tbl <span class="ot">&lt;-</span> train_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a>  <span class="fu">set_names</span>(<span class="fu">str_replace_all</span>(<span class="fu">names</span>(train_tbl), <span class="st">" |-"</span>, <span class="st">"_"</span>))</span>
-<span id="cb7-9"><a href="#cb7-9"></a>test_tbl  <span class="ot">&lt;-</span> test_tbl  <span class="sc">%&gt;%</span> </span>
-<span id="cb7-10"><a href="#cb7-10"></a>  <span class="fu">set_names</span>(<span class="fu">str_replace_all</span>(<span class="fu">names</span>(test_tbl),  <span class="st">" |-"</span>, <span class="st">"_"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Split the data into training and test sets:</p>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-8_012dc6e4c844714100af2ee1c7f33e6d">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">set.seed</span>(<span class="dv">1036</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>split_obj <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(bike_features_tbl, <span class="at">prop =</span> <span class="fl">0.80</span>, <span class="at">strata =</span> <span class="st">"category_2"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a>train_tbl <span class="ot">&lt;-</span> <span class="fu">training</span>(split_obj)</span>
+<span id="cb9-5"><a href="#cb9-5"></a>test_tbl  <span class="ot">&lt;-</span> <span class="fu">testing</span>(split_obj)</span>
+<span id="cb9-6"><a href="#cb9-6"></a></span>
+<span id="cb9-7"><a href="#cb9-7"></a>train_tbl <span class="ot">&lt;-</span> train_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a>  <span class="fu">set_names</span>(<span class="fu">str_replace_all</span>(<span class="fu">names</span>(train_tbl), <span class="st">" |-"</span>, <span class="st">"_"</span>))</span>
+<span id="cb9-9"><a href="#cb9-9"></a>test_tbl  <span class="ot">&lt;-</span> test_tbl  <span class="sc">%&gt;%</span> </span>
+<span id="cb9-10"><a href="#cb9-10"></a>  <span class="fu">set_names</span>(<span class="fu">str_replace_all</span>(<span class="fu">names</span>(test_tbl),  <span class="st">" |-"</span>, <span class="st">"_"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="create-the-recipe" class="level2" data-number="3.6"><h2 data-number="3.6" class="anchored" data-anchor-id="create-the-recipe">
 <span class="header-section-number">3.6</span> Create the recipe</h2>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-8_87c040ef5a855a0a6ccc0c2dc0c0aa8d">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>sales_rec <span class="ot">&lt;-</span> </span>
-<span id="cb8-2"><a href="#cb8-2"></a>  <span class="fu">recipe</span>(price <span class="sc">~</span> ., <span class="at">data =</span> train_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb8-3"><a href="#cb8-3"></a>           <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(bike_id<span class="sc">:</span>model_year),</span>
-<span id="cb8-4"><a href="#cb8-4"></a>                  <span class="sc">-</span>weight,</span>
-<span id="cb8-5"><a href="#cb8-5"></a>                  <span class="sc">-</span>category_1,</span>
-<span id="cb8-6"><a href="#cb8-6"></a>                  <span class="sc">-</span><span class="fu">c</span>(category_3<span class="sc">:</span>Fork),</span>
-<span id="cb8-7"><a href="#cb8-7"></a>                  <span class="sc">-</span><span class="fu">c</span>(Front_Derailleur<span class="sc">:</span>Brake_Rotor))) <span class="sc">%&gt;%</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a>  <span class="fu">step_novel</span>(<span class="fu">all_predictors</span>(), <span class="sc">-</span><span class="fu">all_numeric</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal</span>(), <span class="sc">-</span><span class="fu">all_outcomes</span>(), <span class="at">one_hot =</span> T) <span class="sc">%&gt;%</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a>  <span class="fu">prep</span>()</span>
-<span id="cb8-12"><a href="#cb8-12"></a></span>
-<span id="cb8-13"><a href="#cb8-13"></a>sales_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To determine the <code>price</code> of bikes we will use <code>category_2</code>, <code>frame_material</code> and <code>Rear_Derailleur</code>. Since they are not numeric, we will create dummy variables from them:</p>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-9_727a3961ed5aedb3b16d00d61938a558">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>sales_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price <span class="sc">~</span> ., <span class="at">data =</span> train_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2"></a>                      <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(bike_id<span class="sc">:</span>model_year), </span>
+<span id="cb10-3"><a href="#cb10-3"></a>                             <span class="sc">-</span>weight, </span>
+<span id="cb10-4"><a href="#cb10-4"></a>                             <span class="sc">-</span>category_1, </span>
+<span id="cb10-5"><a href="#cb10-5"></a>                             <span class="sc">-</span><span class="fu">c</span>(category_3<span class="sc">:</span>Fork), </span>
+<span id="cb10-6"><a href="#cb10-6"></a>                             <span class="sc">-</span><span class="fu">c</span>(Front_Derailleur<span class="sc">:</span>Brake_Rotor))) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-7"><a href="#cb10-7"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal</span>(), <span class="sc">-</span><span class="fu">all_outcomes</span>(), <span class="at">one_hot =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>  <span class="fu">prep</span>()</span>
+<span id="cb10-10"><a href="#cb10-10"></a></span>
+<span id="cb10-11"><a href="#cb10-11"></a>sales_rec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; </code></pre>
 </div>
@@ -431,34 +504,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>#&gt; ── Operations</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>#&gt; • Novel factor level assignment for: frame_material, category_2, ... | Trained</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
 <pre><code>#&gt; • Dummy variables from: frame_material, category_2, Rear_Derailleur | Trained</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>#&gt; • Zero variance filter removed: frame_material_new, ... | Trained</code></pre>
+<pre><code>#&gt; • Zero variance filter removed: &lt;none&gt; | Trained</code></pre>
 </div>
 </div>
 </section><section id="create-the-workflow" class="level2" data-number="3.7"><h2 data-number="3.7" class="anchored" data-anchor-id="create-the-workflow">
 <span class="header-section-number">3.7</span> Create the workflow</h2>
 <p>Bundle the <code>linear_model</code> and <code>sales_rec</code> together:</p>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-9_cafcd54811eeb10fc6fc6d076ea9a372">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>sales_wflow <span class="ot">&lt;-</span> </span>
-<span id="cb23-2"><a href="#cb23-2"></a>  <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb23-3"><a href="#cb23-3"></a>  <span class="fu">add_model</span>(linear_model) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-4"><a href="#cb23-4"></a>  <span class="fu">add_recipe</span>(sales_rec)</span>
-<span id="cb23-5"><a href="#cb23-5"></a></span>
-<span id="cb23-6"><a href="#cb23-6"></a>sales_wflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-10_0f64a5dd5d8582e6cb2b5fc2292f2b9c">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>sales_wflow <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2"></a>  <span class="fu">add_model</span>(linear_model) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3"></a>  <span class="fu">add_recipe</span>(sales_rec)</span>
+<span id="cb24-4"><a href="#cb24-4"></a></span>
+<span id="cb24-5"><a href="#cb24-5"></a>sales_wflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; ══ Workflow ════════════════════════════════════════════════════════════════════
 #&gt; Preprocessor: Recipe
 #&gt; Model: linear_reg()
 #&gt; 
 #&gt; ── Preprocessor ────────────────────────────────────────────────────────────────
-#&gt; 3 Recipe Steps
+#&gt; 2 Recipe Steps
 #&gt; 
-#&gt; • step_novel()
 #&gt; • step_dummy()
 #&gt; • step_zv()
 #&gt; 
@@ -469,25 +537,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <p>Fit the model to the training data:</p>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-10_0b55e22582ffe19baf503b0518f433ee">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>sales_fit <span class="ot">&lt;-</span> </span>
-<span id="cb25-2"><a href="#cb25-2"></a>  sales_wflow <span class="sc">%&gt;%</span> </span>
-<span id="cb25-3"><a href="#cb25-3"></a>  <span class="fu">fit</span>(<span class="at">data =</span> train_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-11_917c4e546b8d657884fc4ecc11817a08">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>sales_fit <span class="ot">&lt;-</span> sales_wflow <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="at">data =</span> train_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="evaluate-the-model" class="level2" data-number="3.8"><h2 data-number="3.8" class="anchored" data-anchor-id="evaluate-the-model">
 <span class="header-section-number">3.8</span> Evaluate the model</h2>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-12_b0213cc6d7a37e06c67525f40c7b08f9">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>sales_fit <span class="sc">%&gt;%</span> </span>
-<span id="cb26-2"><a href="#cb26-2"></a>  <span class="fu">calc_metrics</span>(test_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Evaluate the model using <code>calc_metrics()</code> helper function:</p>
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-13_152c7af6f6e3035c1e0223af198f263d">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>sales_fit <span class="sc">%&gt;%</span> <span class="fu">calc_metrics</span>(test_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":[".metric"],"name":[1],"type":["chr"],"align":["left"]},{"label":[".estimator"],"name":[2],"type":["chr"],"align":["left"]},{"label":[".estimate"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"rmse","2":"standard","3":"1467.7182918"},{"1":"rsq","2":"standard","3":"0.4653537"},{"1":"mae","2":"standard","3":"935.3343110"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[".metric"],"name":[1],"type":["chr"],"align":["left"]},{"label":[".estimator"],"name":[2],"type":["chr"],"align":["left"]},{"label":[".estimate"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"rmse","2":"standard","3":"727.4804596"},{"1":"rsq","2":"standard","3":"0.8197275"},{"1":"mae","2":"standard","3":"565.6929620"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
 </div>
+<p>From the metrics, it is seen that our linear regression model has acceptable performance.</p>
 
 
 </section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
@@ -739,7 +806,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","descPosition":"bottom","selector":".lightbox","loop":true,"closeEffect":"zoom"});</script>
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","loop":true,"closeEffect":"zoom","openEffect":"zoom"});</script>
 
 
 </body></html>
