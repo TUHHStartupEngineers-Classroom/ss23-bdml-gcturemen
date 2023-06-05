@@ -237,25 +237,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header><section id="challenge-summary" class="level1" data-number="1"><h1 data-number="1">
 <span class="header-section-number">1</span> Challenge Summary</h1>
 <p>Attrition is a problem that impacts all businesses, irrespective of geography, industry and size of the company. Employee attrition leads to significant costs for a business, including the cost of business disruption, hiring new staff and training new staff.</p>
-<p>Our goal is to use classification models to predict if an employee is likely to quit so that the situation can be intervened on time and remedied to prevent attrition.</p>
+<p>We will use classification models to predict if an employee is likely to quit so that the situation can be intervened on time and remedied to prevent attrition.</p>
 </section><section id="objectives" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Objectives</h1>
-<p>Use your learning from descriptive features and <code>plot_ggpairs()</code> to further investigate the features and answer the related questions.</p>
+<p>We will use our learning from descriptive features and <code>plot_ggpairs()</code> to further investigate the features of the employee attrition dataset and answer the related questions.</p>
 </section><section id="solution" class="level1" data-number="3"><h1 data-number="3">
 <span class="header-section-number">3</span> Solution</h1>
 <section id="import-libraries" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="import-libraries">
 <span class="header-section-number">3.1</span> Import Libraries</h2>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-1_d5aa22655d570af350b2821796592e89">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-1_116c3e2380f1ad3750bd31d87f55916a">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(GGally)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="read-data" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="read-data">
 <span class="header-section-number">3.2</span> Read Data</h2>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-2_7de5736546c40221fd7503173259b68e">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-2_e12a09efb351a7b3836d828340bd735b">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>employee_attrition_tbl <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  <span class="st">"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/datasets-1067-1925-WA_Fn-UseC_-HR-Employee-Attrition.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2"></a>  <span class="st">"data/datasets-1067-1925-WA_Fn-UseC_-HR-Employee-Attrition.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-3_5f291c9887825713fa125399f37d9e2f">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-3_ddcf8a13fb4b7cce7be0a1a7f29c6cf7">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Rows: 1,470
 #&gt; Columns: 35
@@ -298,7 +298,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </section><section id="compensation-features" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="compensation-features">
 <span class="header-section-number">3.3</span> Compensation Features</h2>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-5_f4fcc70655e0488bf08337c6e31adc3f">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-5_b1fce1ea57a17528fdecd463c6413cea">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-5-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></a></p>
@@ -311,21 +311,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 b. That those are staying have a lower Monthly Income
 c. Those that are leaving have a lower Monthly Income
 d. It's difficult to deduce anything based on the visualization</code></pre>
-<p><strong>Answer:</strong> From the figure it can be seen that the employees that are leaving have a lower Monthly income. The answer is c.</p>
+<p><strong>Answer:</strong> Looking at the second figure in the diagonal it can be seen that the employees that are leaving have a peak at a lower monthly income value compared to those that are staying. The answer is c.</p>
 <p><strong>Question:</strong> What can you deduce about the interaction between Percent Salary Hike and Attrition?</p>
 <pre><code>a. Those that are leaving the company have a higher Percent Salary Hike
 b. Those that are staying have a lower Percent Salary Hike
 c. Those that are leaving have lower Percent Salary Hike
 d. It's difficult to deduce anything based on the visualization</code></pre>
-<p><strong>Answer:</strong> Since the curves in the figure are similar, it is difficult to make any comments. The answer is d.</p>
+<p><strong>Answer:</strong> Looking at the sixth figure in the diagonal, it is seen that distributions for both employee groups are similar so it is difficult to make any comments. The answer is d.</p>
 <p><strong>Question:</strong> What can you deduce about the interaction between Stock Option Level and Attrition?</p>
 <pre><code>a. Those that are leaving the company have a higher stock option level
 b. Those that are staying have a higher stock option level
 c. It's difficult to deduce anything based on the visualization</code></pre>
-<p><strong>Answer:</strong> Since the number of staying employees are higher at high stock option levels (1, 2) the answer is b.</p>
+<p><strong>Answer:</strong> Since the number of staying employees are concentrated around higher stock option levels (1, 2) compared to the employees that are leaving (0) the answer is b.</p>
 </section><section id="survey-results" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="survey-results">
 <span class="header-section-number">3.4</span> Survey results</h2>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-6_4789bf910e53e5b1d23664cf2a9504bd">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-6_81658bf8001d2cf850a9fee2c2131881">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-6-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></a></p>
@@ -343,10 +343,10 @@ c. It's difficult to deduce anything based on the visualization</code></pre>
 b. Those that are staying have a higher density of 2's and 3's
 c. Those that are staying have a lower density of 2's and 3's
 d. It's difficult to deduce anything based on the visualization</code></pre>
-<p><strong>Answer:</strong> From the figure, it can be seen that staying employees have a higher density of 2’s and 3’s. The answer is b.</p>
+<p><strong>Answer:</strong> From the fifth figure in the diagonal, it can be seen that staying employees have a higher density of 2’s and 3’s. The answer is b.</p>
 </section><section id="performance-data" class="level2" data-number="3.5"><h2 data-number="3.5" class="anchored" data-anchor-id="performance-data">
 <span class="header-section-number">3.5</span> Performance Data</h2>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-7_6ce5f9d13a028621484efe8ba33b6757">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-7_59fabb0bd707ac86e9e01c671524b4c2">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-7-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></a></p>
@@ -362,7 +362,7 @@ d. It's difficult to deduce anything based on the visualization</code></pre>
 <p><strong>Answer:</strong> From the figure, it can be seen that leaving employees have a lower density of 3’s and 4’s. The answer is a.</p>
 </section><section id="work-life-features" class="level2" data-number="3.6"><h2 data-number="3.6" class="anchored" data-anchor-id="work-life-features">
 <span class="header-section-number">3.6</span> Work-Life Features</h2>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-8_9a2273d07e8fc0f662027ffd9397f10a">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-8_bd3b3f3d0e2464d8f23f867890eec251">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-8-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></a></p>
@@ -376,7 +376,7 @@ b. The proportion of those staying that are working Over Time are high compared 
 <p><strong>Answer:</strong> Regarding Over Time, proportion of staying employees is higher in both groups. The answer is b.</p>
 </section><section id="training-and-education" class="level2" data-number="3.7"><h2 data-number="3.7" class="anchored" data-anchor-id="training-and-education">
 <span class="header-section-number">3.7</span> Training and Education</h2>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-9_59a860911821db5128bbc12a7ce60bb0">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-9_d1f56306b43e22fece551146460f6946">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-9-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></a></p>
@@ -388,10 +388,10 @@ b. The proportion of those staying that are working Over Time are high compared 
 <pre><code>a. People that leave tend to have more annual trainings
 b. People that leave tend to have less annual trainings
 c. It's difficult to deduce anything based on the visualization</code></pre>
-<p><strong>Answer:</strong> From the figure it can be seen that people that leave tend to have less annual trainings. The answer is b.</p>
+<p><strong>Answer:</strong> From the figure it is seen that distributions of both groups concentrate around similar values. The answer is c.</p>
 </section><section id="time-based-features" class="level2" data-number="3.8"><h2 data-number="3.8" class="anchored" data-anchor-id="time-based-features">
 <span class="header-section-number">3.8</span> Time-Based Features</h2>
-<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-10_b339c6c5fb6015dd4e4aa7687967b14e">
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-10_027a04f332c9109ef2262de84e76d5ee">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-10-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></a></p>
@@ -403,12 +403,12 @@ c. It's difficult to deduce anything based on the visualization</code></pre>
 <pre><code>a. People that leave tend to have more working years at the company
 b. People that leave tend to have less working years at the company
 c. It's difficult to deduce anything based on the visualization</code></pre>
-<p><strong>Answer:</strong> It is apparent that people that leave tend to have less working years at the company. The answer is b.</p>
+<p><strong>Answer:</strong> It is apparent that people that leave tend to have less working years at the company because corresponding distribution peaks at a smaller value. The answer is b.</p>
 <p><strong>Question:</strong> What can you deduce about the interaction between Years Since Last Promotion and Attrition?</p>
 <pre><code>a. Those that are leaving have more years since last promotion than those that are staying
 b. Those that are leaving have fewer years since last promotion than those that are staying
 c. It's difficult to deduce anything based on the visualization</code></pre>
-<p><strong>Answer:</strong> Since both curves are similar in the figure it is hard to make a decision. The answer is c.</p>
+<p><strong>Answer:</strong> Since both distributions peak at the lower end of the x axis and they are similar in other parts it is hard to make a decision. The answer is c.</p>
 
 
 </section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
@@ -660,7 +660,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"loop":true,"selector":".lightbox","openEffect":"zoom","closeEffect":"zoom","descPosition":"bottom"});</script>
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","closeEffect":"zoom","loop":true,"descPosition":"bottom"});</script>
 
 
 </body></html>

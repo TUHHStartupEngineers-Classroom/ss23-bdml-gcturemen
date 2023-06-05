@@ -236,10 +236,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header><section id="challenge-summary" class="level1" data-number="1"><h1 data-number="1">
 <span class="header-section-number">1</span> Challenge Summary</h1>
-<p>Your organization wants to know which companies are similar to each other to help in identifying potential customers of a SAAS software solution (e.g.&nbsp;Salesforce CRM or equivalent) in various segments of the market. The Sales Department is very interested in this analysis, which will help them more easily penetrate various market segments.</p>
+<p>Our organization wants to know which companies are similar to each other to help in identifying potential customers of a SAAS software solution (e.g.&nbsp;Salesforce CRM or equivalent) in various segments of the market. The Sales Department is very interested in this analysis, which will help them more easily penetrate various market segments.</p>
 </section><section id="objectives" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Objectives</h1>
-<p>Apply your knowledge on K-Means and UMAP along with <code>dplyr</code>, <code>ggplot2</code>, and <code>purrr</code> to create a visualization that identifies subgroups in the S&amp;P 500 Index. You will specifically apply:</p>
+<p>We will apply our knowledge on K-Means and UMAP along with <code>dplyr</code>, <code>ggplot2</code>, and <code>purrr</code> to create a visualization that identifies subgroups in the S&amp;P 500 Index. We will specifically apply:</p>
 <ul>
 <li>Modeling: <code><a href="https://rdrr.io/r/stats/kmeans.html">kmeans()</a></code> and <code>umap()</code>
 </li>
@@ -252,7 +252,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span class="header-section-number">3</span> Solution</h1>
 <section id="import-libraries" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="import-libraries">
 <span class="header-section-number">3.1</span> Import Libraries</h2>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-1_f8ac97bad9360c71da704d674f06ff95">
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-1_6ac439d78071818d45cb6d9474ec4791">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(tidyquant)</span>
@@ -262,13 +262,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </section><section id="read-data" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="read-data">
 <span class="header-section-number">3.2</span> Read Data</h2>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-2_ee28d70afe7fefeb0259907a162a003b">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>sp_500_prices_tbl <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/sp_500_prices_tbl.rds"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2"></a>sp_500_index_tbl <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"~/GitHub/ss23-bdml-gcturemen/code_drafts/data/sp_500_index_tbl.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-2_9960637a866b0d08e050c2be11f4a9dd">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>sp_500_prices_tbl <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/sp_500_prices_tbl.rds"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a>sp_500_index_tbl <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/sp_500_index_tbl.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="convert-stock-prices-to-a-standardized-format-daily-returns" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="convert-stock-prices-to-a-standardized-format-daily-returns">
 <span class="header-section-number">3.3</span> Convert stock prices to a standardized format (daily returns)</h2>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-3_c981fda371b76eee9bf053626a4ec2e6">
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-3_76d2d2dfe1642314d08555322a74dcf6">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>sp_500_prices_tbl <span class="ot">&lt;-</span> sp_500_prices_tbl <span class="sc">%&gt;%</span> </span>
 <span id="cb3-2"><a href="#cb3-2"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">'2018-01-01'</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-3"><a href="#cb3-3"></a>  <span class="fu">group_by</span>(symbol) <span class="sc">%&gt;%</span></span>
@@ -277,11 +277,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-6"><a href="#cb3-6"></a>  <span class="fu">mutate</span>(<span class="at">diff =</span> adjusted <span class="sc">-</span> lag) <span class="sc">%&gt;%</span></span>
 <span id="cb3-7"><a href="#cb3-7"></a>  <span class="fu">mutate</span>(<span class="at">pct_return =</span> diff <span class="sc">/</span> lag)</span>
 <span id="cb3-8"><a href="#cb3-8"></a></span>
-<span id="cb3-9"><a href="#cb3-9"></a>sp_500_daily_returns_tbl <span class="ot">&lt;-</span> sp_500_prices_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb3-10"><a href="#cb3-10"></a>  <span class="fu">select</span>(symbol, date, pct_return)</span>
-<span id="cb3-11"><a href="#cb3-11"></a></span>
-<span id="cb3-12"><a href="#cb3-12"></a>sp_500_daily_returns_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb3-13"><a href="#cb3-13"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-9"><a href="#cb3-9"></a>sp_500_daily_returns_tbl <span class="ot">&lt;-</span> sp_500_prices_tbl <span class="sc">%&gt;%</span> <span class="fu">select</span>(symbol, date, pct_return)</span>
+<span id="cb3-10"><a href="#cb3-10"></a></span>
+<span id="cb3-11"><a href="#cb3-11"></a>sp_500_daily_returns_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Rows: 141,340
 #&gt; Columns: 3
@@ -310,18 +308,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </section><section id="perform-k-means-clustering" class="level2" data-number="3.5"><h2 data-number="3.5" class="anchored" data-anchor-id="perform-k-means-clustering">
 <span class="header-section-number">3.5</span> Perform K-Means Clustering</h2>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-5_18dec8386bf90ada6878ecaaf7b6a694">
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-5_4b614a5d4d0928a7dbc4131e4fa5d57e">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>kmeans_obj <span class="ot">&lt;-</span> stock_date_matrix_tbl <span class="sc">%&gt;%</span></span>
 <span id="cb6-2"><a href="#cb6-2"></a>  <span class="fu">select</span>(<span class="sc">-</span>symbol) <span class="sc">%&gt;%</span></span>
 <span id="cb6-3"><a href="#cb6-3"></a>  <span class="fu">kmeans</span>(<span class="at">centers =</span> <span class="dv">4</span>, <span class="at">nstart =</span> <span class="dv">20</span>)</span>
 <span id="cb6-4"><a href="#cb6-4"></a></span>
-<span id="cb6-5"><a href="#cb6-5"></a>kmeans_obj <span class="sc">%&gt;%</span> </span>
-<span id="cb6-6"><a href="#cb6-6"></a>  <span class="fu">glance</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-5"><a href="#cb6-5"></a>kmeans_obj <span class="sc">%&gt;%</span> <span class="fu">glance</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["totss"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["tot.withinss"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["betweenss"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["iter"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"33.60445","2":"29.20555","3":"4.398903","4":"4"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["totss"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["tot.withinss"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["betweenss"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["iter"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"33.60445","2":"29.20555","3":"4.398903","4":"3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -337,13 +334,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-5"><a href="#cb7-5"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Applying <code>kmeans_mapper()</code> and <code>glance()</code> functions iteratively:</p>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-7_7c407b5602246917cf14c6ce0b0bbd05">
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-7_7f757e5fff3e094d6a6941a8a88e595a">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>k_means_mapped_tbl <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">centers =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb8-2"><a href="#cb8-2"></a>  <span class="fu">mutate</span>(<span class="at">k_means =</span> centers <span class="sc">%&gt;%</span> <span class="fu">map</span>(kmeans_mapper)) <span class="sc">%&gt;%</span></span>
 <span id="cb8-3"><a href="#cb8-3"></a>  <span class="fu">mutate</span>(<span class="at">glance  =</span> k_means <span class="sc">%&gt;%</span> <span class="fu">map</span>(glance))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Visualizing the result as a <strong>Scree Plot:</strong></p>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-8_3a1572be9475bae691fe3b3afe8689cf">
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-8_609b8a127f5dd4e5bd879060a392e98c">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>k_means_mapped_tbl <span class="sc">%&gt;%</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a>  <span class="fu">unnest</span>(glance) <span class="sc">%&gt;%</span></span>
 <span id="cb9-3"><a href="#cb9-3"></a>  <span class="fu">select</span>(centers, tot.withinss) <span class="sc">%&gt;%</span></span>
@@ -357,17 +354,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-11"><a href="#cb9-11"></a>       <span class="at">subtitle =</span> <span class="st">"Total within-cluster sum of squares for various number of centers"</span>,</span>
 <span id="cb9-12"><a href="#cb9-12"></a>       <span class="at">caption =</span> <span class="st">"Conclusion: Based on the Scree Plot, a value between 5-10 can be chosen for the number of centers."</span>) <span class="sc">+</span></span>
 <span id="cb9-13"><a href="#cb9-13"></a>  <span class="fu">theme</span>(</span>
-<span id="cb9-14"><a href="#cb9-14"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb9-14"><a href="#cb9-14"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb9-15"><a href="#cb9-15"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
 <span id="cb9-16"><a href="#cb9-16"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb9-17"><a href="#cb9-17"></a>    <span class="co">#panel.grid = element_line(color = "white"),</span></span>
-<span id="cb9-18"><a href="#cb9-18"></a>    <span class="co">#legend.background = element_rect(fill='transparent'),</span></span>
-<span id="cb9-19"><a href="#cb9-19"></a>    <span class="co">#legend.box.background = element_rect(fill='transparent')</span></span>
-<span id="cb9-20"><a href="#cb9-20"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb9-21"><a href="#cb9-21"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb9-22"><a href="#cb9-22"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb9-23"><a href="#cb9-23"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb9-24"><a href="#cb9-24"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-17"><a href="#cb9-17"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb9-18"><a href="#cb9-18"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb9-19"><a href="#cb9-19"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb9-20"><a href="#cb9-20"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb9-21"><a href="#cb9-21"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="01_machine_learning_fundamentals_files/figure-html/unnamed-chunk-8-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="01_machine_learning_fundamentals_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></a></p>
@@ -384,22 +378,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-3"><a href="#cb10-3"></a>  <span class="fu">umap</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Combining the <code>layout</code> from the <code>umap_results</code> with the <code>symbol</code> column from the <code>stock_date_matrix_tbl</code>:</p>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-10_4bed914bbf1e66248daeaa5cbf9547a6">
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-10_cb385f78de4fc303007c6ecdf1a9901a">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>umap_results_tbl <span class="ot">&lt;-</span> umap_results<span class="sc">$</span>layout <span class="sc">%&gt;%</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a>  <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> <span class="st">"unique"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb11-3"><a href="#cb11-3"></a>  <span class="fu">set_names</span>(<span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb11-4"><a href="#cb11-4"></a>  <span class="fu">bind_cols</span>(stock_date_matrix_tbl <span class="sc">%&gt;%</span> <span class="fu">select</span>(symbol))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Visualizing the <code>umap_results_tbl</code>:</p>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-11_8d9537377052db7bb6b47d240cdc3171">
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-11_84589a0f8faf98b0d324ab7af648d54f">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>umap_results_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
-<span id="cb12-3"><a href="#cb12-3"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">'#2DC6D6'</span>) <span class="sc">+</span> </span>
-<span id="cb12-4"><a href="#cb12-4"></a>  <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> symbol), <span class="at">size =</span> <span class="dv">1</span>, <span class="at">max.overlaps =</span> <span class="dv">20</span>, <span class="at">label.padding =</span> <span class="fl">0.10</span>, <span class="at">color =</span> <span class="st">'#FF8014'</span>, <span class="at">seed =</span> <span class="dv">777</span>, <span class="at">nudge_x =</span> <span class="fl">0.25</span>, <span class="at">nudge_y =</span> <span class="fl">0.05</span>, <span class="at">fill =</span> <span class="st">"#282A36"</span>) <span class="sc">+</span> </span>
-<span id="cb12-5"><a href="#cb12-5"></a>  <span class="co">#theme_tq() + </span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>  </span>
+<span id="cb12-3"><a href="#cb12-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">'#2DC6D6'</span>) <span class="sc">+</span> </span>
+<span id="cb12-5"><a href="#cb12-5"></a>  <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> symbol), <span class="at">size =</span> <span class="dv">1</span>, <span class="at">max.overlaps =</span> <span class="dv">15</span>, <span class="at">label.padding =</span> <span class="fl">0.10</span>, <span class="at">color =</span> <span class="st">'#FF8014'</span>, <span class="at">seed =</span> <span class="dv">777</span>, <span class="at">nudge_x =</span> <span class="fl">0.25</span>, <span class="at">nudge_y =</span> <span class="fl">0.05</span>, <span class="at">fill =</span> <span class="st">"#282A36"</span>) <span class="sc">+</span> </span>
 <span id="cb12-6"><a href="#cb12-6"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'UMAP 2D Projection'</span>) <span class="sc">+</span></span>
 <span id="cb12-7"><a href="#cb12-7"></a>  <span class="fu">theme</span>(</span>
-<span id="cb12-8"><a href="#cb12-8"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb12-8"><a href="#cb12-8"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb12-9"><a href="#cb12-9"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
 <span id="cb12-10"><a href="#cb12-10"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
 <span id="cb12-11"><a href="#cb12-11"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
@@ -433,33 +427,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-7"><a href="#cb14-7"></a>  <span class="fu">left_join</span>(sp_500_index_tbl <span class="sc">%&gt;%</span> <span class="fu">select</span>(symbol, company, sector), <span class="at">by =</span> <span class="st">'symbol'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Visualizing the K-Means and UMAP results:</p>
-<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-14_d9f8daf2ecd622a8b328ae8054dd5d2a">
+<div class="cell" data-hash="01_machine_learning_fundamentals_cache/html/unnamed-chunk-14_f556d6f6c816f3b34504accb3195f3aa">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>umap_kmeans_results_tbl <span class="sc">%&gt;%</span></span>
 <span id="cb15-2"><a href="#cb15-2"></a>  <span class="fu">mutate</span>(<span class="at">label_text =</span> <span class="fu">str_glue</span>(<span class="st">"Symbol: {symbol}</span></span>
 <span id="cb15-3"><a href="#cb15-3"></a><span class="st">                                 Cluster: {.cluster}"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb15-4"><a href="#cb15-4"></a>  </span>
-<span id="cb15-5"><a href="#cb15-5"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">color =</span> .cluster)) <span class="sc">+</span></span>
-<span id="cb15-6"><a href="#cb15-6"></a>  </span>
-<span id="cb15-7"><a href="#cb15-7"></a>  <span class="co"># Geometries</span></span>
-<span id="cb15-8"><a href="#cb15-8"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb15-9"><a href="#cb15-9"></a>  <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> label_text), <span class="at">size =</span> <span class="dv">1</span>,<span class="at">max.overlaps =</span> <span class="dv">20</span>, <span class="at">fill =</span> <span class="st">"#282A36"</span>, <span class="at">label.padding =</span> <span class="fl">0.10</span>, <span class="at">nudge_x =</span> <span class="fl">0.25</span>, <span class="at">nudge_y =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
-<span id="cb15-10"><a href="#cb15-10"></a>  </span>
-<span id="cb15-11"><a href="#cb15-11"></a>  <span class="co"># Formatting</span></span>
-<span id="cb15-12"><a href="#cb15-12"></a>  <span class="fu">scale_color_discrete</span>() <span class="sc">+</span></span>
-<span id="cb15-13"><a href="#cb15-13"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Company Segmentation: 2D Projection"</span>,</span>
-<span id="cb15-14"><a href="#cb15-14"></a>       <span class="at">subtitle =</span> <span class="st">"UMAP 2D Projection with K-Means Cluster Assignment"</span>) <span class="sc">+</span></span>
-<span id="cb15-15"><a href="#cb15-15"></a>  <span class="fu">theme</span>(</span>
-<span id="cb15-16"><a href="#cb15-16"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
-<span id="cb15-17"><a href="#cb15-17"></a>    <span class="co">#legend.key = element_rect(fill = umap_kmeans_results_tbl$.cluster),</span></span>
-<span id="cb15-18"><a href="#cb15-18"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb15-19"><a href="#cb15-19"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb15-20"><a href="#cb15-20"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb15-21"><a href="#cb15-21"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb15-22"><a href="#cb15-22"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb15-23"><a href="#cb15-23"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb15-24"><a href="#cb15-24"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb15-25"><a href="#cb15-25"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb15-26"><a href="#cb15-26"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-5"><a href="#cb15-5"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">color =</span> .cluster)) <span class="sc">+</span> </span>
+<span id="cb15-6"><a href="#cb15-6"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a>  <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> label_text), <span class="at">size =</span> <span class="dv">1</span>,<span class="at">max.overlaps =</span> <span class="dv">15</span>, <span class="at">fill =</span> <span class="st">"#282A36"</span>, <span class="at">label.padding =</span> <span class="fl">0.10</span>, <span class="at">nudge_x =</span> <span class="fl">0.25</span>, <span class="at">nudge_y =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a>  <span class="fu">scale_color_discrete</span>() <span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Company Segmentation: 2D Projection"</span>,</span>
+<span id="cb15-10"><a href="#cb15-10"></a>       <span class="at">subtitle =</span> <span class="st">"UMAP 2D Projection with K-Means Cluster Assignment"</span>) <span class="sc">+</span></span>
+<span id="cb15-11"><a href="#cb15-11"></a>  <span class="fu">theme</span>(</span>
+<span id="cb15-12"><a href="#cb15-12"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb15-13"><a href="#cb15-13"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-14"><a href="#cb15-14"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb15-15"><a href="#cb15-15"></a>    <span class="at">legend.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-16"><a href="#cb15-16"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb15-17"><a href="#cb15-17"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb15-18"><a href="#cb15-18"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb15-19"><a href="#cb15-19"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb15-20"><a href="#cb15-20"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb15-21"><a href="#cb15-21"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="01_machine_learning_fundamentals_files/figure-html/unnamed-chunk-14-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="01_machine_learning_fundamentals_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></a></p>
@@ -718,7 +707,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","closeEffect":"zoom","selector":".lightbox","loop":true});</script>
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","loop":true,"descPosition":"bottom","openEffect":"zoom"});</script>
 
 
 </body></html>
