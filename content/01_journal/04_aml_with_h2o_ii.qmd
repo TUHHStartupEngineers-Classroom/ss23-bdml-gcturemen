@@ -1,0 +1,169 @@
+---
+title: "Automated Machine Learning with H2O (II)"
+author: "Gani Cem Türemen"
+---
+
+# Challenge Summary
+
+For the challenge, we shall be working with a Product Backorders dataset. The goal here is to predict whether or not a product will be put on backorder status, given a number of product metrics such as current inventory, transit time, demand forecasts and prior sales. It’s a classic Binary Classification problem.
+
+# Objectives
+
+We will apply our learning of H2O Automated Machine Learning to predict backorder status.
+
+# Solution
+
+## Import Libraries
+
+```{r}
+#| output: false
+
+library(tidyverse)
+library(recipes)
+library(rsample)
+library(readxl)
+library(h2o)
+```
+
+## Load the training & test dataset
+
+```{r}
+#| output: false
+
+product_backorders_tbl <- read_csv("data/product_backorders.csv")
+
+product_backorders_tbl %>% glimpse()
+```
+
+```{r}
+#| echo: false
+
+product_backorders_tbl %>% glimpse()
+```
+
+Split the data into training and test sets:
+```{r}
+set.seed(seed = 777)
+split_obj <- initial_split(product_backorders_tbl, prop = 0.80)
+
+train_set_tbl <- training(split_obj)
+test_set_tbl  <- testing(split_obj)
+```
+
+Since some columns such as `deck_risk` are not numeric, they have to be converted into factor. The recipe below will take care of that:
+```{r}
+recipe_obj <- recipe(went_on_backorder ~., data = train_set_tbl) %>% 
+  step_zv(all_predictors()) %>% 
+  step_mutate_at(potential_issue,
+                 deck_risk,
+                 oe_constraint,
+                 ppap_risk,
+                 stop_auto_buy,
+                 rev_stop,
+                 went_on_backorder,
+                 fn = as.factor) %>% 
+  prep()
+
+train_tbl <- bake(recipe_obj, new_data = train_set_tbl)
+test_tbl  <- bake(recipe_obj, new_data = test_set_tbl)
+
+train_tbl %>% glimpse()
+```
+
+## Specify the response and predictor variables
+
+To determine the backorder status `went_on_backorder`, all the other columns will be used as predictors:
+```{r}
+#| output: false
+
+h2o.init()
+
+split_h2o <- h2o.splitFrame(as.h2o(train_tbl), ratios = c(0.80), seed = 767)
+train_h2o <- split_h2o[[1]]
+valid_h2o <- split_h2o[[2]]
+test_h2o  <- as.h2o(test_tbl)
+
+y <- "went_on_backorder"
+x <- setdiff(names(train_h2o), y)
+```
+    
+## Run AutoML specifying the stopping criterion
+
+Set 30 seconds for `max_runtime_secs` and 5 for `nfolds`:
+```{r}
+#| output: false
+
+automl_models_h2o <- h2o.automl(
+  x = x,
+  y = y,
+  training_frame    = train_h2o,
+  validation_frame  = valid_h2o,
+  leaderboard_frame = test_h2o,
+  max_runtime_secs  = 30,
+  nfolds            = 5 
+)
+```
+
+## View the leaderboard
+
+```{r}
+automl_models_h2o@leaderboard
+```
+
+## Predicting using Leader Model
+
+```{r}
+#| include: false
+# Extracts and H2O model name by a position so can more easily use h2o.getModel()
+
+extract_h2o_model_name_by_position <- function(h2o_leaderboard, n = 1, verbose = T) { 
+  
+  model_name <- h2o_leaderboard %>% as_tibble() %>% 
+    slice(n) %>% 
+    pull(model_id)
+    
+    if (verbose) message(model_name)
+    
+    return(model_name)
+    
+}
+```
+
+Extract the first model of the leaderboard:
+```{r}
+leader_model <- automl_models_h2o@leaderboard %>% 
+  extract_h2o_model_name_by_position(1) %>% 
+  h2o.getModel()
+```
+
+Use the extracted model to make predictions on the test set:
+```{r}
+#| output: false
+
+predictions <- h2o.predict(leader_model, newdata = as.h2o(test_tbl))
+
+predictions_tbl <- predictions %>% as_tibble()
+
+predictions_tbl %>% glimpse()
+```
+
+```{r}
+#| echo: false
+
+predictions_tbl %>% glimpse()
+```
+
+## Save the leader model
+
+Save the extracted model in case it is needed later:
+```{r}
+#| output: false
+
+leader_model %>% h2o.saveModel(path = "h2o_models/")
+```
+
+```{r}
+#| include: false
+
+h2o.shutdown()
+```

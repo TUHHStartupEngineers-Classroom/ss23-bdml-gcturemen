@@ -1,0 +1,582 @@
+---
+title: "Performance Measures"
+author: "Gani Cem Türemen"
+---
+
+# Challenge Summary
+
+For the challenge, we will continue working on the Product Backorders dataset. The goal here is to visualize various performance metrics of H2O models to simplify evaluation of them.
+
+# Objectives
+
+We will apply our learning of H2O Automated Machine Learning to predict backorder status and visualize performance metrics to evaluate models.
+
+# Solution
+
+## Import Libraries
+
+```{r}
+#| output: false
+
+library(tidyverse)
+library(readxl)
+library(rsample)
+library(h2o)
+library(recipes)
+library(cowplot)
+library(glue)
+```
+
+## Load the training & test dataset
+
+```{r}
+#| output: false
+
+product_backorders_tbl <- read_csv("data/product_backorders.csv")
+
+product_backorders_tbl %>% glimpse()
+```
+
+```{r}
+#| echo: false
+
+product_backorders_tbl %>% glimpse()
+```
+
+Split the data into training and test sets:
+```{r}
+set.seed(seed = 777)
+split_obj <- initial_split(product_backorders_tbl, prop = 0.80)
+
+train_set_tbl <- training(split_obj)
+test_set_tbl  <- testing(split_obj)
+```
+
+Since some columns such as `deck_risk` are not numeric, they have to be converted into factor. The recipe below will take care of that:
+```{r}
+recipe_obj <- recipe(went_on_backorder ~., data = train_set_tbl) %>% 
+  step_zv(all_predictors()) %>% 
+  step_mutate_at(potential_issue,
+                 deck_risk,
+                 oe_constraint,
+                 ppap_risk,
+                 stop_auto_buy,
+                 rev_stop,
+                 went_on_backorder,
+                 fn = as.factor) %>% 
+  prep()
+
+train_tbl <- bake(recipe_obj, new_data = train_set_tbl)
+test_tbl  <- bake(recipe_obj, new_data = test_set_tbl)
+
+train_tbl %>% glimpse()
+```
+
+## Specify the response and predictor variables
+
+To determine the backorder status `went_on_backorder`, all the other columns will be used as predictors:
+```{r}
+#| output: false
+
+h2o.init()
+
+split_h2o <- h2o.splitFrame(as.h2o(train_tbl), ratios = c(0.80), seed = 767)
+train_h2o <- split_h2o[[1]]
+valid_h2o <- split_h2o[[2]]
+test_h2o  <- as.h2o(test_tbl)
+
+y <- "went_on_backorder"
+x <- setdiff(names(train_h2o), y)
+```
+    
+## Run AutoML
+
+Set 600 seconds for `max_runtime_secs` and 15 for `max_models` to limit the computation time:
+```{r}
+#| output: false
+
+automl_models_h2o <- h2o.automl(
+  x = x,
+  y = y,
+  training_frame    = train_h2o,
+  validation_frame  = valid_h2o,
+  leaderboard_frame = test_h2o,
+  max_runtime_secs  = 600,
+  max_models = 15,
+  nfolds            = 5,
+  include_algos = c("DeepLearning", "GBM", "XGBoost", "GLM", "DRF")
+)
+```
+
+## View the leaderboard
+
+```{r}
+automl_models_h2o@leaderboard
+```
+
+## Leaderboard visualization
+
+First, leaderboard will be converted into long format to be able to visualize it easier:
+```{r}
+model_leaderboard <- automl_models_h2o@leaderboard %>%
+  as_tibble() %>%
+  select(-c(aucpr, mean_per_class_error, rmse, mse)) %>%
+  mutate(model_type = str_extract(model_id, "[^_]+")) %>%
+  rownames_to_column(var = "row_name") %>%
+  mutate(model_id   = as_factor(model_id) %>% reorder(auc), 
+         model_type = as.factor(model_type)) %>% 
+  pivot_longer(cols = -c(model_id, model_type, row_name), 
+               names_to = "key", 
+               values_to = "value", 
+               names_transform = list(key = forcats::fct_inorder)) %>% 
+  mutate(model_id = paste0(row_name, ". ", model_id) %>% as_factor() %>% fct_rev())
+
+model_leaderboard %>% glimpse()
+```
+
+Visualize the long format leaderboard:
+```{r}
+model_leaderboard %>%
+  ggplot(aes(value, model_id, color = model_type)) +
+  geom_point(size = 3) +
+  geom_label(aes(label = round(value, 3), hjust = "inward"), label.padding = unit(0.10, "lines"), size = 3) +
+  facet_wrap(~ key, scales = "free_x") +
+  labs(title = "Leaderboard Metrics",
+       subtitle = paste0("Ordered by: ", "auc"),
+       y = "Model Position, Model ID",
+       x = "",
+       col = "Model Type") + 
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = NA, color = "white"),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white", size = 7),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white", size = 6),
+  )
+```
+
+From the figure, it is seen that `AUC` and `LogLoss` metrics behave mostly as expected. Generally with increasing model performance, an increase in `AUC` and a decrease in `LogLoss` is observed.
+
+## Tune a model with grid search
+
+```{r}
+#| include: false
+# Extracts and H2O model name by a position so can more easily use h2o.getModel()
+
+extract_h2o_model_name_by_position <- function(h2o_leaderboard, n = 1, verbose = T) {
+    
+    model_name <- h2o_leaderboard %>%
+        as_tibble() %>%
+        slice(n) %>%
+        pull(model_id)
+    
+    if (verbose) message(model_name)
+    
+    return(model_name)
+    
+}
+```
+
+A `Deep Learning` model will be tuned in this section. First, the Deep Learning model from the leaderboard is extracted to be used for comparison purposes:
+```{r}
+dl_model_automl <- automl_models_h2o@leaderboard %>% 
+  extract_h2o_model_name_by_position(11) %>% 
+  h2o.getModel()
+```
+
+```{r}
+#| output: false
+
+p_dl_model_automl <- h2o.performance(dl_model_automl, newdata = as.h2o(test_tbl))
+
+p_dl_model_automl
+```
+
+```{r}
+#| echo: false
+
+p_dl_model_automl
+```
+
+```{r}
+#| include: false
+
+p_dl_model_automl_tbl <- p_dl_model_automl %>% 
+  h2o.metric() %>%
+  as_tibble() %>%
+  mutate(auc = h2o.auc(p_dl_model_automl))
+```
+
+It is seen that this model has an `AUC` value of 0.775 and a `LogLoss` value of 0.321. Using grid search, there is a possibility to find a model with better performance metrics.
+
+Use the hyperparameters `hidden` and `epochs` for tuning:
+
+    hidden: Hidden layer size. 
+    lambda: The number of times to iterate the data set.
+    
+```{r}
+#| warning: false
+#| output : false
+
+model_grid <- h2o.grid(
+  algorithm = "deeplearning",
+  grid_id = "deeplearning_grid_01",
+  x = x,
+  y = y,
+  training_frame = train_h2o,
+  validation_frame = valid_h2o,
+  max_runtime_secs  = 600,
+  nfolds = 5,
+  hyper_params = list(
+    #activation = c("tanh", "rectifier"),
+    hidden = list(c(10, 10), c(15, 15), c(10, 10, 10), c(15, 15, 15)),
+    epochs = c(50, 100, 200)
+  )
+)
+```
+
+Get the grid search result and order models by decreasing AUC: 
+```{r}
+#| warning: false
+
+h2o.getGrid(grid_id = "deeplearning_grid_01", sort_by = "auc", decreasing = TRUE)
+```
+
+Extract the leader model of the grid search: 
+```{r}
+dl_model_grid_search <- h2o.getModel("deeplearning_grid_01_model_9")
+```
+
+```{r}
+dl_model_grid_search %>% h2o.auc(train = T, valid = T, xval = T)
+```
+
+No overfitting is observed since the AUC value for training, validation and cross-validation are all similar.
+
+```{r}
+#| output: false
+
+p_dl_model_grid_search <- dl_model_grid_search %>% h2o.performance(newdata = as.h2o(test_tbl))
+
+p_dl_model_grid_search
+```
+
+```{r}
+#| echo: false
+
+p_dl_model_grid_search
+```
+
+It is seen that by using grid search it was possible find a model with improved performance metrics compared to the base model found in the previous section.
+
+|             Model               |  AUC  |  LogLoss  |
+|:-------------------------------:|:-----:|:---------:|
+| dl_model_automl                 | 0.775 |   0.321   |
+| dl_model_grid_search            | 0.895 |   0.263   |
+
+## Visualize the trade-off between the precision and the recall and the optimal threshold
+
+Convert the performance object of the model into a series of different metrics which vary by threshold and store it as `p_dl_model_grid_search_tbl`:
+```{r}
+p_dl_model_grid_search_tbl <- p_dl_model_grid_search %>% 
+  h2o.metric() %>%
+  as_tibble() %>%
+  mutate(auc = h2o.auc(p_dl_model_grid_search))
+```
+
+Visualize `precision` and `recall` by selecting corresponding columns:
+```{r}
+#| warning: false
+#| output: false
+
+p_dl_model_grid_search_tbl %>% select(c(threshold, precision, recall)) %>% 
+  pivot_longer(cols = c(precision, recall), names_to = "key", values_to = "values") %>%
+  
+  ggplot(aes(x = threshold, y = values, color = key)) +
+  geom_line(size = 1) +
+  scale_color_manual(values = c("#2DC6D6", "#FF8014")) +
+  geom_vline(xintercept = h2o.find_threshold_by_max_metric(p_dl_model_grid_search, "f1"), 
+             color = 'red', size = 1) +
+  labs(title = "Precision vs Recall", subtitle = "dl_model_grid_search", y = "Value", x = "Threshold", col = "") +
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = NA, color = "white"),
+    legend.key = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+p_dl_model_grid_search_tbl %>% select(c(threshold, precision, recall)) %>% 
+  pivot_longer(cols = c(precision, recall), names_to = "key", values_to = "values") %>%
+  
+  ggplot(aes(x = threshold, y = values, color = key)) +
+  geom_line(size = 1) +
+  scale_color_manual(values = c("#2DC6D6", "#FF8014")) +
+  geom_vline(xintercept = h2o.find_threshold_by_max_metric(p_dl_model_grid_search, "f1"), 
+             color = 'red', size = 1) +
+  labs(title = "Precision vs Recall", subtitle = "dl_model_grid_search", y = "Value", x = "Threshold", col = "") +
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = NA, color = "white"),
+    legend.key = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+```
+
+From the figure, values of `precision` and `recall` can be seen as the threshold value increases. The vertical red line indicates the optimal threshold value which maximizes the `F1`.
+
+## ROC Plot
+
+```{r}
+#| include: false
+
+p_dl_model_automl_tbl <- p_dl_model_automl_tbl %>% 
+  mutate(auc = auc %>% round(3) %>% as.character() %>% as_factor())
+
+p_dl_model_grid_search_tbl <- p_dl_model_grid_search_tbl %>% 
+  mutate(auc  = auc %>% round(3) %>% as.character() %>% as_factor())
+```
+
+```{r}
+roc_plot <- ggplot() + 
+  geom_line(data = p_dl_model_automl_tbl, 
+            aes(x = fpr, y = tpr, color = "dl_model_automl"), 
+            size = 1) +
+  geom_line(data = p_dl_model_grid_search_tbl, 
+            aes(x = fpr, y = tpr, color = "dl_model_grid_search"), 
+            size = 1) +
+  geom_abline(color = "red", 
+              linetype = "dotted", 
+              size = 1) +
+  scale_color_manual(name = "", 
+                     values = c("dl_model_automl" = "#2DC6D6", "dl_model_grid_search" = "#FF8014")) +
+  labs(title = "ROC Plot", 
+       subtitle = "Performance Comparison of dl_model_automl and dl_model_grid_search", 
+       x = "False Positive Rate (FPR)", 
+       y = "True Positive Rate (TPR)") +
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = NA, color = "white"),
+    legend.key = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+
+roc_plot
+```
+
+It is also seen from the ROC plot that the model found with grid search (`dl_model_grid_search`) has better performance since it has a larger area under its curve compared to the model that has been found automatically (`dl_model_automl`). 
+
+## Precision vs Recall Plot
+
+```{r}
+pr_plot <- ggplot() +
+  geom_line(data = p_dl_model_automl_tbl, 
+            aes(x = recall, y = precision, color = "dl_model_automl"), 
+            size = 1) +
+  geom_line(data = p_dl_model_grid_search_tbl, 
+            aes(x = recall, y = precision, color = "dl_model_grid_search"), 
+            size = 1) +
+  scale_color_manual(name = "", 
+                     values = c("dl_model_automl" = "#2DC6D6", "dl_model_grid_search" = "#FF8014")) +
+  labs(title = "Precision vs Recall Plot", 
+       subtitle = "Performance Comparison of dl_model_automl and dl_model_grid_search", 
+       x = "Recall", 
+       y = "Precision") +
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = NA, color = "white"),
+    legend.key = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+
+pr_plot
+```
+
+A similar observation can also be made for the precision-recall curve. It is seen that `dl_model_grid_search` performs better compared to `dl_model_automl` since its curve is closer to the upper right corner of the plot (which means the model can maintain higher precision while recall increases).
+
+## Gain Plot
+
+```{r}
+gain_lift_automl_tbl <- p_dl_model_automl %>%
+  h2o.gainsLift() %>%
+  as_tibble()
+
+gain_automl_transformed_tbl <- gain_lift_automl_tbl %>% 
+  select(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) %>%
+  select(-contains("lift")) %>%
+  mutate(baseline = cumulative_data_fraction) %>%
+  rename(gain     = cumulative_capture_rate) %>%
+  pivot_longer(cols = c(gain, baseline), values_to = "value", names_to = "key")
+
+gain_lift_grid_tbl <- p_dl_model_grid_search %>%
+  h2o.gainsLift() %>%
+  as_tibble()
+
+gain_grid_transformed_tbl <- gain_lift_grid_tbl %>% 
+  select(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) %>%
+  select(-contains("lift")) %>%
+  mutate(baseline = cumulative_data_fraction) %>%
+  rename(gain     = cumulative_capture_rate) %>%
+  pivot_longer(cols = c(gain, baseline), values_to = "value", names_to = "key")
+```
+
+```{r}
+gain_plot <- ggplot() +
+  geom_line(data = gain_automl_transformed_tbl %>% filter(str_detect(key, "gain")), 
+            aes(x = cumulative_data_fraction, y = value, color = "dl_model_automl"),
+            size = 1) +
+  geom_line(data = gain_grid_transformed_tbl %>% filter(str_detect(key, "gain")), 
+            aes(x = cumulative_data_fraction, y = value, color = "dl_model_grid_search"),
+            size = 1) +
+  geom_abline(color = "red", 
+            linetype = "dotted", 
+            size = 1) +
+  scale_color_manual(name = "", 
+                     values = c("dl_model_automl" = "#2DC6D6", 
+                                "dl_model_grid_search" = "#FF8014")) +
+  labs(title = "Gain Chart", x = "Cumulative Data Fraction", y = "Gain") +
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = NA, color = "white"),
+    legend.key = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+
+gain_plot
+```
+
+From the figure, it can be seen that with `dl_model_grid_search`, the ability to target backorders from a given size of data has increased significantly, especially at the lower end of the x-axis (where it is important).
+
+## Lift Plot
+
+```{r}
+lift_automl_transformed_tbl <- gain_lift_automl_tbl %>%
+  select(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) %>%
+  select(-contains("capture")) %>%
+  mutate(baseline = 1) %>%
+  rename(lift = cumulative_lift) %>%
+  pivot_longer(cols = c(lift, baseline), values_to = "value", names_to = "key")
+
+lift_grid_transformed_tbl <- gain_lift_grid_tbl %>% 
+  select(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) %>%
+  select(-contains("capture")) %>%
+  mutate(baseline = 1) %>%
+  rename(lift = cumulative_lift) %>%
+  pivot_longer(cols = c(lift, baseline), values_to = "value", names_to = "key")
+```
+
+```{r}
+lift_plot <- ggplot() +
+  geom_line(data = lift_automl_transformed_tbl %>% filter(str_detect(key, "lift")), 
+            aes(x = cumulative_data_fraction, y = value, color = "dl_model_automl"),
+            size = 1) +
+  geom_line(data = lift_grid_transformed_tbl %>% filter(str_detect(key, "lift")), 
+            aes(x = cumulative_data_fraction, y = value, color = "dl_model_grid_search"),
+            size = 1) +
+  geom_hline(yintercept = 1,
+             color = "red", 
+            linetype = "dotted", 
+            size = 1) +
+  scale_color_manual(name = "", 
+                     values = c("dl_model_automl" = "#2DC6D6", 
+                                "dl_model_grid_search" = "#FF8014")) +
+  labs(title = "Lift Chart", x = "Cumulative Data Fraction", y = "Lift") +
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = NA, color = "white"),
+    legend.key = element_blank(),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "white", fill = NA),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+
+lift_plot
+```
+
+Similarly, it is seen from the figure that `dl_model_grid_search` is better at targeting backorders for the same size of data when compared with `dl_model_automl`.
+
+## Dashboard with cowplot
+
+```{r}
+p_legend <- get_legend(roc_plot)
+
+roc_plot <- roc_plot + theme(legend.position = "none") + labs(subtitle = element_blank())
+pr_plot <- pr_plot + theme(legend.position = "none") + labs(subtitle = element_blank())
+gain_plot <- gain_plot + theme(legend.position = "none")
+lift_plot <- lift_plot + theme(legend.position = "none")
+
+p <- plot_grid(roc_plot, pr_plot, gain_plot, lift_plot, ncol = 2)
+
+p_title <- ggdraw() + 
+  draw_label("H2O Model Metrics", size = 18, fontface = "bold", color = "white")
+  
+p_subtitle <- ggdraw() + draw_label(glue(""), size = 10, color = "white")
+  
+combined_plot <- plot_grid(p_title, 
+                           p_subtitle, 
+                           p, 
+                           p_legend, 
+                           ncol = 1, 
+                           rel_heights = c(0.05, 0.05, 1, 0.05 * 4)) +
+  theme(
+    legend.position = "bottom",
+    legend.background = element_rect(fill = NA, color = "white"),
+    panel.background = element_blank(),
+    panel.border = element_rect(color = "#222222", fill = NA),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
+    line = element_line(color = "white"),
+    text = element_text(color = "white"),
+    axis.ticks = element_line(color = "white"),
+    axis.text = element_text(color = "white")
+  )
+
+combined_plot
+```
+
+```{r}
+#| include: false
+
+h2o.shutdown()
+```

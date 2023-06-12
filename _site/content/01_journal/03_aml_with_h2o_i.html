@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Gani Cem Türemen">
+<title>MyLabJournal - Automated Machine Learning with H2O (I)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/icons/favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script><link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+</head>
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg navbar-dark "><div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">MyLabJournal</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+<li class="nav-item">
+    <a class="nav-link" href="../../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-journal" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Journal</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-journal">
+<li>
+    <a class="dropdown-item" href="../../content/01_journal/01_machine_learning_fundamentals.html">
+ <span class="dropdown-text">Machine Learning Fundamentals</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/02_regression_ii.html">
+ <span class="dropdown-text">Regression (II)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/03_aml_with_h2o_i.html">
+ <span class="dropdown-text">Automated Machine Learning with H2O (I)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/04_aml_with_h2o_ii.html">
+ <span class="dropdown-text">Automated Machine Learning with H2O (II)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/05_performance_measures.html">
+ <span class="dropdown-text">Performance Measures</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/06_lime.html">
+ <span class="dropdown-text">Explaining Black-Box Models with LIME</span></a>
+  </li>  
+    </ul>
+</li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../content/02_notes/05_class_notes.html">
+ <span class="menu-text">Class notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../content/03_other/06_links.html">
+ <span class="menu-text">Links</span></a>
+  </li>  
+</ul>
+<div class="quarto-toggle-container">
+                  <a href="" class="quarto-color-scheme-toggle nav-link" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+<li><a href="#challenge-summary" id="toc-challenge-summary" class="nav-link active" data-scroll-target="#challenge-summary"><span class="toc-section-number">1</span>  Challenge Summary</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives"><span class="toc-section-number">2</span>  Objectives</a></li>
+  <li>
+<a href="#solution" id="toc-solution" class="nav-link" data-scroll-target="#solution"><span class="toc-section-number">3</span>  Solution</a>
+  <ul class="collapse">
+<li><a href="#import-libraries" id="toc-import-libraries" class="nav-link" data-scroll-target="#import-libraries"><span class="toc-section-number">3.1</span>  Import Libraries</a></li>
+  <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data"><span class="toc-section-number">3.2</span>  Read Data</a></li>
+  <li><a href="#compensation-features" id="toc-compensation-features" class="nav-link" data-scroll-target="#compensation-features"><span class="toc-section-number">3.3</span>  Compensation Features</a></li>
+  <li><a href="#survey-results" id="toc-survey-results" class="nav-link" data-scroll-target="#survey-results"><span class="toc-section-number">3.4</span>  Survey results</a></li>
+  <li><a href="#performance-data" id="toc-performance-data" class="nav-link" data-scroll-target="#performance-data"><span class="toc-section-number">3.5</span>  Performance Data</a></li>
+  <li><a href="#work-life-features" id="toc-work-life-features" class="nav-link" data-scroll-target="#work-life-features"><span class="toc-section-number">3.6</span>  Work-Life Features</a></li>
+  <li><a href="#training-and-education" id="toc-training-and-education" class="nav-link" data-scroll-target="#training-and-education"><span class="toc-section-number">3.7</span>  Training and Education</a></li>
+  <li><a href="#time-based-features" id="toc-time-based-features" class="nav-link" data-scroll-target="#time-based-features"><span class="toc-section-number">3.8</span>  Time-Based Features</a></li>
+  </ul>
+</li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title">Automated Machine Learning with H2O (I)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Gani Cem Türemen </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header><section id="challenge-summary" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Challenge Summary</h1>
+<p>Attrition is a problem that impacts all businesses, irrespective of geography, industry and size of the company. Employee attrition leads to significant costs for a business, including the cost of business disruption, hiring new staff and training new staff.</p>
+<p>We will use classification models to predict if an employee is likely to quit so that the situation can be intervened on time and remedied to prevent attrition.</p>
+</section><section id="objectives" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Objectives</h1>
+<p>We will use our learning from descriptive features and <code>plot_ggpairs()</code> to further investigate the features of the employee attrition dataset and answer the related questions.</p>
+</section><section id="solution" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Solution</h1>
+<section id="import-libraries" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="import-libraries">
+<span class="header-section-number">3.1</span> Import Libraries</h2>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-1_116c3e2380f1ad3750bd31d87f55916a">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(GGally)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="read-data" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="read-data">
+<span class="header-section-number">3.2</span> Read Data</h2>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-2_e12a09efb351a7b3836d828340bd735b">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>employee_attrition_tbl <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb2-2"><a href="#cb2-2"></a>  <span class="st">"data/datasets-1067-1925-WA_Fn-UseC_-HR-Employee-Attrition.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-3_ddcf8a13fb4b7cce7be0a1a7f29c6cf7">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 1,470
+#&gt; Columns: 35
+#&gt; $ Age                      &lt;dbl&gt; 41, 49, 37, 33, 27, 32, 59, 30, 38, 36, 35, 2…
+#&gt; $ Attrition                &lt;chr&gt; "Yes", "No", "Yes", "No", "No", "No", "No", "…
+#&gt; $ BusinessTravel           &lt;chr&gt; "Travel_Rarely", "Travel_Frequently", "Travel…
+#&gt; $ DailyRate                &lt;dbl&gt; 1102, 279, 1373, 1392, 591, 1005, 1324, 1358,…
+#&gt; $ Department               &lt;chr&gt; "Sales", "Research &amp; Development", "Research …
+#&gt; $ DistanceFromHome         &lt;dbl&gt; 1, 8, 2, 3, 2, 2, 3, 24, 23, 27, 16, 15, 26, …
+#&gt; $ Education                &lt;dbl&gt; 2, 1, 2, 4, 1, 2, 3, 1, 3, 3, 3, 2, 1, 2, 3, …
+#&gt; $ EducationField           &lt;chr&gt; "Life Sciences", "Life Sciences", "Other", "L…
+#&gt; $ EmployeeCount            &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+#&gt; $ EmployeeNumber           &lt;dbl&gt; 1, 2, 4, 5, 7, 8, 10, 11, 12, 13, 14, 15, 16,…
+#&gt; $ EnvironmentSatisfaction  &lt;dbl&gt; 2, 3, 4, 4, 1, 4, 3, 4, 4, 3, 1, 4, 1, 2, 3, …
+#&gt; $ Gender                   &lt;chr&gt; "Female", "Male", "Male", "Female", "Male", "…
+#&gt; $ HourlyRate               &lt;dbl&gt; 94, 61, 92, 56, 40, 79, 81, 67, 44, 94, 84, 4…
+#&gt; $ JobInvolvement           &lt;dbl&gt; 3, 2, 2, 3, 3, 3, 4, 3, 2, 3, 4, 2, 3, 3, 2, …
+#&gt; $ JobLevel                 &lt;dbl&gt; 2, 2, 1, 1, 1, 1, 1, 1, 3, 2, 1, 2, 1, 1, 1, …
+#&gt; $ JobRole                  &lt;chr&gt; "Sales Executive", "Research Scientist", "Lab…
+#&gt; $ JobSatisfaction          &lt;dbl&gt; 4, 2, 3, 3, 2, 4, 1, 3, 3, 3, 2, 3, 3, 4, 3, …
+#&gt; $ MaritalStatus            &lt;chr&gt; "Single", "Married", "Single", "Married", "Ma…
+#&gt; $ MonthlyIncome            &lt;dbl&gt; 5993, 5130, 2090, 2909, 3468, 3068, 2670, 269…
+#&gt; $ MonthlyRate              &lt;dbl&gt; 19479, 24907, 2396, 23159, 16632, 11864, 9964…
+#&gt; $ NumCompaniesWorked       &lt;dbl&gt; 8, 1, 6, 1, 9, 0, 4, 1, 0, 6, 0, 0, 1, 0, 5, …
+#&gt; $ Over18                   &lt;chr&gt; "Y", "Y", "Y", "Y", "Y", "Y", "Y", "Y", "Y", …
+#&gt; $ OverTime                 &lt;chr&gt; "Yes", "No", "Yes", "Yes", "No", "No", "Yes",…
+#&gt; $ PercentSalaryHike        &lt;dbl&gt; 11, 23, 15, 11, 12, 13, 20, 22, 21, 13, 13, 1…
+#&gt; $ PerformanceRating        &lt;dbl&gt; 3, 4, 3, 3, 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 3, …
+#&gt; $ RelationshipSatisfaction &lt;dbl&gt; 1, 4, 2, 3, 4, 3, 1, 2, 2, 2, 3, 4, 4, 3, 2, …
+#&gt; $ StandardHours            &lt;dbl&gt; 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 8…
+#&gt; $ StockOptionLevel         &lt;dbl&gt; 0, 1, 0, 0, 1, 0, 3, 1, 0, 2, 1, 0, 1, 1, 0, …
+#&gt; $ TotalWorkingYears        &lt;dbl&gt; 8, 10, 7, 8, 6, 8, 12, 1, 10, 17, 6, 10, 5, 3…
+#&gt; $ TrainingTimesLastYear    &lt;dbl&gt; 0, 3, 3, 3, 3, 2, 3, 2, 2, 3, 5, 3, 1, 2, 4, …
+#&gt; $ WorkLifeBalance          &lt;dbl&gt; 1, 3, 3, 3, 3, 2, 2, 3, 3, 2, 3, 3, 2, 3, 3, …
+#&gt; $ YearsAtCompany           &lt;dbl&gt; 6, 10, 0, 8, 2, 7, 1, 1, 9, 7, 5, 9, 5, 2, 4,…
+#&gt; $ YearsInCurrentRole       &lt;dbl&gt; 4, 7, 0, 7, 2, 7, 0, 0, 7, 7, 4, 5, 2, 2, 2, …
+#&gt; $ YearsSinceLastPromotion  &lt;dbl&gt; 0, 1, 0, 3, 2, 3, 0, 0, 1, 7, 0, 0, 4, 1, 0, …
+#&gt; $ YearsWithCurrManager     &lt;dbl&gt; 5, 7, 0, 0, 2, 6, 0, 0, 8, 7, 3, 8, 3, 2, 3, …</code></pre>
+</div>
+</div>
+</section><section id="compensation-features" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="compensation-features">
+<span class="header-section-number">3.3</span> Compensation Features</h2>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-5_b1fce1ea57a17528fdecd463c6413cea">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-5-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Question:</strong> What can you deduce about the interaction between Monthly Income and Attrition?</p>
+<pre><code>a. Those that are leaving the company have a higher Monthly Income
+b. That those are staying have a lower Monthly Income
+c. Those that are leaving have a lower Monthly Income
+d. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> Looking at the second figure in the diagonal it can be seen that the employees that are leaving have a peak at a lower monthly income value compared to those that are staying. The answer is c.</p>
+<p><strong>Question:</strong> What can you deduce about the interaction between Percent Salary Hike and Attrition?</p>
+<pre><code>a. Those that are leaving the company have a higher Percent Salary Hike
+b. Those that are staying have a lower Percent Salary Hike
+c. Those that are leaving have lower Percent Salary Hike
+d. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> Looking at the sixth figure in the diagonal, it is seen that distributions for both employee groups are similar so it is difficult to make any comments. The answer is d.</p>
+<p><strong>Question:</strong> What can you deduce about the interaction between Stock Option Level and Attrition?</p>
+<pre><code>a. Those that are leaving the company have a higher stock option level
+b. Those that are staying have a higher stock option level
+c. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> Since the number of staying employees are concentrated around higher stock option levels (1, 2) compared to the employees that are leaving (0) the answer is b.</p>
+</section><section id="survey-results" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="survey-results">
+<span class="header-section-number">3.4</span> Survey results</h2>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-6_81658bf8001d2cf850a9fee2c2131881">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-6-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Question:</strong> What can you deduce about the interaction between Environment Satisfaction and Attrition?</p>
+<pre><code>a. A higher proportion of those leaving have a low environment satisfaction level
+b. A higher proportion of those leaving have a high environment satisfaction level
+c. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> It is difficult to make a comment since it is not clearly defined what ‘high’ and ‘low’ satisfaction are. The answer is c.</p>
+<p><strong>Question:</strong> What can you deduce about the interaction between Work Life Balance and Attrition</p>
+<pre><code>a. Those that are leaving have higher density of 2's and 3's
+b. Those that are staying have a higher density of 2's and 3's
+c. Those that are staying have a lower density of 2's and 3's
+d. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> From the fifth figure in the diagonal, it can be seen that staying employees have a higher density of 2’s and 3’s. The answer is b.</p>
+</section><section id="performance-data" class="level2" data-number="3.5"><h2 data-number="3.5" class="anchored" data-anchor-id="performance-data">
+<span class="header-section-number">3.5</span> Performance Data</h2>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-7_59fabb0bd707ac86e9e01c671524b4c2">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-7-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Question:</strong> What can you deduce about the interaction between Job Involvement and Attrition?</p>
+<pre><code>a. Those that are leaving have a lower density of 3's and 4's
+b. Those that are leaving have a lower density of 1's and 2's
+c. Those that are staying have a lower density of 2's and 3's
+d. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> From the figure, it can be seen that leaving employees have a lower density of 3’s and 4’s. The answer is a.</p>
+</section><section id="work-life-features" class="level2" data-number="3.6"><h2 data-number="3.6" class="anchored" data-anchor-id="work-life-features">
+<span class="header-section-number">3.6</span> Work-Life Features</h2>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-8_bd3b3f3d0e2464d8f23f867890eec251">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-8-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Question:</strong> What can you deduce about the interaction between Over Time and Attrition?</p>
+<pre><code>a. The proportion of those leaving that are working Over Time are high compared to those that are not leaving
+b. The proportion of those staying that are working Over Time are high compared to those that are not staying</code></pre>
+<p><strong>Answer:</strong> Regarding Over Time, proportion of staying employees is higher in both groups. The answer is b.</p>
+</section><section id="training-and-education" class="level2" data-number="3.7"><h2 data-number="3.7" class="anchored" data-anchor-id="training-and-education">
+<span class="header-section-number">3.7</span> Training and Education</h2>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-9_d1f56306b43e22fece551146460f6946">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-9-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Question:</strong> What can you deduce about the interaction between Training Times Last Year and Attrition</p>
+<pre><code>a. People that leave tend to have more annual trainings
+b. People that leave tend to have less annual trainings
+c. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> From the figure it is seen that distributions of both groups concentrate around similar values. The answer is c.</p>
+</section><section id="time-based-features" class="level2" data-number="3.8"><h2 data-number="3.8" class="anchored" data-anchor-id="time-based-features">
+<span class="header-section-number">3.8</span> Time-Based Features</h2>
+<div class="cell" data-hash="03_aml_with_h2o_i_cache/html/unnamed-chunk-10_027a04f332c9109ef2262de84e76d5ee">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><a href="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-10-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="03_aml_with_h2o_i_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Question:</strong> What can you deduce about the interaction between Years At Company and Attrition</p>
+<pre><code>a. People that leave tend to have more working years at the company
+b. People that leave tend to have less working years at the company
+c. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> It is apparent that people that leave tend to have less working years at the company because corresponding distribution peaks at a smaller value. The answer is b.</p>
+<p><strong>Question:</strong> What can you deduce about the interaction between Years Since Last Promotion and Attrition?</p>
+<pre><code>a. Those that are leaving have more years since last promotion than those that are staying
+b. Those that are leaving have fewer years since last promotion than those that are staying
+c. It's difficult to deduce anything based on the visualization</code></pre>
+<p><strong>Answer:</strong> Since both distributions peak at the lower end of the x axis and they are similar in other parts it is hard to make a decision. The answer is c.</p>
+
+
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","closeEffect":"zoom","loop":true,"openEffect":"zoom"});</script>
+
+
+</body></html>

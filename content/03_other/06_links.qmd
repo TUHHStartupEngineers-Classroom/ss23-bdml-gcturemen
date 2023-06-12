@@ -12,4 +12,3 @@ author: "Joschka Schwarz"
 
 1. Google is great, Google your problem
 2. [Stackoverflow](https://stackoverflow.com) is great, google will often take you there because someone has already asked your question, and someone else has answered, usually many people have answered your question many ways.
-3. ---

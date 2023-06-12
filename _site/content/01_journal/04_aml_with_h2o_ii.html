@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Gani Cem Türemen">
+<title>MyLabJournal - Automated Machine Learning with H2O (II)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/icons/favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark"><script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script><link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+</head>
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg navbar-dark "><div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">MyLabJournal</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+<li class="nav-item">
+    <a class="nav-link" href="../../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-journal" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Journal</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-journal">
+<li>
+    <a class="dropdown-item" href="../../content/01_journal/01_machine_learning_fundamentals.html">
+ <span class="dropdown-text">Machine Learning Fundamentals</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/02_regression_ii.html">
+ <span class="dropdown-text">Regression (II)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/03_aml_with_h2o_i.html">
+ <span class="dropdown-text">Automated Machine Learning with H2O (I)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/04_aml_with_h2o_ii.html">
+ <span class="dropdown-text">Automated Machine Learning with H2O (II)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/05_performance_measures.html">
+ <span class="dropdown-text">Performance Measures</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../content/01_journal/06_lime.html">
+ <span class="dropdown-text">Explaining Black-Box Models with LIME</span></a>
+  </li>  
+    </ul>
+</li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../content/02_notes/05_class_notes.html">
+ <span class="menu-text">Class notes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../content/03_other/06_links.html">
+ <span class="menu-text">Links</span></a>
+  </li>  
+</ul>
+<div class="quarto-toggle-container">
+                  <a href="" class="quarto-color-scheme-toggle nav-link" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+<li><a href="#challenge-summary" id="toc-challenge-summary" class="nav-link active" data-scroll-target="#challenge-summary"><span class="toc-section-number">1</span>  Challenge Summary</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives"><span class="toc-section-number">2</span>  Objectives</a></li>
+  <li>
+<a href="#solution" id="toc-solution" class="nav-link" data-scroll-target="#solution"><span class="toc-section-number">3</span>  Solution</a>
+  <ul class="collapse">
+<li><a href="#import-libraries" id="toc-import-libraries" class="nav-link" data-scroll-target="#import-libraries"><span class="toc-section-number">3.1</span>  Import Libraries</a></li>
+  <li><a href="#load-the-training-test-dataset" id="toc-load-the-training-test-dataset" class="nav-link" data-scroll-target="#load-the-training-test-dataset"><span class="toc-section-number">3.2</span>  Load the training &amp; test dataset</a></li>
+  <li><a href="#specify-the-response-and-predictor-variables" id="toc-specify-the-response-and-predictor-variables" class="nav-link" data-scroll-target="#specify-the-response-and-predictor-variables"><span class="toc-section-number">3.3</span>  Specify the response and predictor variables</a></li>
+  <li><a href="#run-automl-specifying-the-stopping-criterion" id="toc-run-automl-specifying-the-stopping-criterion" class="nav-link" data-scroll-target="#run-automl-specifying-the-stopping-criterion"><span class="toc-section-number">3.4</span>  Run AutoML specifying the stopping criterion</a></li>
+  <li><a href="#view-the-leaderboard" id="toc-view-the-leaderboard" class="nav-link" data-scroll-target="#view-the-leaderboard"><span class="toc-section-number">3.5</span>  View the leaderboard</a></li>
+  <li><a href="#predicting-using-leader-model" id="toc-predicting-using-leader-model" class="nav-link" data-scroll-target="#predicting-using-leader-model"><span class="toc-section-number">3.6</span>  Predicting using Leader Model</a></li>
+  <li><a href="#save-the-leader-model" id="toc-save-the-leader-model" class="nav-link" data-scroll-target="#save-the-leader-model"><span class="toc-section-number">3.7</span>  Save the leader model</a></li>
+  </ul>
+</li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title">Automated Machine Learning with H2O (II)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Gani Cem Türemen </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header><section id="challenge-summary" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Challenge Summary</h1>
+<p>For the challenge, we shall be working with a Product Backorders dataset. The goal here is to predict whether or not a product will be put on backorder status, given a number of product metrics such as current inventory, transit time, demand forecasts and prior sales. It’s a classic Binary Classification problem.</p>
+</section><section id="objectives" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Objectives</h1>
+<p>We will apply our learning of H2O Automated Machine Learning to predict backorder status.</p>
+</section><section id="solution" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Solution</h1>
+<section id="import-libraries" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="import-libraries">
+<span class="header-section-number">3.1</span> Import Libraries</h2>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-1_691aeddb1aa0d93c3fd5b22075f97027">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(recipes)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(h2o)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="load-the-training-test-dataset" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="load-the-training-test-dataset">
+<span class="header-section-number">3.2</span> Load the training &amp; test dataset</h2>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-2_650b1d00c6e368a8b1688ab56b97cc6f">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>product_backorders_tbl <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/product_backorders.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>product_backorders_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-3_103294d01493845ca0d82e75f941961a">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 19,053
+#&gt; Columns: 23
+#&gt; $ sku               &lt;dbl&gt; 1113121, 1113268, 1113874, 1114222, 1114823, 1115453…
+#&gt; $ national_inv      &lt;dbl&gt; 0, 0, 20, 0, 0, 55, -34, 4, 2, -7, 1, 2, 0, 0, 0, 0,…
+#&gt; $ lead_time         &lt;dbl&gt; 8, 8, 2, 8, 12, 8, 8, 9, 8, 8, 8, 8, 12, 2, 12, 4, 2…
+#&gt; $ in_transit_qty    &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0…
+#&gt; $ forecast_3_month  &lt;dbl&gt; 6, 2, 45, 9, 31, 216, 120, 43, 4, 56, 2, 5, 5, 54, 4…
+#&gt; $ forecast_6_month  &lt;dbl&gt; 6, 3, 99, 14, 31, 360, 240, 67, 6, 96, 4, 9, 6, 72, …
+#&gt; $ forecast_9_month  &lt;dbl&gt; 6, 4, 153, 21, 31, 492, 240, 115, 9, 112, 6, 13, 9, …
+#&gt; $ sales_1_month     &lt;dbl&gt; 0, 1, 16, 5, 7, 30, 83, 5, 1, 13, 0, 1, 0, 0, 1, 0, …
+#&gt; $ sales_3_month     &lt;dbl&gt; 4, 2, 42, 17, 15, 108, 122, 22, 5, 30, 2, 5, 4, 0, 3…
+#&gt; $ sales_6_month     &lt;dbl&gt; 9, 3, 80, 36, 33, 275, 144, 40, 6, 56, 3, 8, 5, 0, 4…
+#&gt; $ sales_9_month     &lt;dbl&gt; 12, 3, 111, 43, 47, 340, 165, 58, 9, 76, 4, 11, 6, 0…
+#&gt; $ min_bank          &lt;dbl&gt; 0, 0, 10, 0, 2, 51, 33, 4, 2, 0, 0, 0, 3, 4, 0, 0, 0…
+#&gt; $ potential_issue   &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No", "No"…
+#&gt; $ pieces_past_due   &lt;dbl&gt; 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+#&gt; $ perf_6_month_avg  &lt;dbl&gt; 0.90, 0.96, 0.81, 0.96, 0.98, 0.00, 1.00, 0.69, 1.00…
+#&gt; $ perf_12_month_avg &lt;dbl&gt; 0.89, 0.97, 0.88, 0.98, 0.98, 0.00, 0.97, 0.68, 0.95…
+#&gt; $ local_bo_qty      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 34, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, …
+#&gt; $ deck_risk         &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No", "No"…
+#&gt; $ oe_constraint     &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No", "No"…
+#&gt; $ ppap_risk         &lt;chr&gt; "No", "No", "No", "No", "No", "Yes", "No", "No", "No…
+#&gt; $ stop_auto_buy     &lt;chr&gt; "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Ye…
+#&gt; $ rev_stop          &lt;chr&gt; "No", "No", "No", "No", "No", "No", "No", "No", "No"…
+#&gt; $ went_on_backorder &lt;chr&gt; "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Ye…</code></pre>
+</div>
+</div>
+<p>Split the data into training and test sets:</p>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-4_e64ee48bb03ee8d70407e6594542632f">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">set.seed</span>(<span class="at">seed =</span> <span class="dv">777</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>split_obj <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(product_backorders_tbl, <span class="at">prop =</span> <span class="fl">0.80</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>train_set_tbl <span class="ot">&lt;-</span> <span class="fu">training</span>(split_obj)</span>
+<span id="cb4-5"><a href="#cb4-5"></a>test_set_tbl  <span class="ot">&lt;-</span> <span class="fu">testing</span>(split_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Since some columns such as <code>deck_risk</code> are not numeric, they have to be converted into factor. The recipe below will take care of that:</p>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-5_373d6fa91c702787cc54c31900dca8f0">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>recipe_obj <span class="ot">&lt;-</span> <span class="fu">recipe</span>(went_on_backorder <span class="sc">~</span>., <span class="at">data =</span> train_set_tbl) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="fu">step_mutate_at</span>(potential_issue,</span>
+<span id="cb5-4"><a href="#cb5-4"></a>                 deck_risk,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>                 oe_constraint,</span>
+<span id="cb5-6"><a href="#cb5-6"></a>                 ppap_risk,</span>
+<span id="cb5-7"><a href="#cb5-7"></a>                 stop_auto_buy,</span>
+<span id="cb5-8"><a href="#cb5-8"></a>                 rev_stop,</span>
+<span id="cb5-9"><a href="#cb5-9"></a>                 went_on_backorder,</span>
+<span id="cb5-10"><a href="#cb5-10"></a>                 <span class="at">fn =</span> as.factor) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-11"><a href="#cb5-11"></a>  <span class="fu">prep</span>()</span>
+<span id="cb5-12"><a href="#cb5-12"></a></span>
+<span id="cb5-13"><a href="#cb5-13"></a>train_tbl <span class="ot">&lt;-</span> <span class="fu">bake</span>(recipe_obj, <span class="at">new_data =</span> train_set_tbl)</span>
+<span id="cb5-14"><a href="#cb5-14"></a>test_tbl  <span class="ot">&lt;-</span> <span class="fu">bake</span>(recipe_obj, <span class="at">new_data =</span> test_set_tbl)</span>
+<span id="cb5-15"><a href="#cb5-15"></a></span>
+<span id="cb5-16"><a href="#cb5-16"></a>train_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 15,242
+#&gt; Columns: 23
+#&gt; $ sku               &lt;dbl&gt; 1370478, 1423347, 1704266, 2258894, 3000725, 2888766…
+#&gt; $ national_inv      &lt;dbl&gt; 4, 59, 1, 9, 151, 6, 195, 66, 52, 0, 25, 1, 4, 2, 10…
+#&gt; $ lead_time         &lt;dbl&gt; 12, NA, 8, 2, 8, 2, 8, 8, 14, 2, 4, 4, 8, 8, 2, 8, 5…
+#&gt; $ in_transit_qty    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+#&gt; $ forecast_3_month  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 122, 20, 0, 9, 15, 0, 28, 0, 0,…
+#&gt; $ forecast_6_month  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 214, 35, 0, 18, 15, 0, 61, 0, 0…
+#&gt; $ forecast_9_month  &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 306, 65, 0, 18, 21, 0, 94, 0, 0…
+#&gt; $ sales_1_month     &lt;dbl&gt; 1, 0, 1, 0, 0, 0, 2, 36, 13, 0, 9, 4, 0, 3, 0, 0, 0,…
+#&gt; $ sales_3_month     &lt;dbl&gt; 1, 7, 1, 0, 15, 0, 4, 119, 31, 0, 24, 9, 0, 26, 0, 0…
+#&gt; $ sales_6_month     &lt;dbl&gt; 3, 20, 1, 0, 27, 0, 12, 209, 78, 0, 43, 15, 0, 56, 0…
+#&gt; $ sales_9_month     &lt;dbl&gt; 3, 28, 1, 3, 43, 0, 16, 322, 121, 0, 75, 22, 1, 82, …
+#&gt; $ min_bank          &lt;dbl&gt; 0, 0, 0, 0, 7, 0, 1, 45, 21, 1, 0, 2, 1, 6, 0, 0, 1,…
+#&gt; $ potential_issue   &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No, No, …
+#&gt; $ pieces_past_due   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+#&gt; $ perf_6_month_avg  &lt;dbl&gt; 0.87, -99.00, 0.99, 0.99, 0.98, 0.98, 0.88, 0.98, 0.…
+#&gt; $ perf_12_month_avg &lt;dbl&gt; 0.67, -99.00, 0.98, 0.99, 0.96, 0.99, 0.91, 0.99, 0.…
+#&gt; $ local_bo_qty      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+#&gt; $ deck_risk         &lt;fct&gt; No, Yes, No, Yes, No, No, No, No, No, No, No, No, No…
+#&gt; $ oe_constraint     &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No, No, …
+#&gt; $ ppap_risk         &lt;fct&gt; No, Yes, No, No, No, No, No, No, Yes, No, No, No, No…
+#&gt; $ stop_auto_buy     &lt;fct&gt; Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Ye…
+#&gt; $ rev_stop          &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No, No, …
+#&gt; $ went_on_backorder &lt;fct&gt; No, No, Yes, No, No, No, No, No, No, No, No, Yes, No…</code></pre>
+</div>
+</div>
+</section><section id="specify-the-response-and-predictor-variables" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="specify-the-response-and-predictor-variables">
+<span class="header-section-number">3.3</span> Specify the response and predictor variables</h2>
+<p>To determine the backorder status <code>went_on_backorder</code>, all the other columns will be used as predictors:</p>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-6_cab611db43ff798753c2b16a747cc19d">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">h2o.init</span>()</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a>split_h2o <span class="ot">&lt;-</span> <span class="fu">h2o.splitFrame</span>(<span class="fu">as.h2o</span>(train_tbl), <span class="at">ratios =</span> <span class="fu">c</span>(<span class="fl">0.80</span>), <span class="at">seed =</span> <span class="dv">767</span>)</span>
+<span id="cb7-4"><a href="#cb7-4"></a>train_h2o <span class="ot">&lt;-</span> split_h2o[[<span class="dv">1</span>]]</span>
+<span id="cb7-5"><a href="#cb7-5"></a>valid_h2o <span class="ot">&lt;-</span> split_h2o[[<span class="dv">2</span>]]</span>
+<span id="cb7-6"><a href="#cb7-6"></a>test_h2o  <span class="ot">&lt;-</span> <span class="fu">as.h2o</span>(test_tbl)</span>
+<span id="cb7-7"><a href="#cb7-7"></a></span>
+<span id="cb7-8"><a href="#cb7-8"></a>y <span class="ot">&lt;-</span> <span class="st">"went_on_backorder"</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>x <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(train_h2o), y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="run-automl-specifying-the-stopping-criterion" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="run-automl-specifying-the-stopping-criterion">
+<span class="header-section-number">3.4</span> Run AutoML specifying the stopping criterion</h2>
+<p>Set 30 seconds for <code>max_runtime_secs</code> and 5 for <code>nfolds</code>:</p>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-7_12a074549fe737861d03dcf63638c9ea">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>automl_models_h2o <span class="ot">&lt;-</span> <span class="fu">h2o.automl</span>(</span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="at">x =</span> x,</span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="at">y =</span> y,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="at">training_frame    =</span> train_h2o,</span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="at">validation_frame  =</span> valid_h2o,</span>
+<span id="cb8-6"><a href="#cb8-6"></a>  <span class="at">leaderboard_frame =</span> test_h2o,</span>
+<span id="cb8-7"><a href="#cb8-7"></a>  <span class="at">max_runtime_secs  =</span> <span class="dv">30</span>,</span>
+<span id="cb8-8"><a href="#cb8-8"></a>  <span class="at">nfolds            =</span> <span class="dv">5</span> </span>
+<span id="cb8-9"><a href="#cb8-9"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="view-the-leaderboard" class="level2" data-number="3.5"><h2 data-number="3.5" class="anchored" data-anchor-id="view-the-leaderboard">
+<span class="header-section-number">3.5</span> View the leaderboard</h2>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-8_848c1350c492c1e0db7017f95c380547">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>automl_models_h2o<span class="sc">@</span>leaderboard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;                                                  model_id       auc   logloss
+#&gt; 1                          GBM_1_AutoML_1_20230606_235930 0.9217779 0.2278932
+#&gt; 2 StackedEnsemble_BestOfFamily_1_AutoML_1_20230606_235930 0.9216773 0.2214933
+#&gt; 3                          DRF_1_AutoML_1_20230606_235930 0.7456369 2.7271022
+#&gt; 4                          GLM_1_AutoML_1_20230606_235930 0.7403997 0.3303213
+#&gt;       aucpr mean_per_class_error      rmse        mse
+#&gt; 1 0.6257940            0.1667248 0.2612527 0.06825299
+#&gt; 2 0.6303983            0.1693529 0.2611982 0.06822452
+#&gt; 3 0.3779712            0.2808203 0.3280305 0.10760404
+#&gt; 4 0.2842939            0.3237555 0.3133306 0.09817608
+#&gt; 
+#&gt; [4 rows x 7 columns]</code></pre>
+</div>
+</div>
+</section><section id="predicting-using-leader-model" class="level2" data-number="3.6"><h2 data-number="3.6" class="anchored" data-anchor-id="predicting-using-leader-model">
+<span class="header-section-number">3.6</span> Predicting using Leader Model</h2>
+<p>Extract the first model of the leaderboard:</p>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-10_4a71414f93f449813ffffbe879049491">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>leader_model <span class="ot">&lt;-</span> automl_models_h2o<span class="sc">@</span>leaderboard <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2"></a>  <span class="fu">extract_h2o_model_name_by_position</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3"></a>  <span class="fu">h2o.getModel</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; GBM_1_AutoML_1_20230606_235930</code></pre>
+</div>
+</div>
+<p>Use the extracted model to make predictions on the test set:</p>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-11_1e1e7fbc2f9611cd7ea986a038e798e3">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">h2o.predict</span>(leader_model, <span class="at">newdata =</span> <span class="fu">as.h2o</span>(test_tbl))</span>
+<span id="cb13-2"><a href="#cb13-2"></a></span>
+<span id="cb13-3"><a href="#cb13-3"></a>predictions_tbl <span class="ot">&lt;-</span> predictions <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb13-4"><a href="#cb13-4"></a></span>
+<span id="cb13-5"><a href="#cb13-5"></a>predictions_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-12_ef9fe2f46d739905404126e94c713c6a">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 3,811
+#&gt; Columns: 3
+#&gt; $ predict &lt;fct&gt; Yes, Yes, Yes, Yes, No, Yes, Yes, Yes, Yes, Yes, Yes, Yes, Yes…
+#&gt; $ No      &lt;dbl&gt; 0.7289282, 0.5590327, 0.5837228, 0.4468112, 0.8088230, 0.57161…
+#&gt; $ Yes     &lt;dbl&gt; 0.27107175, 0.44096726, 0.41627720, 0.55318882, 0.19117701, 0.…</code></pre>
+</div>
+</div>
+</section><section id="save-the-leader-model" class="level2" data-number="3.7"><h2 data-number="3.7" class="anchored" data-anchor-id="save-the-leader-model">
+<span class="header-section-number">3.7</span> Save the leader model</h2>
+<p>Save the extracted model in case it is needed later:</p>
+<div class="cell" data-hash="04_aml_with_h2o_ii_cache/html/unnamed-chunk-13_35082580450ea759c3700c5191030170">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>leader_model <span class="sc">%&gt;%</span> <span class="fu">h2o.saveModel</span>(<span class="at">path =</span> <span class="st">"h2o_models/"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'alternate';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
