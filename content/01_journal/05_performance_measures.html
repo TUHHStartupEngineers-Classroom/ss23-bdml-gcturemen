@@ -204,7 +204,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link" data-scroll-target="#import-libraries"><span class="toc-section-number">3.1</span>  Import Libraries</a></li>
   <li><a href="#load-the-training-test-dataset" id="toc-load-the-training-test-dataset" class="nav-link" data-scroll-target="#load-the-training-test-dataset"><span class="toc-section-number">3.2</span>  Load the training &amp; test dataset</a></li>
   <li><a href="#specify-the-response-and-predictor-variables" id="toc-specify-the-response-and-predictor-variables" class="nav-link" data-scroll-target="#specify-the-response-and-predictor-variables"><span class="toc-section-number">3.3</span>  Specify the response and predictor variables</a></li>
-  <li><a href="#run-automl-specifying-the-stopping-criterion" id="toc-run-automl-specifying-the-stopping-criterion" class="nav-link" data-scroll-target="#run-automl-specifying-the-stopping-criterion"><span class="toc-section-number">3.4</span>  Run AutoML specifying the stopping criterion</a></li>
+  <li><a href="#run-automl" id="toc-run-automl" class="nav-link" data-scroll-target="#run-automl"><span class="toc-section-number">3.4</span>  Run AutoML</a></li>
   <li><a href="#view-the-leaderboard" id="toc-view-the-leaderboard" class="nav-link" data-scroll-target="#view-the-leaderboard"><span class="toc-section-number">3.5</span>  View the leaderboard</a></li>
   <li><a href="#leaderboard-visualization" id="toc-leaderboard-visualization" class="nav-link" data-scroll-target="#leaderboard-visualization"><span class="toc-section-number">3.6</span>  Leaderboard visualization</a></li>
   <li><a href="#tune-a-model-with-grid-search" id="toc-tune-a-model-with-grid-search" class="nav-link" data-scroll-target="#tune-a-model-with-grid-search"><span class="toc-section-number">3.7</span>  Tune a model with grid search</a></li>
@@ -244,12 +244,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>For the challenge, we will continue working on the Product Backorders dataset. The goal here is to visualize various performance metrics of H2O models to simplify evaluation of them.</p>
 </section><section id="objectives" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Objectives</h1>
-<p>Apply your learning of H2O Automated Machine Learning to predict backorder status and visualize performance metrics to evaluate models.</p>
+<p>We will apply our learning of H2O Automated Machine Learning to predict backorder status and visualize performance metrics to evaluate models.</p>
 </section><section id="solution" class="level1" data-number="3"><h1 data-number="3">
 <span class="header-section-number">3</span> Solution</h1>
 <section id="import-libraries" class="level2" data-number="3.1"><h2 data-number="3.1" class="anchored" data-anchor-id="import-libraries">
 <span class="header-section-number">3.1</span> Import Libraries</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-1_d98d3c219efbbbc61564abc925bc85e8">
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-1_5682568294d4157a7ca86d9b555be41e">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(readxl)</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(rsample)</span>
@@ -260,12 +260,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </section><section id="load-the-training-test-dataset" class="level2" data-number="3.2"><h2 data-number="3.2" class="anchored" data-anchor-id="load-the-training-test-dataset">
 <span class="header-section-number">3.2</span> Load the training &amp; test dataset</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-2_c09413e5328f6766b6a45d795889b268">
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-2_2376f3778db2b1507b2827f5c7ac3c41">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>product_backorders_tbl <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/product_backorders.csv"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2"></a></span>
 <span id="cb2-3"><a href="#cb2-3"></a>product_backorders_tbl <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-3_88219ec31f74a06191d1e95572947cfe">
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-3_0af88d2943c357012eceeb4fe219fadd">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Rows: 19,053
 #&gt; Columns: 23
@@ -294,6 +294,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 #&gt; $ went_on_backorder &lt;chr&gt; "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Yes", "Ye…</code></pre>
 </div>
 </div>
+<p>Split the data into training and test sets:</p>
 <div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-4_1d285e883fa3acb237edefbd406a2538">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">set.seed</span>(<span class="at">seed =</span> <span class="dv">777</span>)</span>
 <span id="cb4-2"><a href="#cb4-2"></a>split_obj <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(product_backorders_tbl, <span class="at">prop =</span> <span class="fl">0.80</span>)</span>
@@ -301,6 +302,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-4"><a href="#cb4-4"></a>train_set_tbl <span class="ot">&lt;-</span> <span class="fu">training</span>(split_obj)</span>
 <span id="cb4-5"><a href="#cb4-5"></a>test_set_tbl  <span class="ot">&lt;-</span> <span class="fu">testing</span>(split_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Since some columns such as <code>deck_risk</code> are not numeric, they have to be converted into factor. The recipe below will take care of that:</p>
 <div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-5_d2e7380d8ba3b0d54f27e94174f418c2">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>recipe_obj <span class="ot">&lt;-</span> <span class="fu">recipe</span>(went_on_backorder <span class="sc">~</span>., <span class="at">data =</span> train_set_tbl) <span class="sc">%&gt;%</span> </span>
 <span id="cb5-2"><a href="#cb5-2"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>()) <span class="sc">%&gt;%</span> </span>
@@ -348,7 +350,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </section><section id="specify-the-response-and-predictor-variables" class="level2" data-number="3.3"><h2 data-number="3.3" class="anchored" data-anchor-id="specify-the-response-and-predictor-variables">
 <span class="header-section-number">3.3</span> Specify the response and predictor variables</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-6_26762db09980bba87a3ee5216a3226cf">
+<p>To determine the backorder status <code>went_on_backorder</code>, all the other columns will be used as predictors:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-6_25f4305a10e8c4bda422cb4cc92aa497">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">h2o.init</span>()</span>
 <span id="cb7-2"><a href="#cb7-2"></a></span>
 <span id="cb7-3"><a href="#cb7-3"></a>split_h2o <span class="ot">&lt;-</span> <span class="fu">h2o.splitFrame</span>(<span class="fu">as.h2o</span>(train_tbl), <span class="at">ratios =</span> <span class="fu">c</span>(<span class="fl">0.80</span>), <span class="at">seed =</span> <span class="dv">767</span>)</span>
@@ -359,447 +362,568 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-8"><a href="#cb7-8"></a>y <span class="ot">&lt;-</span> <span class="st">"went_on_backorder"</span></span>
 <span id="cb7-9"><a href="#cb7-9"></a>x <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(train_h2o), y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="run-automl-specifying-the-stopping-criterion" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="run-automl-specifying-the-stopping-criterion">
-<span class="header-section-number">3.4</span> Run AutoML specifying the stopping criterion</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-7_c363991dde88324ae735e8b58651fab6">
+</section><section id="run-automl" class="level2" data-number="3.4"><h2 data-number="3.4" class="anchored" data-anchor-id="run-automl">
+<span class="header-section-number">3.4</span> Run AutoML</h2>
+<p>Set 600 seconds for <code>max_runtime_secs</code> and 15 for <code>max_models</code> to limit the computation time:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-7_d2127da65286f8a76960e90d41e67875">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>automl_models_h2o <span class="ot">&lt;-</span> <span class="fu">h2o.automl</span>(</span>
 <span id="cb8-2"><a href="#cb8-2"></a>  <span class="at">x =</span> x,</span>
 <span id="cb8-3"><a href="#cb8-3"></a>  <span class="at">y =</span> y,</span>
 <span id="cb8-4"><a href="#cb8-4"></a>  <span class="at">training_frame    =</span> train_h2o,</span>
 <span id="cb8-5"><a href="#cb8-5"></a>  <span class="at">validation_frame  =</span> valid_h2o,</span>
 <span id="cb8-6"><a href="#cb8-6"></a>  <span class="at">leaderboard_frame =</span> test_h2o,</span>
-<span id="cb8-7"><a href="#cb8-7"></a>  <span class="at">max_runtime_secs  =</span> <span class="dv">60</span>,</span>
-<span id="cb8-8"><a href="#cb8-8"></a>  <span class="at">nfolds            =</span> <span class="dv">5</span> </span>
-<span id="cb8-9"><a href="#cb8-9"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-7"><a href="#cb8-7"></a>  <span class="at">max_runtime_secs  =</span> <span class="dv">600</span>,</span>
+<span id="cb8-8"><a href="#cb8-8"></a>  <span class="at">max_models =</span> <span class="dv">15</span>,</span>
+<span id="cb8-9"><a href="#cb8-9"></a>  <span class="at">nfolds            =</span> <span class="dv">5</span>,</span>
+<span id="cb8-10"><a href="#cb8-10"></a>  <span class="at">include_algos =</span> <span class="fu">c</span>(<span class="st">"DeepLearning"</span>, <span class="st">"GBM"</span>, <span class="st">"XGBoost"</span>, <span class="st">"GLM"</span>, <span class="st">"DRF"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="view-the-leaderboard" class="level2" data-number="3.5"><h2 data-number="3.5" class="anchored" data-anchor-id="view-the-leaderboard">
 <span class="header-section-number">3.5</span> View the leaderboard</h2>
 <div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-8_c1556bfaf53b0454fe10563a63287890">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>automl_models_h2o<span class="sc">@</span>leaderboard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;                                                  model_id       auc   logloss
-#&gt; 1    StackedEnsemble_AllModels_1_AutoML_1_20230604_130304 0.9418326 0.1834302
-#&gt; 2 StackedEnsemble_BestOfFamily_2_AutoML_1_20230604_130304 0.9407567 0.1851883
-#&gt; 3 StackedEnsemble_BestOfFamily_1_AutoML_1_20230604_130304 0.9401706 0.1855316
-#&gt; 4                          GBM_1_AutoML_1_20230604_130304 0.9401474 0.1871021
-#&gt; 5                          GBM_2_AutoML_1_20230604_130304 0.9368236 0.2178867
-#&gt; 6                          GBM_4_AutoML_1_20230604_130304 0.9363300 0.2134692
-#&gt;       aucpr mean_per_class_error      rmse        mse
-#&gt; 1 0.7353642            0.1680537 0.2326903 0.05414477
-#&gt; 2 0.7268495            0.1420750 0.2341499 0.05482616
-#&gt; 3 0.7261961            0.1415974 0.2342388 0.05486782
-#&gt; 4 0.7257485            0.1582008 0.2351557 0.05529820
-#&gt; 5 0.7163763            0.1805378 0.2500639 0.06253194
-#&gt; 6 0.7296437            0.1800278 0.2467934 0.06090696
+<pre><code>#&gt;                                     model_id       auc   logloss     aucpr
+#&gt; 1              GBM_3_AutoML_1_20230612_84439 0.9460585 0.1782440 0.7492513
+#&gt; 2              GBM_1_AutoML_1_20230612_84439 0.9454817 0.1792050 0.7391388
+#&gt; 3 GBM_grid_1_AutoML_1_20230612_84439_model_3 0.9453233 0.1782869 0.7453088
+#&gt; 4              GBM_2_AutoML_1_20230612_84439 0.9448476 0.1790129 0.7546212
+#&gt; 5              DRF_1_AutoML_1_20230612_84439 0.9433694 0.2031015 0.7311273
+#&gt; 6              GBM_4_AutoML_1_20230612_84439 0.9427084 0.1797984 0.7508803
+#&gt;   mean_per_class_error      rmse        mse
+#&gt; 1            0.1452358 0.2284730 0.05219991
+#&gt; 2            0.1746839 0.2304370 0.05310123
+#&gt; 3            0.1600785 0.2282351 0.05209127
+#&gt; 4            0.1586459 0.2289302 0.05240905
+#&gt; 5            0.1692491 0.2448786 0.05996551
+#&gt; 6            0.1716661 0.2288689 0.05238100
 #&gt; 
-#&gt; [9 rows x 7 columns]</code></pre>
+#&gt; [12 rows x 7 columns]</code></pre>
 </div>
 </div>
 </section><section id="leaderboard-visualization" class="level2" data-number="3.6"><h2 data-number="3.6" class="anchored" data-anchor-id="leaderboard-visualization">
 <span class="header-section-number">3.6</span> Leaderboard visualization</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-9_04d69b7ffbb54bdfc17a3a02286415f0">
+<p>First, leaderboard will be converted into long format to be able to visualize it easier:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-9_03a8c425be17279887251882ec976a20">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>model_leaderboard <span class="ot">&lt;-</span> automl_models_h2o<span class="sc">@</span>leaderboard <span class="sc">%&gt;%</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb11-3"><a href="#cb11-3"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(aucpr, mean_per_class_error, rmse, mse)) <span class="sc">%&gt;%</span></span>
 <span id="cb11-4"><a href="#cb11-4"></a>  <span class="fu">mutate</span>(<span class="at">model_type =</span> <span class="fu">str_extract</span>(model_id, <span class="st">"[^_]+"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb11-5"><a href="#cb11-5"></a>  <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">"row_name"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb11-6"><a href="#cb11-6"></a>  <span class="fu">mutate</span>(<span class="at">model_id   =</span> <span class="fu">as_factor</span>(model_id) <span class="sc">%&gt;%</span> <span class="fu">reorder</span>(auc), </span>
-<span id="cb11-7"><a href="#cb11-7"></a>         <span class="at">model_type =</span> <span class="fu">as.factor</span>(model_type)</span>
-<span id="cb11-8"><a href="#cb11-8"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-9"><a href="#cb11-9"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(model_id, model_type, row_name), </span>
-<span id="cb11-10"><a href="#cb11-10"></a>               <span class="at">names_to =</span> <span class="st">"key"</span>, </span>
-<span id="cb11-11"><a href="#cb11-11"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>, </span>
-<span id="cb11-12"><a href="#cb11-12"></a>               <span class="at">names_transform =</span> <span class="fu">list</span>(<span class="at">key =</span> forcats<span class="sc">::</span>fct_inorder)</span>
-<span id="cb11-13"><a href="#cb11-13"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-14"><a href="#cb11-14"></a>  <span class="fu">mutate</span>(<span class="at">model_id =</span> <span class="fu">paste0</span>(row_name, <span class="st">". "</span>, model_id) <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>() <span class="sc">%&gt;%</span> <span class="fu">fct_rev</span>())</span>
-<span id="cb11-15"><a href="#cb11-15"></a></span>
-<span id="cb11-16"><a href="#cb11-16"></a>model_leaderboard <span class="sc">%&gt;%</span></span>
-<span id="cb11-17"><a href="#cb11-17"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value, model_id, <span class="at">color =</span> model_type)) <span class="sc">+</span></span>
-<span id="cb11-18"><a href="#cb11-18"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb11-19"><a href="#cb11-19"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(value, <span class="dv">2</span>), <span class="at">hjust =</span> <span class="st">"inward"</span>)) <span class="sc">+</span></span>
-<span id="cb11-20"><a href="#cb11-20"></a>  </span>
-<span id="cb11-21"><a href="#cb11-21"></a>  <span class="co"># Facet to break out logloss and auc</span></span>
-<span id="cb11-22"><a href="#cb11-22"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> key, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
-<span id="cb11-23"><a href="#cb11-23"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Leaderboard Metrics"</span>,</span>
-<span id="cb11-24"><a href="#cb11-24"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Ordered by: "</span>, <span class="st">"auc"</span>),</span>
-<span id="cb11-25"><a href="#cb11-25"></a>       <span class="at">y =</span> <span class="st">"Model Position, Model ID"</span>, <span class="at">x =</span> <span class="st">""</span>) <span class="sc">+</span> </span>
-<span id="cb11-26"><a href="#cb11-26"></a>  <span class="fu">theme</span>(</span>
-<span id="cb11-27"><a href="#cb11-27"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
-<span id="cb11-28"><a href="#cb11-28"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb11-29"><a href="#cb11-29"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb11-30"><a href="#cb11-30"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb11-31"><a href="#cb11-31"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb11-32"><a href="#cb11-32"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb11-33"><a href="#cb11-33"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb11-34"><a href="#cb11-34"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb11-35"><a href="#cb11-35"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb11-36"><a href="#cb11-36"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-7"><a href="#cb11-7"></a>         <span class="at">model_type =</span> <span class="fu">as.factor</span>(model_type)) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-8"><a href="#cb11-8"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(model_id, model_type, row_name), </span>
+<span id="cb11-9"><a href="#cb11-9"></a>               <span class="at">names_to =</span> <span class="st">"key"</span>, </span>
+<span id="cb11-10"><a href="#cb11-10"></a>               <span class="at">values_to =</span> <span class="st">"value"</span>, </span>
+<span id="cb11-11"><a href="#cb11-11"></a>               <span class="at">names_transform =</span> <span class="fu">list</span>(<span class="at">key =</span> forcats<span class="sc">::</span>fct_inorder)) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-12"><a href="#cb11-12"></a>  <span class="fu">mutate</span>(<span class="at">model_id =</span> <span class="fu">paste0</span>(row_name, <span class="st">". "</span>, model_id) <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>() <span class="sc">%&gt;%</span> <span class="fu">fct_rev</span>())</span>
+<span id="cb11-13"><a href="#cb11-13"></a></span>
+<span id="cb11-14"><a href="#cb11-14"></a>model_leaderboard <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Rows: 24
+#&gt; Columns: 5
+#&gt; $ row_name   &lt;chr&gt; "1", "1", "2", "2", "3", "3", "4", "4", "5", "5", "6", "6",…
+#&gt; $ model_id   &lt;fct&gt; 1. GBM_3_AutoML_1_20230612_84439, 1. GBM_3_AutoML_1_2023061…
+#&gt; $ model_type &lt;fct&gt; GBM, GBM, GBM, GBM, GBM, GBM, GBM, GBM, DRF, DRF, GBM, GBM,…
+#&gt; $ key        &lt;fct&gt; auc, logloss, auc, logloss, auc, logloss, auc, logloss, auc…
+#&gt; $ value      &lt;dbl&gt; 0.9460585, 0.1782440, 0.9454817, 0.1792050, 0.9453233, 0.17…</code></pre>
+</div>
+</div>
+<p>Visualize the long format leaderboard:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-10_8a6880a5005ac4310347a59a766b90fa">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>model_leaderboard <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(value, model_id, <span class="at">color =</span> model_type)) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(value, <span class="dv">3</span>), <span class="at">hjust =</span> <span class="st">"inward"</span>), <span class="at">label.padding =</span> <span class="fu">unit</span>(<span class="fl">0.10</span>, <span class="st">"lines"</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> key, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Leaderboard Metrics"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Ordered by: "</span>, <span class="st">"auc"</span>),</span>
+<span id="cb13-8"><a href="#cb13-8"></a>       <span class="at">y =</span> <span class="st">"Model Position, Model ID"</span>,</span>
+<span id="cb13-9"><a href="#cb13-9"></a>       <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb13-10"><a href="#cb13-10"></a>       <span class="at">col =</span> <span class="st">"Model Type"</span>) <span class="sc">+</span> </span>
+<span id="cb13-11"><a href="#cb13-11"></a>  <span class="fu">theme</span>(</span>
+<span id="cb13-12"><a href="#cb13-12"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb13-13"><a href="#cb13-13"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb13-14"><a href="#cb13-14"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb13-15"><a href="#cb13-15"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb13-16"><a href="#cb13-16"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb13-17"><a href="#cb13-17"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb13-18"><a href="#cb13-18"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">size =</span> <span class="dv">7</span>),</span>
+<span id="cb13-19"><a href="#cb13-19"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb13-20"><a href="#cb13-20"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">size =</span> <span class="dv">6</span>),</span>
+<span id="cb13-21"><a href="#cb13-21"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-9-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="05_performance_measures_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></a></p>
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-10-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="05_performance_measures_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
+<p>From the figure, it is seen that <code>AUC</code> and <code>LogLoss</code> metrics behave mostly as expected. Generally with increasing model performance, an increase in <code>AUC</code> and a decrease in <code>LogLoss</code> is observed.</p>
 </section><section id="tune-a-model-with-grid-search" class="level2" data-number="3.7"><h2 data-number="3.7" class="anchored" data-anchor-id="tune-a-model-with-grid-search">
 <span class="header-section-number">3.7</span> Tune a model with grid search</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-11_5612e9387ac78b815178b75a1aebe73d">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>model <span class="ot">&lt;-</span> automl_models_h2o<span class="sc">@</span>leaderboard <span class="sc">%&gt;%</span> </span>
-<span id="cb12-2"><a href="#cb12-2"></a>  <span class="fu">extract_h2o_model_name_by_position</span>(<span class="dv">9</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-3"><a href="#cb12-3"></a>  <span class="fu">h2o.getModel</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A <code>Deep Learning</code> model will be tuned in this section. First, the Deep Learning model from the leaderboard is extracted to be used for comparison purposes:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-12_52a6b991d1261013f1aedb68cdd39941">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>dl_model_automl <span class="ot">&lt;-</span> automl_models_h2o<span class="sc">@</span>leaderboard <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2"></a>  <span class="fu">extract_h2o_model_name_by_position</span>(<span class="dv">11</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3"></a>  <span class="fu">h2o.getModel</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>#&gt; GLM_1_AutoML_1_20230604_130304</code></pre>
+<pre><code>#&gt; DeepLearning_1_AutoML_1_20230612_84439</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-12_1df8398d3ec971dab528a83170ab2e66">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>p_model <span class="ot">&lt;-</span> <span class="fu">h2o.performance</span>(model, <span class="at">newdata =</span> <span class="fu">as.h2o</span>(test_tbl))</span>
-<span id="cb14-2"><a href="#cb14-2"></a></span>
-<span id="cb14-3"><a href="#cb14-3"></a>p_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-13_dc574b2181075c1004af188e2a5563cd">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>p_dl_model_automl <span class="ot">&lt;-</span> <span class="fu">h2o.performance</span>(dl_model_automl, <span class="at">newdata =</span> <span class="fu">as.h2o</span>(test_tbl))</span>
+<span id="cb16-2"><a href="#cb16-2"></a></span>
+<span id="cb16-3"><a href="#cb16-3"></a>p_dl_model_automl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-13_b069966cba7097f5b2fdda711014eddf">
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-14_7ca466137a7379a9856922edc8dd0815">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; H2OBinomialMetrics: glm
+<pre><code>#&gt; H2OBinomialMetrics: deeplearning
 #&gt; 
-#&gt; MSE:  0.09817608
-#&gt; RMSE:  0.3133306
-#&gt; LogLoss:  0.3303213
-#&gt; Mean Per-Class Error:  0.3237555
-#&gt; AUC:  0.7403997
-#&gt; AUCPR:  0.2842939
-#&gt; Gini:  0.4807994
-#&gt; R^2:  0.08355864
-#&gt; Residual Deviance:  2517.709
-#&gt; AIC:  2575.709
+#&gt; MSE:  0.09505643
+#&gt; RMSE:  0.3083122
+#&gt; LogLoss:  0.321205
+#&gt; Mean Per-Class Error:  0.3228888
+#&gt; AUC:  0.7750419
+#&gt; AUCPR:  0.350434
+#&gt; Gini:  0.5500839
 #&gt; 
 #&gt; Confusion Matrix (vertical: actual; across: predicted) for F1-optimal threshold:
-#&gt;          No  Yes    Error        Rate
-#&gt; No     2230 1116 0.333533  =1116/3346
-#&gt; Yes     146  319 0.313978    =146/465
-#&gt; Totals 2376 1435 0.331147  =1262/3811
+#&gt;          No Yes    Error       Rate
+#&gt; No     2905 441 0.131799  =441/3346
+#&gt; Yes     239 226 0.513978   =239/465
+#&gt; Totals 3144 667 0.178431  =680/3811
 #&gt; 
 #&gt; Maximum Metrics: Maximum metrics at their respective thresholds
 #&gt;                         metric threshold       value idx
-#&gt; 1                       max f1  0.130969    0.335789 221
-#&gt; 2                       max f2  0.100363    0.508274 265
-#&gt; 3                 max f0point5  0.228856    0.319582 102
-#&gt; 4                 max accuracy  0.421982    0.880609  16
-#&gt; 5                max precision  1.000000    1.000000   0
-#&gt; 6                   max recall  0.000054    1.000000 399
-#&gt; 7              max specificity  1.000000    1.000000   0
-#&gt; 8             max absolute_mcc  0.100363    0.239662 265
-#&gt; 9   max min_per_class_accuracy  0.132503    0.671847 219
-#&gt; 10 max mean_per_class_accuracy  0.100363    0.683015 265
-#&gt; 11                     max tns  1.000000 3346.000000   0
-#&gt; 12                     max fns  1.000000  464.000000   0
-#&gt; 13                     max fps  0.000054 3346.000000 399
-#&gt; 14                     max tps  0.000054  465.000000 399
-#&gt; 15                     max tnr  1.000000    1.000000   0
-#&gt; 16                     max fnr  1.000000    0.997849   0
-#&gt; 17                     max fpr  0.000054    1.000000 399
-#&gt; 18                     max tpr  0.000054    1.000000 399
+#&gt; 1                       max f1  0.238236    0.399293 141
+#&gt; 2                       max f2  0.179913    0.526316 212
+#&gt; 3                 max f0point5  0.306734    0.385791  85
+#&gt; 4                 max accuracy  0.386126    0.884807  52
+#&gt; 5                max precision  0.946199    1.000000   0
+#&gt; 6                   max recall  0.000058    1.000000 399
+#&gt; 7              max specificity  0.946199    1.000000   0
+#&gt; 8             max absolute_mcc  0.238236    0.305113 141
+#&gt; 9   max min_per_class_accuracy  0.194376    0.699342 195
+#&gt; 10 max mean_per_class_accuracy  0.179913    0.708168 212
+#&gt; 11                     max tns  0.946199 3346.000000   0
+#&gt; 12                     max fns  0.946199  464.000000   0
+#&gt; 13                     max fps  0.000058 3346.000000 399
+#&gt; 14                     max tps  0.000058  465.000000 399
+#&gt; 15                     max tnr  0.946199    1.000000   0
+#&gt; 16                     max fnr  0.946199    0.997849   0
+#&gt; 17                     max fpr  0.000058    1.000000 399
+#&gt; 18                     max tpr  0.000058    1.000000 399
 #&gt; 
 #&gt; Gains/Lift Table: Extract with `h2o.gainsLift(&lt;model&gt;, &lt;data&gt;)` or `h2o.gainsLift(&lt;model&gt;, valid=&lt;T/F&gt;, xval=&lt;T/F&gt;)`</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-14_0c9ef3d05e8e44a4aabb3e03d3144d96">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>model_grid <span class="ot">&lt;-</span> <span class="fu">h2o.grid</span>(</span>
-<span id="cb16-2"><a href="#cb16-2"></a>  <span class="at">algorithm =</span> <span class="st">"glm"</span>,</span>
-<span id="cb16-3"><a href="#cb16-3"></a>  <span class="at">grid_id =</span> <span class="st">"model_grid"</span>,</span>
-<span id="cb16-4"><a href="#cb16-4"></a>  <span class="at">x =</span> x,</span>
-<span id="cb16-5"><a href="#cb16-5"></a>  <span class="at">y =</span> y,</span>
-<span id="cb16-6"><a href="#cb16-6"></a>  <span class="at">training_frame =</span> train_h2o,</span>
-<span id="cb16-7"><a href="#cb16-7"></a>  <span class="at">validation_frame =</span> valid_h2o,</span>
-<span id="cb16-8"><a href="#cb16-8"></a>  <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
-<span id="cb16-9"><a href="#cb16-9"></a>  <span class="at">hyper_params =</span> <span class="fu">list</span>(</span>
-<span id="cb16-10"><a href="#cb16-10"></a>    <span class="at">alpha =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="fl">1.00</span>),</span>
-<span id="cb16-11"><a href="#cb16-11"></a>    <span class="at">lambda =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="dv">1</span>, <span class="dv">10</span>)</span>
-<span id="cb16-12"><a href="#cb16-12"></a>  )</span>
-<span id="cb16-13"><a href="#cb16-13"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It is seen that this model has an <code>AUC</code> value of 0.775 and a <code>LogLoss</code> value of 0.321. Using grid search, there is a possibility to find a model with better performance metrics.</p>
+<p>Use the hyperparameters <code>hidden</code> and <code>epochs</code> for tuning:</p>
+<pre><code>hidden: Hidden layer size. 
+lambda: The number of times to iterate the data set.</code></pre>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-16_2ba21bad15bc24749ce91bb48eb9ef70">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>model_grid <span class="ot">&lt;-</span> <span class="fu">h2o.grid</span>(</span>
+<span id="cb19-2"><a href="#cb19-2"></a>  <span class="at">algorithm =</span> <span class="st">"deeplearning"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3"></a>  <span class="at">grid_id =</span> <span class="st">"deeplearning_grid_01"</span>,</span>
+<span id="cb19-4"><a href="#cb19-4"></a>  <span class="at">x =</span> x,</span>
+<span id="cb19-5"><a href="#cb19-5"></a>  <span class="at">y =</span> y,</span>
+<span id="cb19-6"><a href="#cb19-6"></a>  <span class="at">training_frame =</span> train_h2o,</span>
+<span id="cb19-7"><a href="#cb19-7"></a>  <span class="at">validation_frame =</span> valid_h2o,</span>
+<span id="cb19-8"><a href="#cb19-8"></a>  <span class="at">max_runtime_secs  =</span> <span class="dv">600</span>,</span>
+<span id="cb19-9"><a href="#cb19-9"></a>  <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
+<span id="cb19-10"><a href="#cb19-10"></a>  <span class="at">hyper_params =</span> <span class="fu">list</span>(</span>
+<span id="cb19-11"><a href="#cb19-11"></a>    <span class="co">#activation = c("tanh", "rectifier"),</span></span>
+<span id="cb19-12"><a href="#cb19-12"></a>    <span class="at">hidden =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>), <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">15</span>), <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>), <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">15</span>, <span class="dv">15</span>)),</span>
+<span id="cb19-13"><a href="#cb19-13"></a>    <span class="at">epochs =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>)</span>
+<span id="cb19-14"><a href="#cb19-14"></a>  )</span>
+<span id="cb19-15"><a href="#cb19-15"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-15_501ea43d5f3dc75bdeaaf7247871cdb2">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">h2o.getGrid</span>(<span class="at">grid_id =</span> <span class="st">"model_grid"</span>, <span class="at">sort_by =</span> <span class="st">"auc"</span>, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Get the grid search result and order models by decreasing AUC:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-17_43f11427d2f0e9044ed804e616801ffa">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">h2o.getGrid</span>(<span class="at">grid_id =</span> <span class="st">"deeplearning_grid_01"</span>, <span class="at">sort_by =</span> <span class="st">"auc"</span>, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; H2O Grid Details
 #&gt; ================
 #&gt; 
-#&gt; Grid ID: model_grid 
+#&gt; Grid ID: deeplearning_grid_01 
 #&gt; Used hyper parameters: 
-#&gt;   -  alpha 
-#&gt;   -  lambda 
-#&gt; Number of models: 25 
+#&gt;   -  epochs 
+#&gt;   -  hidden 
+#&gt; Number of models: 12 
 #&gt; Number of failed models: 0 
 #&gt; 
 #&gt; Hyper-Parameter Search Summary: ordered by decreasing auc
-#&gt;   alpha lambda          model_ids     auc
-#&gt; 1  0.25    0.0 model_grid_model_2 0.79093
-#&gt; 2   0.5    0.0 model_grid_model_3 0.78946
-#&gt; 3   1.0    0.0 model_grid_model_5 0.78942
-#&gt; 4   0.0    0.0 model_grid_model_1 0.78940
-#&gt; 5  0.75    0.0 model_grid_model_4 0.78769
-#&gt; 
-#&gt; ---
-#&gt;    alpha lambda           model_ids     auc
-#&gt; 20   1.0   10.0 model_grid_model_25 0.48696
-#&gt; 21   0.5    0.1 model_grid_model_13 0.48628
-#&gt; 22  0.25   10.0 model_grid_model_22 0.48370
-#&gt; 23  0.25    1.0 model_grid_model_17 0.48216
-#&gt; 24  0.75   10.0 model_grid_model_24 0.48089
-#&gt; 25   1.0    1.0 model_grid_model_20 0.47361</code></pre>
+#&gt;       epochs       hidden                     model_ids     auc
+#&gt; 1  204.75291 [10, 10, 10]  deeplearning_grid_01_model_9 0.89661
+#&gt; 2  203.22186     [15, 15]  deeplearning_grid_01_model_6 0.88974
+#&gt; 3  204.79010 [15, 15, 15] deeplearning_grid_01_model_12 0.88580
+#&gt; 4  103.99907 [10, 10, 10]  deeplearning_grid_01_model_8 0.88199
+#&gt; 5  203.19357     [10, 10]  deeplearning_grid_01_model_3 0.87900
+#&gt; 6  104.00621 [15, 15, 15] deeplearning_grid_01_model_11 0.86775
+#&gt; 7  103.98990     [10, 10]  deeplearning_grid_01_model_2 0.86551
+#&gt; 8  103.99660     [15, 15]  deeplearning_grid_01_model_5 0.86497
+#&gt; 9   52.01461     [10, 10]  deeplearning_grid_01_model_1 0.84500
+#&gt; 10  52.00563 [15, 15, 15] deeplearning_grid_01_model_10 0.84160
+#&gt; 11  51.99446 [10, 10, 10]  deeplearning_grid_01_model_7 0.83979
+#&gt; 12  51.98538     [15, 15]  deeplearning_grid_01_model_4 0.83636</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-16_ed081a5d5904f2b728a7db7091e748eb">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>model_grid_5 <span class="ot">&lt;-</span> <span class="fu">h2o.getModel</span>(<span class="st">"model_grid_model_5"</span>)</span>
-<span id="cb19-2"><a href="#cb19-2"></a>model_grid_5 <span class="sc">%&gt;%</span> <span class="fu">h2o.auc</span>(<span class="at">train =</span> T, <span class="at">valid =</span> T, <span class="at">xval =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Extract the leader model of the grid search:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-18_3f843af6f0c55eca6bd07c0f8763da5f">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>dl_model_grid_search <span class="ot">&lt;-</span> <span class="fu">h2o.getModel</span>(<span class="st">"deeplearning_grid_01_model_9"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-19_3c7501b496be1f7088bdd1ebb9d82e03">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>dl_model_grid_search <span class="sc">%&gt;%</span> <span class="fu">h2o.auc</span>(<span class="at">train =</span> T, <span class="at">valid =</span> T, <span class="at">xval =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;     train     valid      xval 
-#&gt; 0.7866092 0.7827733 0.7894218</code></pre>
+#&gt; 0.9064394 0.9012377 0.8966053</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-17_fb60dbbc1dd41b59ea513b137b4a3efc">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>p_model_grid_5 <span class="ot">&lt;-</span> model_grid_5 <span class="sc">%&gt;%</span> <span class="fu">h2o.performance</span>(<span class="at">newdata =</span> <span class="fu">as.h2o</span>(test_tbl))</span>
-<span id="cb21-2"><a href="#cb21-2"></a></span>
-<span id="cb21-3"><a href="#cb21-3"></a>p_model_grid_5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>No overfitting is observed since the AUC value for training, validation and cross-validation are all similar.</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-20_9c6290b1cee018d8c4e0c37d5050dd3c">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>p_dl_model_grid_search <span class="ot">&lt;-</span> dl_model_grid_search <span class="sc">%&gt;%</span> <span class="fu">h2o.performance</span>(<span class="at">newdata =</span> <span class="fu">as.h2o</span>(test_tbl))</span>
+<span id="cb25-2"><a href="#cb25-2"></a></span>
+<span id="cb25-3"><a href="#cb25-3"></a>p_dl_model_grid_search</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-18_8bf00fd2fb4f79d80292c6fe8d1307ef">
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-21_4845c6b77d587379efe836ceb1832143">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; H2OBinomialMetrics: glm
+<pre><code>#&gt; H2OBinomialMetrics: deeplearning
 #&gt; 
-#&gt; MSE:  0.09534117
-#&gt; RMSE:  0.3087737
-#&gt; LogLoss:  0.3223601
-#&gt; Mean Per-Class Error:  0.313812
-#&gt; AUC:  0.7742565
-#&gt; AUCPR:  0.3253347
-#&gt; Gini:  0.5485131
-#&gt; R^2:  0.1100216
-#&gt; Residual Deviance:  2457.029
-#&gt; AIC:  2503.029
+#&gt; MSE:  0.07524832
+#&gt; RMSE:  0.2743143
+#&gt; LogLoss:  0.2631152
+#&gt; Mean Per-Class Error:  0.2072473
+#&gt; AUC:  0.8954788
+#&gt; AUCPR:  0.6113704
+#&gt; Gini:  0.7909576
 #&gt; 
 #&gt; Confusion Matrix (vertical: actual; across: predicted) for F1-optimal threshold:
-#&gt;          No  Yes    Error       Rate
-#&gt; No     2534  812 0.242678  =812/3346
-#&gt; Yes     179  286 0.384946   =179/465
-#&gt; Totals 2713 1098 0.260037  =991/3811
+#&gt;          No Yes    Error       Rate
+#&gt; No     3132 214 0.063957  =214/3346
+#&gt; Yes     163 302 0.350538   =163/465
+#&gt; Totals 3295 516 0.098924  =377/3811
 #&gt; 
 #&gt; Maximum Metrics: Maximum metrics at their respective thresholds
 #&gt;                         metric threshold       value idx
-#&gt; 1                       max f1  0.158004    0.365963 193
-#&gt; 2                       max f2  0.101413    0.535378 262
-#&gt; 3                 max f0point5  0.234898    0.363489 111
-#&gt; 4                 max accuracy  0.399793    0.881134  31
-#&gt; 5                max precision  0.680566    0.750000   9
-#&gt; 6                   max recall  0.000019    1.000000 399
-#&gt; 7              max specificity  0.999834    0.999701   0
-#&gt; 8             max absolute_mcc  0.117944    0.279256 240
-#&gt; 9   max min_per_class_accuracy  0.136795    0.695158 216
-#&gt; 10 max mean_per_class_accuracy  0.107751    0.711258 254
-#&gt; 11                     max tns  0.999834 3345.000000   0
-#&gt; 12                     max fns  0.999834  463.000000   0
-#&gt; 13                     max fps  0.000019 3346.000000 399
-#&gt; 14                     max tps  0.000019  465.000000 399
-#&gt; 15                     max tnr  0.999834    0.999701   0
-#&gt; 16                     max fnr  0.999834    0.995699   0
-#&gt; 17                     max fpr  0.000019    1.000000 399
-#&gt; 18                     max tpr  0.000019    1.000000 399
+#&gt; 1                       max f1  0.449638    0.615698 141
+#&gt; 2                       max f2  0.342839    0.681644 188
+#&gt; 3                 max f0point5  0.629235    0.631579  72
+#&gt; 4                 max accuracy  0.629235    0.909473  72
+#&gt; 5                max precision  0.998544    1.000000   0
+#&gt; 6                   max recall  0.000051    1.000000 399
+#&gt; 7              max specificity  0.998544    1.000000   0
+#&gt; 8             max absolute_mcc  0.449638    0.560103 141
+#&gt; 9   max min_per_class_accuracy  0.273284    0.821505 223
+#&gt; 10 max mean_per_class_accuracy  0.265519    0.824108 227
+#&gt; 11                     max tns  0.998544 3346.000000   0
+#&gt; 12                     max fns  0.998544  462.000000   0
+#&gt; 13                     max fps  0.000051 3346.000000 399
+#&gt; 14                     max tps  0.000051  465.000000 399
+#&gt; 15                     max tnr  0.998544    1.000000   0
+#&gt; 16                     max fnr  0.998544    0.993548   0
+#&gt; 17                     max fpr  0.000051    1.000000 399
+#&gt; 18                     max tpr  0.000051    1.000000 399
 #&gt; 
 #&gt; Gains/Lift Table: Extract with `h2o.gainsLift(&lt;model&gt;, &lt;data&gt;)` or `h2o.gainsLift(&lt;model&gt;, valid=&lt;T/F&gt;, xval=&lt;T/F&gt;)`</code></pre>
 </div>
 </div>
-</section><section id="visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold" class="level2" data-number="3.8"><h2 data-number="3.8" class="anchored" data-anchor-id="visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold">
+<p>It is seen that by using grid search it was possible find a model with improved performance metrics compared to the base model found in the previous section.</p>
+<table class="table">
+<thead><tr class="header">
+<th style="text-align: center;">Model</th>
+<th style="text-align: center;">AUC</th>
+<th style="text-align: center;">LogLoss</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">dl_model_automl</td>
+<td style="text-align: center;">0.775</td>
+<td style="text-align: center;">0.321</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">dl_model_grid_search</td>
+<td style="text-align: center;">0.895</td>
+<td style="text-align: center;">0.263</td>
+</tr>
+</tbody>
+</table></section><section id="visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold" class="level2" data-number="3.8"><h2 data-number="3.8" class="anchored" data-anchor-id="visualize-the-trade-off-between-the-precision-and-the-recall-and-the-optimal-threshold">
 <span class="header-section-number">3.8</span> Visualize the trade-off between the precision and the recall and the optimal threshold</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-19_846f07275d3f461f3d1b8519f5d18efc">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>p_model_grid_5_tbl <span class="ot">&lt;-</span> p_model_grid_5 <span class="sc">%&gt;%</span> </span>
-<span id="cb23-2"><a href="#cb23-2"></a>  <span class="fu">h2o.metric</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb23-3"><a href="#cb23-3"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb23-4"><a href="#cb23-4"></a>  <span class="fu">mutate</span>(<span class="at">auc =</span> <span class="fu">h2o.auc</span>(p_model_grid_5))</span>
-<span id="cb23-5"><a href="#cb23-5"></a></span>
-<span id="cb23-6"><a href="#cb23-6"></a>p_model_grid_5_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb23-7"><a href="#cb23-7"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> threshold)) <span class="sc">+</span></span>
-<span id="cb23-8"><a href="#cb23-8"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> precision), <span class="at">color =</span> <span class="st">"#2DC6D6"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb23-9"><a href="#cb23-9"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> recall), <span class="at">color =</span> <span class="st">"#FF8014"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb23-10"><a href="#cb23-10"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">h2o.find_threshold_by_max_metric</span>(p_model_grid_5, <span class="st">"f1"</span>), </span>
-<span id="cb23-11"><a href="#cb23-11"></a>             <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb23-12"><a href="#cb23-12"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Precision vs Recall"</span>, <span class="at">y =</span> <span class="st">"value"</span>) <span class="sc">+</span></span>
-<span id="cb23-13"><a href="#cb23-13"></a>  <span class="fu">theme</span>(</span>
-<span id="cb23-14"><a href="#cb23-14"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb23-15"><a href="#cb23-15"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb23-16"><a href="#cb23-16"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb23-17"><a href="#cb23-17"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb23-18"><a href="#cb23-18"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb23-19"><a href="#cb23-19"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb23-20"><a href="#cb23-20"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb23-21"><a href="#cb23-21"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb23-22"><a href="#cb23-22"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Convert the performance object of the model into a series of different metrics which vary by threshold and store it as <code>p_dl_model_grid_search_tbl</code>:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-22_c4ec212509d90c7b1b7cbadc9e273c0c">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>p_dl_model_grid_search_tbl <span class="ot">&lt;-</span> p_dl_model_grid_search <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2"></a>  <span class="fu">h2o.metric</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-4"><a href="#cb27-4"></a>  <span class="fu">mutate</span>(<span class="at">auc =</span> <span class="fu">h2o.auc</span>(p_dl_model_grid_search))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-20_e31c53def76dd468cee0a2bc26f8bb6c">
+<p>Visualize <code>precision</code> and <code>recall</code> by selecting corresponding columns:</p>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-23_f544b2a36f18affc95a7c7f10d6ce9a6">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>p_dl_model_grid_search_tbl <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">c</span>(threshold, precision, recall)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-2"><a href="#cb28-2"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(precision, recall), <span class="at">names_to =</span> <span class="st">"key"</span>, <span class="at">values_to =</span> <span class="st">"values"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a>  </span>
+<span id="cb28-4"><a href="#cb28-4"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> threshold, <span class="at">y =</span> values, <span class="at">color =</span> key)) <span class="sc">+</span></span>
+<span id="cb28-5"><a href="#cb28-5"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#2DC6D6"</span>, <span class="st">"#FF8014"</span>)) <span class="sc">+</span></span>
+<span id="cb28-7"><a href="#cb28-7"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">h2o.find_threshold_by_max_metric</span>(p_dl_model_grid_search, <span class="st">"f1"</span>), </span>
+<span id="cb28-8"><a href="#cb28-8"></a>             <span class="at">color =</span> <span class="st">'red'</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb28-9"><a href="#cb28-9"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Precision vs Recall"</span>, <span class="at">subtitle =</span> <span class="st">"dl_model_grid_search"</span>, <span class="at">y =</span> <span class="st">"Value"</span>, <span class="at">x =</span> <span class="st">"Threshold"</span>, <span class="at">col =</span> <span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb28-10"><a href="#cb28-10"></a>  <span class="fu">theme</span>(</span>
+<span id="cb28-11"><a href="#cb28-11"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb28-12"><a href="#cb28-12"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb28-13"><a href="#cb28-13"></a>    <span class="at">legend.key =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb28-14"><a href="#cb28-14"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb28-15"><a href="#cb28-15"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb28-16"><a href="#cb28-16"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb28-17"><a href="#cb28-17"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb28-18"><a href="#cb28-18"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb28-19"><a href="#cb28-19"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb28-20"><a href="#cb28-20"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb28-21"><a href="#cb28-21"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-24_16172e4aa3db8148350bf26cf5198347">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-20-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="05_performance_measures_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></a></p>
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-24-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="05_performance_measures_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
+<p>From the figure, values of <code>precision</code> and <code>recall</code> can be seen as the threshold value increases. The vertical red line indicates the optimal threshold value which maximizes the <code>F1</code>.</p>
 </section><section id="roc-plot" class="level2" data-number="3.9"><h2 data-number="3.9" class="anchored" data-anchor-id="roc-plot">
 <span class="header-section-number">3.9</span> ROC Plot</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-21_341ff3ca6674055ff1ef6a3bc864723d">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>roc_plot <span class="ot">&lt;-</span> p_model_grid_5_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb24-2"><a href="#cb24-2"></a>  <span class="fu">mutate</span>(<span class="at">auc  =</span> auc <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">as.character</span>() <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(fpr, tpr, <span class="at">linetype =</span> auc)) <span class="sc">+</span></span>
-<span id="cb24-4"><a href="#cb24-4"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#2DC6D6"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb24-5"><a href="#cb24-5"></a>  <span class="fu">geom_abline</span>(<span class="at">color =</span> <span class="st">"#FF8014"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
-<span id="cb24-6"><a href="#cb24-6"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ROC Plot"</span>, <span class="at">subtitle =</span> <span class="st">"-"</span>) <span class="sc">+</span></span>
-<span id="cb24-7"><a href="#cb24-7"></a>  <span class="fu">theme</span>(</span>
-<span id="cb24-8"><a href="#cb24-8"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb24-9"><a href="#cb24-9"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb24-10"><a href="#cb24-10"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb24-11"><a href="#cb24-11"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb24-12"><a href="#cb24-12"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb24-13"><a href="#cb24-13"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb24-14"><a href="#cb24-14"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb24-15"><a href="#cb24-15"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb24-16"><a href="#cb24-16"></a>  )</span>
-<span id="cb24-17"><a href="#cb24-17"></a></span>
-<span id="cb24-18"><a href="#cb24-18"></a>roc_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-26_0028bb38ca56b193d2b51017773634cd">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>roc_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb29-2"><a href="#cb29-2"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> p_dl_model_automl_tbl, </span>
+<span id="cb29-3"><a href="#cb29-3"></a>            <span class="fu">aes</span>(<span class="at">x =</span> fpr, <span class="at">y =</span> tpr, <span class="at">color =</span> <span class="st">"dl_model_automl"</span>), </span>
+<span id="cb29-4"><a href="#cb29-4"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb29-5"><a href="#cb29-5"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> p_dl_model_grid_search_tbl, </span>
+<span id="cb29-6"><a href="#cb29-6"></a>            <span class="fu">aes</span>(<span class="at">x =</span> fpr, <span class="at">y =</span> tpr, <span class="at">color =</span> <span class="st">"dl_model_grid_search"</span>), </span>
+<span id="cb29-7"><a href="#cb29-7"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb29-8"><a href="#cb29-8"></a>  <span class="fu">geom_abline</span>(<span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb29-9"><a href="#cb29-9"></a>              <span class="at">linetype =</span> <span class="st">"dotted"</span>, </span>
+<span id="cb29-10"><a href="#cb29-10"></a>              <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb29-11"><a href="#cb29-11"></a>  <span class="fu">scale_color_manual</span>(<span class="at">name =</span> <span class="st">""</span>, </span>
+<span id="cb29-12"><a href="#cb29-12"></a>                     <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"dl_model_automl"</span> <span class="ot">=</span> <span class="st">"#2DC6D6"</span>, <span class="st">"dl_model_grid_search"</span> <span class="ot">=</span> <span class="st">"#FF8014"</span>)) <span class="sc">+</span></span>
+<span id="cb29-13"><a href="#cb29-13"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ROC Plot"</span>, </span>
+<span id="cb29-14"><a href="#cb29-14"></a>       <span class="at">subtitle =</span> <span class="st">"Performance Comparison of dl_model_automl and dl_model_grid_search"</span>, </span>
+<span id="cb29-15"><a href="#cb29-15"></a>       <span class="at">x =</span> <span class="st">"False Positive Rate (FPR)"</span>, </span>
+<span id="cb29-16"><a href="#cb29-16"></a>       <span class="at">y =</span> <span class="st">"True Positive Rate (TPR)"</span>) <span class="sc">+</span></span>
+<span id="cb29-17"><a href="#cb29-17"></a>  <span class="fu">theme</span>(</span>
+<span id="cb29-18"><a href="#cb29-18"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb29-19"><a href="#cb29-19"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb29-20"><a href="#cb29-20"></a>    <span class="at">legend.key =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb29-21"><a href="#cb29-21"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb29-22"><a href="#cb29-22"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb29-23"><a href="#cb29-23"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb29-24"><a href="#cb29-24"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb29-25"><a href="#cb29-25"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb29-26"><a href="#cb29-26"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb29-27"><a href="#cb29-27"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb29-28"><a href="#cb29-28"></a>  )</span>
+<span id="cb29-29"><a href="#cb29-29"></a></span>
+<span id="cb29-30"><a href="#cb29-30"></a>roc_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-21-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="05_performance_measures_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></a></p>
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-26-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="05_performance_measures_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
+<p>It is also seen from the ROC plot that the model found with grid search (<code>dl_model_grid_search</code>) has better performance since it has a larger area under its curve compared to the model that has been found automatically (<code>dl_model_automl</code>).</p>
 </section><section id="precision-vs-recall-plot" class="level2" data-number="3.10"><h2 data-number="3.10" class="anchored" data-anchor-id="precision-vs-recall-plot">
 <span class="header-section-number">3.10</span> Precision vs Recall Plot</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-22_bd827abb9a5109ffcfb59b5286e7ed68">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>pr_plot <span class="ot">&lt;-</span> p_model_grid_5_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb25-2"><a href="#cb25-2"></a>  <span class="fu">mutate</span>(<span class="at">auc  =</span> auc <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">as.character</span>() <span class="sc">%&gt;%</span> <span class="fu">as_factor</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb25-3"><a href="#cb25-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(recall, precision, <span class="at">linetype =</span> auc)) <span class="sc">+</span></span>
-<span id="cb25-4"><a href="#cb25-4"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#2DC6D6"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb25-5"><a href="#cb25-5"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Precision vs Recall Plot"</span>, <span class="at">subtitle =</span> <span class="st">"-"</span>) <span class="sc">+</span></span>
-<span id="cb25-6"><a href="#cb25-6"></a>  <span class="fu">theme</span>(</span>
-<span id="cb25-7"><a href="#cb25-7"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb25-8"><a href="#cb25-8"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb25-9"><a href="#cb25-9"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb25-10"><a href="#cb25-10"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb25-11"><a href="#cb25-11"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb25-12"><a href="#cb25-12"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb25-13"><a href="#cb25-13"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb25-14"><a href="#cb25-14"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb25-15"><a href="#cb25-15"></a>  )</span>
-<span id="cb25-16"><a href="#cb25-16"></a></span>
-<span id="cb25-17"><a href="#cb25-17"></a>pr_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-27_5dad7cbfbe20079bfc2b31e52e94d6f0">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>pr_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> p_dl_model_automl_tbl, </span>
+<span id="cb30-3"><a href="#cb30-3"></a>            <span class="fu">aes</span>(<span class="at">x =</span> recall, <span class="at">y =</span> precision, <span class="at">color =</span> <span class="st">"dl_model_automl"</span>), </span>
+<span id="cb30-4"><a href="#cb30-4"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> p_dl_model_grid_search_tbl, </span>
+<span id="cb30-6"><a href="#cb30-6"></a>            <span class="fu">aes</span>(<span class="at">x =</span> recall, <span class="at">y =</span> precision, <span class="at">color =</span> <span class="st">"dl_model_grid_search"</span>), </span>
+<span id="cb30-7"><a href="#cb30-7"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb30-8"><a href="#cb30-8"></a>  <span class="fu">scale_color_manual</span>(<span class="at">name =</span> <span class="st">""</span>, </span>
+<span id="cb30-9"><a href="#cb30-9"></a>                     <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"dl_model_automl"</span> <span class="ot">=</span> <span class="st">"#2DC6D6"</span>, <span class="st">"dl_model_grid_search"</span> <span class="ot">=</span> <span class="st">"#FF8014"</span>)) <span class="sc">+</span></span>
+<span id="cb30-10"><a href="#cb30-10"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Precision vs Recall Plot"</span>, </span>
+<span id="cb30-11"><a href="#cb30-11"></a>       <span class="at">subtitle =</span> <span class="st">"Performance Comparison of dl_model_automl and dl_model_grid_search"</span>, </span>
+<span id="cb30-12"><a href="#cb30-12"></a>       <span class="at">x =</span> <span class="st">"Recall"</span>, </span>
+<span id="cb30-13"><a href="#cb30-13"></a>       <span class="at">y =</span> <span class="st">"Precision"</span>) <span class="sc">+</span></span>
+<span id="cb30-14"><a href="#cb30-14"></a>  <span class="fu">theme</span>(</span>
+<span id="cb30-15"><a href="#cb30-15"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb30-16"><a href="#cb30-16"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb30-17"><a href="#cb30-17"></a>    <span class="at">legend.key =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb30-18"><a href="#cb30-18"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb30-19"><a href="#cb30-19"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb30-20"><a href="#cb30-20"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb30-21"><a href="#cb30-21"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb30-22"><a href="#cb30-22"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb30-23"><a href="#cb30-23"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb30-24"><a href="#cb30-24"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb30-25"><a href="#cb30-25"></a>  )</span>
+<span id="cb30-26"><a href="#cb30-26"></a></span>
+<span id="cb30-27"><a href="#cb30-27"></a>pr_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-22-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="05_performance_measures_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></a></p>
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-27-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="05_performance_measures_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
+<p>A similar observation can also be made for the precision-recall curve. It is seen that <code>dl_model_grid_search</code> performs better compared to <code>dl_model_automl</code> since its curve is closer to the upper right corner of the plot (which means the model can maintain higher precision while recall increases).</p>
 </section><section id="gain-plot" class="level2" data-number="3.11"><h2 data-number="3.11" class="anchored" data-anchor-id="gain-plot">
 <span class="header-section-number">3.11</span> Gain Plot</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-23_e3c3b730fa9f34f6aeddaef2e02750d2">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>gain_lift_tbl <span class="ot">&lt;-</span> p_model_grid_5 <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2"></a>  <span class="fu">h2o.gainsLift</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="#cb26-3"></a>  <span class="fu">as_tibble</span>()</span>
-<span id="cb26-4"><a href="#cb26-4"></a></span>
-<span id="cb26-5"><a href="#cb26-5"></a>gain_transformed_tbl <span class="ot">&lt;-</span> gain_lift_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb26-6"><a href="#cb26-6"></a>  <span class="fu">select</span>(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) <span class="sc">%&gt;%</span></span>
-<span id="cb26-7"><a href="#cb26-7"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"lift"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-8"><a href="#cb26-8"></a>  <span class="fu">mutate</span>(<span class="at">baseline =</span> cumulative_data_fraction) <span class="sc">%&gt;%</span></span>
-<span id="cb26-9"><a href="#cb26-9"></a>  <span class="fu">rename</span>(<span class="at">gain     =</span> cumulative_capture_rate) <span class="sc">%&gt;%</span></span>
-<span id="cb26-10"><a href="#cb26-10"></a>  <span class="co"># prepare the data for the plotting (for the color and group aesthetics)</span></span>
-<span id="cb26-11"><a href="#cb26-11"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(gain, baseline), <span class="at">values_to =</span> <span class="st">"value"</span>, <span class="at">names_to =</span> <span class="st">"key"</span>)</span>
-<span id="cb26-12"><a href="#cb26-12"></a></span>
-<span id="cb26-13"><a href="#cb26-13"></a>gain_plot <span class="ot">&lt;-</span> gain_transformed_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb26-14"><a href="#cb26-14"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> key)) <span class="sc">+</span></span>
-<span id="cb26-15"><a href="#cb26-15"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
-<span id="cb26-16"><a href="#cb26-16"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Gain Chart"</span>, <span class="at">x =</span> <span class="st">"Cumulative Data Fraction"</span>, <span class="at">y =</span> <span class="st">"Gain"</span>) <span class="sc">+</span></span>
-<span id="cb26-17"><a href="#cb26-17"></a>  <span class="fu">theme</span>(</span>
-<span id="cb26-18"><a href="#cb26-18"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb26-19"><a href="#cb26-19"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb26-20"><a href="#cb26-20"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb26-21"><a href="#cb26-21"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb26-22"><a href="#cb26-22"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb26-23"><a href="#cb26-23"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb26-24"><a href="#cb26-24"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb26-25"><a href="#cb26-25"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb26-26"><a href="#cb26-26"></a>  )</span>
-<span id="cb26-27"><a href="#cb26-27"></a></span>
-<span id="cb26-28"><a href="#cb26-28"></a>gain_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-28_891511fe3c2ff04ca84f5e156242b5eb">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>gain_lift_automl_tbl <span class="ot">&lt;-</span> p_dl_model_automl <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2"></a>  <span class="fu">h2o.gainsLift</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb31-4"><a href="#cb31-4"></a></span>
+<span id="cb31-5"><a href="#cb31-5"></a>gain_automl_transformed_tbl <span class="ot">&lt;-</span> gain_lift_automl_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb31-6"><a href="#cb31-6"></a>  <span class="fu">select</span>(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb31-7"><a href="#cb31-7"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"lift"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-8"><a href="#cb31-8"></a>  <span class="fu">mutate</span>(<span class="at">baseline =</span> cumulative_data_fraction) <span class="sc">%&gt;%</span></span>
+<span id="cb31-9"><a href="#cb31-9"></a>  <span class="fu">rename</span>(<span class="at">gain     =</span> cumulative_capture_rate) <span class="sc">%&gt;%</span></span>
+<span id="cb31-10"><a href="#cb31-10"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(gain, baseline), <span class="at">values_to =</span> <span class="st">"value"</span>, <span class="at">names_to =</span> <span class="st">"key"</span>)</span>
+<span id="cb31-11"><a href="#cb31-11"></a></span>
+<span id="cb31-12"><a href="#cb31-12"></a>gain_lift_grid_tbl <span class="ot">&lt;-</span> p_dl_model_grid_search <span class="sc">%&gt;%</span></span>
+<span id="cb31-13"><a href="#cb31-13"></a>  <span class="fu">h2o.gainsLift</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb31-14"><a href="#cb31-14"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb31-15"><a href="#cb31-15"></a></span>
+<span id="cb31-16"><a href="#cb31-16"></a>gain_grid_transformed_tbl <span class="ot">&lt;-</span> gain_lift_grid_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb31-17"><a href="#cb31-17"></a>  <span class="fu">select</span>(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb31-18"><a href="#cb31-18"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"lift"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-19"><a href="#cb31-19"></a>  <span class="fu">mutate</span>(<span class="at">baseline =</span> cumulative_data_fraction) <span class="sc">%&gt;%</span></span>
+<span id="cb31-20"><a href="#cb31-20"></a>  <span class="fu">rename</span>(<span class="at">gain     =</span> cumulative_capture_rate) <span class="sc">%&gt;%</span></span>
+<span id="cb31-21"><a href="#cb31-21"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(gain, baseline), <span class="at">values_to =</span> <span class="st">"value"</span>, <span class="at">names_to =</span> <span class="st">"key"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-29_075ed578c1ec47400c7094a6de913ab3">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>gain_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb32-2"><a href="#cb32-2"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> gain_automl_transformed_tbl <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(key, <span class="st">"gain"</span>)), </span>
+<span id="cb32-3"><a href="#cb32-3"></a>            <span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> <span class="st">"dl_model_automl"</span>),</span>
+<span id="cb32-4"><a href="#cb32-4"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> gain_grid_transformed_tbl <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(key, <span class="st">"gain"</span>)), </span>
+<span id="cb32-6"><a href="#cb32-6"></a>            <span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> <span class="st">"dl_model_grid_search"</span>),</span>
+<span id="cb32-7"><a href="#cb32-7"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb32-8"><a href="#cb32-8"></a>  <span class="fu">geom_abline</span>(<span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb32-9"><a href="#cb32-9"></a>            <span class="at">linetype =</span> <span class="st">"dotted"</span>, </span>
+<span id="cb32-10"><a href="#cb32-10"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb32-11"><a href="#cb32-11"></a>  <span class="fu">scale_color_manual</span>(<span class="at">name =</span> <span class="st">""</span>, </span>
+<span id="cb32-12"><a href="#cb32-12"></a>                     <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"dl_model_automl"</span> <span class="ot">=</span> <span class="st">"#2DC6D6"</span>, </span>
+<span id="cb32-13"><a href="#cb32-13"></a>                                <span class="st">"dl_model_grid_search"</span> <span class="ot">=</span> <span class="st">"#FF8014"</span>)) <span class="sc">+</span></span>
+<span id="cb32-14"><a href="#cb32-14"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Gain Chart"</span>, <span class="at">x =</span> <span class="st">"Cumulative Data Fraction"</span>, <span class="at">y =</span> <span class="st">"Gain"</span>) <span class="sc">+</span></span>
+<span id="cb32-15"><a href="#cb32-15"></a>  <span class="fu">theme</span>(</span>
+<span id="cb32-16"><a href="#cb32-16"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb32-17"><a href="#cb32-17"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb32-18"><a href="#cb32-18"></a>    <span class="at">legend.key =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb32-19"><a href="#cb32-19"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb32-20"><a href="#cb32-20"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb32-21"><a href="#cb32-21"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb32-22"><a href="#cb32-22"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb32-23"><a href="#cb32-23"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb32-24"><a href="#cb32-24"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb32-25"><a href="#cb32-25"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb32-26"><a href="#cb32-26"></a>  )</span>
+<span id="cb32-27"><a href="#cb32-27"></a></span>
+<span id="cb32-28"><a href="#cb32-28"></a>gain_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-23-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="05_performance_measures_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></a></p>
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-29-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="05_performance_measures_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
+<p>From the figure, it can be seen that with <code>dl_model_grid_search</code>, the ability to target backorders from a given size of data has increased significantly, especially at the lower end of the x-axis (where it is important).</p>
 </section><section id="lift-plot" class="level2" data-number="3.12"><h2 data-number="3.12" class="anchored" data-anchor-id="lift-plot">
 <span class="header-section-number">3.12</span> Lift Plot</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-24_d34442d3d11fd3051cf1a7d5e31adbcf">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>lift_transformed_tbl <span class="ot">&lt;-</span> gain_lift_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb27-2"><a href="#cb27-2"></a>  <span class="fu">select</span>(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) <span class="sc">%&gt;%</span></span>
-<span id="cb27-3"><a href="#cb27-3"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"capture"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb27-4"><a href="#cb27-4"></a>  <span class="fu">mutate</span>(<span class="at">baseline =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb27-5"><a href="#cb27-5"></a>  <span class="fu">rename</span>(<span class="at">lift =</span> cumulative_lift) <span class="sc">%&gt;%</span></span>
-<span id="cb27-6"><a href="#cb27-6"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(lift, baseline), <span class="at">values_to =</span> <span class="st">"value"</span>, <span class="at">names_to =</span> <span class="st">"key"</span>)</span>
-<span id="cb27-7"><a href="#cb27-7"></a></span>
-<span id="cb27-8"><a href="#cb27-8"></a>lift_plot <span class="ot">&lt;-</span> lift_transformed_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb27-9"><a href="#cb27-9"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> key)) <span class="sc">+</span></span>
-<span id="cb27-10"><a href="#cb27-10"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
-<span id="cb27-11"><a href="#cb27-11"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Lift Chart"</span>, <span class="at">x =</span> <span class="st">"Cumulative Data Fraction"</span>, <span class="at">y =</span> <span class="st">"Lift"</span>) <span class="sc">+</span></span>
-<span id="cb27-12"><a href="#cb27-12"></a>  <span class="fu">theme</span>(</span>
-<span id="cb27-13"><a href="#cb27-13"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb27-14"><a href="#cb27-14"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb27-15"><a href="#cb27-15"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb27-16"><a href="#cb27-16"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb27-17"><a href="#cb27-17"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb27-18"><a href="#cb27-18"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb27-19"><a href="#cb27-19"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb27-20"><a href="#cb27-20"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb27-21"><a href="#cb27-21"></a>  )</span>
-<span id="cb27-22"><a href="#cb27-22"></a></span>
-<span id="cb27-23"><a href="#cb27-23"></a>lift_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-30_645ceeafd3698f7bde88d71744d5d4fc">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>lift_automl_transformed_tbl <span class="ot">&lt;-</span> gain_lift_automl_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2"></a>  <span class="fu">select</span>(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"capture"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb33-4"><a href="#cb33-4"></a>  <span class="fu">mutate</span>(<span class="at">baseline =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-5"><a href="#cb33-5"></a>  <span class="fu">rename</span>(<span class="at">lift =</span> cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb33-6"><a href="#cb33-6"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(lift, baseline), <span class="at">values_to =</span> <span class="st">"value"</span>, <span class="at">names_to =</span> <span class="st">"key"</span>)</span>
+<span id="cb33-7"><a href="#cb33-7"></a></span>
+<span id="cb33-8"><a href="#cb33-8"></a>lift_grid_transformed_tbl <span class="ot">&lt;-</span> gain_lift_grid_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb33-9"><a href="#cb33-9"></a>  <span class="fu">select</span>(group, cumulative_data_fraction, cumulative_capture_rate, cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb33-10"><a href="#cb33-10"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"capture"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb33-11"><a href="#cb33-11"></a>  <span class="fu">mutate</span>(<span class="at">baseline =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-12"><a href="#cb33-12"></a>  <span class="fu">rename</span>(<span class="at">lift =</span> cumulative_lift) <span class="sc">%&gt;%</span></span>
+<span id="cb33-13"><a href="#cb33-13"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(lift, baseline), <span class="at">values_to =</span> <span class="st">"value"</span>, <span class="at">names_to =</span> <span class="st">"key"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-31_ee2f197b465a764ef3bdaf097b22eaa1">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>lift_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> lift_automl_transformed_tbl <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(key, <span class="st">"lift"</span>)), </span>
+<span id="cb34-3"><a href="#cb34-3"></a>            <span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> <span class="st">"dl_model_automl"</span>),</span>
+<span id="cb34-4"><a href="#cb34-4"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> lift_grid_transformed_tbl <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">str_detect</span>(key, <span class="st">"lift"</span>)), </span>
+<span id="cb34-6"><a href="#cb34-6"></a>            <span class="fu">aes</span>(<span class="at">x =</span> cumulative_data_fraction, <span class="at">y =</span> value, <span class="at">color =</span> <span class="st">"dl_model_grid_search"</span>),</span>
+<span id="cb34-7"><a href="#cb34-7"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb34-8"><a href="#cb34-8"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>,</span>
+<span id="cb34-9"><a href="#cb34-9"></a>             <span class="at">color =</span> <span class="st">"red"</span>, </span>
+<span id="cb34-10"><a href="#cb34-10"></a>            <span class="at">linetype =</span> <span class="st">"dotted"</span>, </span>
+<span id="cb34-11"><a href="#cb34-11"></a>            <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb34-12"><a href="#cb34-12"></a>  <span class="fu">scale_color_manual</span>(<span class="at">name =</span> <span class="st">""</span>, </span>
+<span id="cb34-13"><a href="#cb34-13"></a>                     <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"dl_model_automl"</span> <span class="ot">=</span> <span class="st">"#2DC6D6"</span>, </span>
+<span id="cb34-14"><a href="#cb34-14"></a>                                <span class="st">"dl_model_grid_search"</span> <span class="ot">=</span> <span class="st">"#FF8014"</span>)) <span class="sc">+</span></span>
+<span id="cb34-15"><a href="#cb34-15"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Lift Chart"</span>, <span class="at">x =</span> <span class="st">"Cumulative Data Fraction"</span>, <span class="at">y =</span> <span class="st">"Lift"</span>) <span class="sc">+</span></span>
+<span id="cb34-16"><a href="#cb34-16"></a>  <span class="fu">theme</span>(</span>
+<span id="cb34-17"><a href="#cb34-17"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb34-18"><a href="#cb34-18"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb34-19"><a href="#cb34-19"></a>    <span class="at">legend.key =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb34-20"><a href="#cb34-20"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb34-21"><a href="#cb34-21"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb34-22"><a href="#cb34-22"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb34-23"><a href="#cb34-23"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb34-24"><a href="#cb34-24"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb34-25"><a href="#cb34-25"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb34-26"><a href="#cb34-26"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb34-27"><a href="#cb34-27"></a>  )</span>
+<span id="cb34-28"><a href="#cb34-28"></a></span>
+<span id="cb34-29"><a href="#cb34-29"></a>lift_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-24-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="05_performance_measures_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></a></p>
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-31-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="05_performance_measures_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
 </div>
+<p>Similarly, it is seen from the figure that <code>dl_model_grid_search</code> is better at targeting backorders for the same size of data when compared with <code>dl_model_automl</code>.</p>
 </section><section id="dashboard-with-cowplot" class="level2" data-number="3.13"><h2 data-number="3.13" class="anchored" data-anchor-id="dashboard-with-cowplot">
 <span class="header-section-number">3.13</span> Dashboard with cowplot</h2>
-<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-25_845ecbc9f3ee2298c7a5a4e1ce03edea">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>p_legend <span class="ot">&lt;-</span> <span class="fu">get_legend</span>(roc_plot)</span>
-<span id="cb28-2"><a href="#cb28-2"></a></span>
-<span id="cb28-3"><a href="#cb28-3"></a>roc_plot <span class="ot">&lt;-</span> roc_plot <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb28-4"><a href="#cb28-4"></a></span>
-<span id="cb28-5"><a href="#cb28-5"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(roc_plot, pr_plot, gain_plot, lift_plot, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb28-6"><a href="#cb28-6"></a></span>
-<span id="cb28-7"><a href="#cb28-7"></a>p_title <span class="ot">&lt;-</span> <span class="fu">ggdraw</span>() <span class="sc">+</span> </span>
-<span id="cb28-8"><a href="#cb28-8"></a>  <span class="fu">draw_label</span>(<span class="st">"H2O Model Metrics"</span>, <span class="at">size =</span> <span class="dv">18</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb28-9"><a href="#cb28-9"></a>  </span>
-<span id="cb28-10"><a href="#cb28-10"></a>p_subtitle <span class="ot">&lt;-</span> <span class="fu">ggdraw</span>() <span class="sc">+</span> <span class="fu">draw_label</span>(<span class="fu">glue</span>(<span class="st">"-"</span>), <span class="at">size =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb28-11"><a href="#cb28-11"></a>  </span>
-<span id="cb28-12"><a href="#cb28-12"></a>combined_plot <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(p_title, </span>
-<span id="cb28-13"><a href="#cb28-13"></a>                           p_subtitle, </span>
-<span id="cb28-14"><a href="#cb28-14"></a>                           p, </span>
-<span id="cb28-15"><a href="#cb28-15"></a>                           p_legend, </span>
-<span id="cb28-16"><a href="#cb28-16"></a>                           <span class="at">ncol =</span> <span class="dv">1</span>, </span>
-<span id="cb28-17"><a href="#cb28-17"></a>                           <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="dv">1</span>, <span class="fl">0.05</span> <span class="sc">*</span> <span class="dv">4</span>)) <span class="sc">+</span></span>
-<span id="cb28-18"><a href="#cb28-18"></a>  <span class="fu">theme</span>(</span>
-<span id="cb28-19"><a href="#cb28-19"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb28-20"><a href="#cb28-20"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb28-21"><a href="#cb28-21"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb28-22"><a href="#cb28-22"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
-<span id="cb28-23"><a href="#cb28-23"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb28-24"><a href="#cb28-24"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb28-25"><a href="#cb28-25"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb28-26"><a href="#cb28-26"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
-<span id="cb28-27"><a href="#cb28-27"></a>  )</span>
-<span id="cb28-28"><a href="#cb28-28"></a></span>
-<span id="cb28-29"><a href="#cb28-29"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="05_performance_measures_cache/html/unnamed-chunk-32_c73ea75193d4fb40bed0180faf70aea9">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>p_legend <span class="ot">&lt;-</span> <span class="fu">get_legend</span>(roc_plot)</span>
+<span id="cb35-2"><a href="#cb35-2"></a></span>
+<span id="cb35-3"><a href="#cb35-3"></a>roc_plot <span class="ot">&lt;-</span> roc_plot <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb35-4"><a href="#cb35-4"></a>pr_plot <span class="ot">&lt;-</span> pr_plot <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb35-5"><a href="#cb35-5"></a>gain_plot <span class="ot">&lt;-</span> gain_plot <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb35-6"><a href="#cb35-6"></a>lift_plot <span class="ot">&lt;-</span> lift_plot <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb35-7"><a href="#cb35-7"></a></span>
+<span id="cb35-8"><a href="#cb35-8"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(roc_plot, pr_plot, gain_plot, lift_plot, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb35-9"><a href="#cb35-9"></a></span>
+<span id="cb35-10"><a href="#cb35-10"></a>p_title <span class="ot">&lt;-</span> <span class="fu">ggdraw</span>() <span class="sc">+</span> </span>
+<span id="cb35-11"><a href="#cb35-11"></a>  <span class="fu">draw_label</span>(<span class="st">"H2O Model Metrics"</span>, <span class="at">size =</span> <span class="dv">18</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb35-12"><a href="#cb35-12"></a>  </span>
+<span id="cb35-13"><a href="#cb35-13"></a>p_subtitle <span class="ot">&lt;-</span> <span class="fu">ggdraw</span>() <span class="sc">+</span> <span class="fu">draw_label</span>(<span class="fu">glue</span>(<span class="st">""</span>), <span class="at">size =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb35-14"><a href="#cb35-14"></a>  </span>
+<span id="cb35-15"><a href="#cb35-15"></a>combined_plot <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(p_title, </span>
+<span id="cb35-16"><a href="#cb35-16"></a>                           p_subtitle, </span>
+<span id="cb35-17"><a href="#cb35-17"></a>                           p, </span>
+<span id="cb35-18"><a href="#cb35-18"></a>                           p_legend, </span>
+<span id="cb35-19"><a href="#cb35-19"></a>                           <span class="at">ncol =</span> <span class="dv">1</span>, </span>
+<span id="cb35-20"><a href="#cb35-20"></a>                           <span class="at">rel_heights =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="dv">1</span>, <span class="fl">0.05</span> <span class="sc">*</span> <span class="dv">4</span>)) <span class="sc">+</span></span>
+<span id="cb35-21"><a href="#cb35-21"></a>  <span class="fu">theme</span>(</span>
+<span id="cb35-22"><a href="#cb35-22"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb35-23"><a href="#cb35-23"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb35-24"><a href="#cb35-24"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb35-25"><a href="#cb35-25"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"#222222"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
+<span id="cb35-26"><a href="#cb35-26"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb35-27"><a href="#cb35-27"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb35-28"><a href="#cb35-28"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb35-29"><a href="#cb35-29"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
+<span id="cb35-30"><a href="#cb35-30"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb35-31"><a href="#cb35-31"></a>  )</span>
+<span id="cb35-32"><a href="#cb35-32"></a></span>
+<span id="cb35-33"><a href="#cb35-33"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-25-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="05_performance_measures_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></a></p>
+<figure class="figure"><p><a href="05_performance_measures_files/figure-html/unnamed-chunk-32-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="05_performance_measures_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
@@ -1055,7 +1179,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","loop":true,"descPosition":"bottom","closeEffect":"zoom","selector":".lightbox"});</script>
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","openEffect":"zoom","loop":true,"descPosition":"bottom"});</script>
 
 
 </body></html>
