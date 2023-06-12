@@ -140,11 +140,11 @@
     "text": "3.3 Data Exploration\nWe will visualize the data to determine possible product gaps. It would be interesting to see the sales for each category_2 separated by the frame material. However, we do not have the sales number. Instead, we will use the stock numbers as a proxy:\n\nmodel_num_sold_tbl <- bike_orderlines_tbl %>% \n  select(quantity, model) %>%\n  group_by(model) %>%\n  summarise(num_sold = sum(quantity)) %>%\n  ungroup() %>%\n  arrange(desc(num_sold))\n\nmodel_sales_tbl <- bike_orderlines_tbl %>% \n  select(total_price, model, category_2, frame_material) %>% \n  group_by(model, category_2, frame_material) %>%\n  summarise(revenue = sum(total_price)) %>%\n  ungroup() %>%\n  arrange(desc(revenue))\n\nmodel_sales_tbl <- model_sales_tbl %>% \n  inner_join(model_num_sold_tbl)\n\nmodel_sales_tbl\n\n\n\n\n\n  \n\n\n\nVisualizing the model_sales_tbl:\n\nmodel_sales_tbl %>% \n  mutate(category_2 = as_factor(category_2) %>% \n           fct_reorder(revenue, .fun = max) %>% \n           fct_rev()) %>% \n  \n  ggplot(aes(frame_material, revenue)) +\n  geom_violin() +\n  geom_jitter(width = 0.1, alpha = 0.5, color = \"#2DC6D6\") +\n  facet_wrap(~ category_2) +\n  scale_y_continuous(labels = scales::dollar_format(scale = 1e-6, \n                                                    suffix = \"M\", \n                                                    accuracy = 0.1)) +\n  labs(title = \"Total Sales for Each Model\",\n    x = \"Frame Material\", y = \"Revenue\") +\n  theme(\n    panel.background = element_blank(),\n    panel.border = element_rect(color = \"white\", fill = NA),\n    plot.background = element_rect(fill = \"#222222\"),\n    line = element_line(color = \"white\"),\n    text = element_text(color = \"white\"),\n    axis.ticks = element_line(color = \"white\"),\n    axis.text = element_text(color = \"white\")\n  )"
   },
   {
-    "objectID": "content/01_journal/02_regression_ii.html#create-the-model",
-    "href": "content/01_journal/02_regression_ii.html#create-the-model",
+    "objectID": "content/01_journal/02_regression_ii.html#build-the-model",
+    "href": "content/01_journal/02_regression_ii.html#build-the-model",
     "title": "Regression (II)",
-    "section": "\n3.4 Create the model",
-    "text": "3.4 Create the model\nCreate a parsnip specification for linear regression:\n\nlinear_model <- linear_reg(\"regression\") %>% set_engine(\"lm\")"
+    "section": "\n3.4 Build the model",
+    "text": "3.4 Build the model\nCreate a parsnip specification for linear regression:\n\nlinear_model <- linear_reg(\"regression\") %>% set_engine(\"lm\")"
   },
   {
     "objectID": "content/01_journal/02_regression_ii.html#split-the-data",
@@ -322,11 +322,11 @@
     "text": "3.3 Specify the response and predictor variables\nTo determine the backorder status went_on_backorder, all the other columns will be used as predictors:\n\nh2o.init()\n\nsplit_h2o <- h2o.splitFrame(as.h2o(train_tbl), ratios = c(0.80), seed = 767)\ntrain_h2o <- split_h2o[[1]]\nvalid_h2o <- split_h2o[[2]]\ntest_h2o  <- as.h2o(test_tbl)\n\ny <- \"went_on_backorder\"\nx <- setdiff(names(train_h2o), y)"
   },
   {
-    "objectID": "content/01_journal/05_performance_measures.html#run-automl-specifying-the-stopping-criterion",
-    "href": "content/01_journal/05_performance_measures.html#run-automl-specifying-the-stopping-criterion",
+    "objectID": "content/01_journal/05_performance_measures.html#run-automl",
+    "href": "content/01_journal/05_performance_measures.html#run-automl",
     "title": "Performance Measures",
-    "section": "\n3.4 Run AutoML specifying the stopping criterion",
-    "text": "3.4 Run AutoML specifying the stopping criterion\nSet 30 seconds for max_runtime_secs and 5 for nfolds:\n\nautoml_models_h2o <- h2o.automl(\n  x = x,\n  y = y,\n  training_frame    = train_h2o,\n  validation_frame  = valid_h2o,\n  leaderboard_frame = test_h2o,\n  max_runtime_secs  = 600,\n  max_models = 15,\n  nfolds            = 5,\n  include_algos = c(\"DeepLearning\", \"GBM\", \"XGBoost\", \"GLM\", \"DRF\")\n)"
+    "section": "\n3.4 Run AutoML",
+    "text": "3.4 Run AutoML\nSet 600 seconds for max_runtime_secs and 15 for max_models to limit the computation time:\n\nautoml_models_h2o <- h2o.automl(\n  x = x,\n  y = y,\n  training_frame    = train_h2o,\n  validation_frame  = valid_h2o,\n  leaderboard_frame = test_h2o,\n  max_runtime_secs  = 600,\n  max_models = 15,\n  nfolds            = 5,\n  include_algos = c(\"DeepLearning\", \"GBM\", \"XGBoost\", \"GLM\", \"DRF\")\n)"
   },
   {
     "objectID": "content/01_journal/05_performance_measures.html#view-the-leaderboard",
@@ -511,20 +511,6 @@
     "text": "5.6 Step 6 - Combine K-Means and UMAP\nNext, we combine the K-Means clusters and the UMAP 2D representation\nWe’re going to import the correct results first (just in case you were not able to complete the last step).\n\nk_means_mapped_tbl <- read_rds(\"k_means_mapped_tbl.rds\")\numap_results_tbl   <- read_rds(\"umap_results_tbl.rds\")\n\nFirst, pull out the K-Means for 10 Centers. Use this since beyond this value the Scree Plot flattens. Have a look at the business case to recall how that works.\n\n# Get the k_means_obj from the 10th center\n\n# Store as k_means_obj\n\nNext, we’ll combine the clusters from the k_means_obj with the umap_results_tbl.\n\nBegin with the k_means_obj\n\nAugment the k_means_obj with the stock_date_matrix_tbl to get the clusters added to the end of the tibble\nSelect just the symbol and .cluster columns\nLeft join the result with the umap_results_tbl by the symbol column\nLeft join the result with the result of sp_500_index_tbl %>% select(symbol, company, sector) by the symbol column.\nStore the output as umap_kmeans_results_tbl\n\n\n\n# Use your dplyr & broom skills to combine the k_means_obj with the umap_results_tbl\n\n\n# Output: umap_kmeans_results_tbl \n\nPlot the K-Means and UMAP results.\n\nBegin with the umap_kmeans_results_tbl\n\nUse ggplot() mapping V1, V2 and color = .cluster\n\nAdd the geom_point() geometry with alpha = 0.5\n\nApply colors as you desire (e.g. scale_color_manual(values = palette_light() %>% rep(3)))\n\n\n# Visualize the combined K-Means and UMAP results\n\nCongratulations! You are done with the 1st challenge!"
   },
   {
-    "objectID": "content/01_journal/tidyverse.html",
-    "href": "content/01_journal/tidyverse.html",
-    "title": "Tidyverse",
-    "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh.\nThis is a .qmd file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
-  },
-  {
-    "objectID": "content/01_journal/tidyverse.html#header-2",
-    "href": "content/01_journal/tidyverse.html#header-2",
-    "title": "Tidyverse",
-    "section": "\n2.1 Header 2",
-    "text": "2.1 Header 2\nHeader 3\nHeader 4\nHeader 5\nHeader 6"
-  },
-  {
     "objectID": "content/02_notes/05_class_notes.html",
     "href": "content/02_notes/05_class_notes.html",
     "title": "Class Notes",
@@ -551,19 +537,5 @@
     "title": "My Lab Journal",
     "section": "How to use",
     "text": "How to use\n\nAccept the assignment and get your own github repo.\nBlog/journal what you are doing in R, by editing the .qmd files.\nSee the links page for lots of helpful links on learning R.\nChange everything to make it your own.\nMake sure to render you website everytime before you want to upload changes"
-  },
-  {
-    "objectID": "content/01_journal/02_regression_ii.html#build-the-model",
-    "href": "content/01_journal/02_regression_ii.html#build-the-model",
-    "title": "Regression (II)",
-    "section": "\n3.4 Build the model",
-    "text": "3.4 Build the model\nCreate a parsnip specification for linear regression:\n\nlinear_model <- linear_reg(\"regression\") %>% set_engine(\"lm\")"
-  },
-  {
-    "objectID": "content/01_journal/05_performance_measures.html#run-automl",
-    "href": "content/01_journal/05_performance_measures.html#run-automl",
-    "title": "Performance Measures",
-    "section": "\n3.4 Run AutoML",
-    "text": "3.4 Run AutoML\nSet 600 seconds for max_runtime_secs and 15 for max_models to limit the computation time:\n\nautoml_models_h2o <- h2o.automl(\n  x = x,\n  y = y,\n  training_frame    = train_h2o,\n  validation_frame  = valid_h2o,\n  leaderboard_frame = test_h2o,\n  max_runtime_secs  = 600,\n  max_models = 15,\n  nfolds            = 5,\n  include_algos = c(\"DeepLearning\", \"GBM\", \"XGBoost\", \"GLM\", \"DRF\")\n)"
   }
 ]
