@@ -239,7 +239,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Our goal is to figure out what gaps exist in the products of a bike manufacturer and come up with a pricing algorithm that will help us to determine a price, if we were to come up with products in that product category.</p>
 </section><section id="objectives" class="level1" data-number="2"><h1 data-number="2">
 <span class="header-section-number">2</span> Objectives</h1>
-<p>We will apply our knowledge on regression on a business case. We will specifically apply:</p>
+<p>We will apply our knowledge of regression on a business case. We will specifically apply:</p>
 <ul>
 <li>Modeling: <code>parsnip</code>
 </li>
@@ -402,7 +402,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <p>Visualizing the <code>model_sales_tbl</code>:</p>
-<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-6_1f026e977d08032372bbc8dedf3a54ef">
+<div class="cell" data-hash="02_regression_ii_cache/html/unnamed-chunk-6_a5ac78c3366595f2a96900b9257c9940">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>model_sales_tbl <span class="sc">%&gt;%</span> </span>
 <span id="cb7-2"><a href="#cb7-2"></a>  <span class="fu">mutate</span>(<span class="at">category_2 =</span> <span class="fu">as_factor</span>(category_2) <span class="sc">%&gt;%</span> </span>
 <span id="cb7-3"><a href="#cb7-3"></a>           <span class="fu">fct_reorder</span>(revenue, <span class="at">.fun =</span> max) <span class="sc">%&gt;%</span> </span>
@@ -420,7 +420,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-15"><a href="#cb7-15"></a>  <span class="fu">theme</span>(</span>
 <span id="cb7-16"><a href="#cb7-16"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb7-17"><a href="#cb7-17"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb7-18"><a href="#cb7-18"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>),</span>
+<span id="cb7-18"><a href="#cb7-18"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#222222"</span>, <span class="at">color =</span> <span class="st">"#222222"</span>),</span>
 <span id="cb7-19"><a href="#cb7-19"></a>    <span class="at">line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb7-20"><a href="#cb7-20"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb7-21"><a href="#cb7-21"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
@@ -806,7 +806,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","closeEffect":"zoom","loop":true,"descPosition":"bottom","selector":".lightbox"});</script>
+<script>var lightboxQuarto = GLightbox({"loop":true,"closeEffect":"zoom","selector":".lightbox","openEffect":"zoom","descPosition":"bottom"});</script>
 
 
 </body></html>

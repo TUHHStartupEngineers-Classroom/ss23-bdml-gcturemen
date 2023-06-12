@@ -9,7 +9,7 @@ Our goal is to figure out what gaps exist in the products of a bike manufacturer
 
 # Objectives
 
-We will apply our knowledge on regression on a business case. We will specifically apply:
+We will apply our knowledge of regression on a business case. We will specifically apply:
 
 - Modeling: `parsnip`
 - Pre-processing: `recipes` and `rsample`
@@ -99,7 +99,7 @@ model_sales_tbl %>%
   theme(
     panel.background = element_blank(),
     panel.border = element_rect(color = "white", fill = NA),
-    plot.background = element_rect(fill = "#222222"),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
     line = element_line(color = "white"),
     text = element_text(color = "white"),
     axis.ticks = element_line(color = "white"),

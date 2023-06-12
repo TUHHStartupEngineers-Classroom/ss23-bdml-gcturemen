@@ -58,7 +58,8 @@ plot_ggpairs <- function(data, color = NULL, density_alpha = 0.5) {
                                                         alpha = density_alpha))) + 
       theme(legend.position = "bottom", 
             legend.background = element_rect(fill = NA, color = 'white'),
-            plot.background = element_rect(fill = "#222222"),
+            legend.key = element_blank(),
+            plot.background = element_rect(fill = "#222222", color = "#222222"),
             text = element_text(color = "white"),
             axis.ticks = element_line(color = "white"),
             axis.text = element_text(color = "white"))
@@ -148,7 +149,7 @@ employee_attrition_tbl %>% select(Attrition,
   plot_ggpairs(Attrition)
 ```
 
-__Question:__ What Can you deduce about the interaction between Job Involvement and Attrition?
+__Question:__ What can you deduce about the interaction between Job Involvement and Attrition?
 
     a. Those that are leaving have a lower density of 3's and 4's
     b. Those that are leaving have a lower density of 1's and 2's

@@ -59,7 +59,8 @@ sp_500_daily_returns_tbl %>% glimpse()
 ```{r}
 stock_date_matrix_tbl <- sp_500_daily_returns_tbl %>% 
   pivot_wider(names_from = date, values_from = pct_return, values_fill = 0) %>%
-  ungroup()
+  ungroup() %>%
+  arrange(symbol)
 
 stock_date_matrix_tbl
 ```
@@ -103,15 +104,15 @@ k_means_mapped_tbl %>%
   ggplot(aes(centers, tot.withinss)) +
   geom_point(color = "#2DC6D6", size = 2) +
   geom_line(color = "#2DC6D6", linewidth = 1) +
-  ggrepel::geom_label_repel(aes(label = centers), color = "#FF8014", fill = "#282A36", size = 3, label.padding = 0.10, nudge_x = 0.75, nudge_y = 1) + 
+  ggrepel::geom_label_repel(aes(label = centers), color = "#FF8014", fill = "#222222", size = 3, label.padding = 0.10, nudge_x = 0.75, nudge_y = 1) + 
   
   labs(title = "Scree Plot",
        subtitle = "Total within-cluster sum of squares for various number of centers",
-       caption = "Conclusion: Based on the Scree Plot, a value between 5-10 can be chosen for the number of centers.") +
+       caption = "Conclusion: Based on the Scree Plot, a value of 10 can be chosen for the number of centers.") +
   theme(
     panel.background = element_blank(),
     panel.border = element_rect(color = "white", fill = NA),
-    plot.background = element_rect(fill = "#222222"),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
     line = element_line(color = "white"),
     text = element_text(color = "white"),
     axis.ticks = element_line(color = "white"),
@@ -134,7 +135,7 @@ Combining the `layout` from the `umap_results` with the `symbol` column from the
 
 umap_results_tbl <- umap_results$layout %>%
   as_tibble(.name_repair = "unique") %>%
-  set_names(c("x", "y")) %>%
+  set_names(c("V1", "V2")) %>%
   bind_cols(stock_date_matrix_tbl %>% select(symbol))
 ```
 
@@ -144,14 +145,14 @@ Visualizing the `umap_results_tbl`:
 
 umap_results_tbl %>%
   
-  ggplot(aes(x, y)) +
+  ggplot(aes(V1, V2)) +
   geom_point(alpha = 0.5, size = 0.5, color = '#2DC6D6') + 
-  geom_label_repel(aes(label = symbol), size = 1, max.overlaps = 15, label.padding = 0.10, color = '#FF8014', seed = 777, nudge_x = 0.25, nudge_y = 0.05, fill = "#282A36") + 
+  #geom_label_repel(aes(label = symbol), size = 1, max.overlaps = 15, label.padding = 0.10, color = '#FF8014', seed = 777, nudge_x = 0.25, nudge_y = 0.05, fill = "#222222") + 
   labs(title = 'UMAP 2D Projection') +
   theme(
     panel.background = element_blank(),
     panel.border = element_rect(color = "white", fill = NA),
-    plot.background = element_rect(fill = "#222222"),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
     line = element_line(color = "white"),
     text = element_text(color = "white"),
     axis.ticks = element_line(color = "white"),
@@ -188,9 +189,9 @@ umap_kmeans_results_tbl %>%
   mutate(label_text = str_glue("Symbol: {symbol}
                                  Cluster: {.cluster}")) %>%
   
-  ggplot(aes(x, y, color = .cluster)) + 
+  ggplot(aes(V1, V2, color = .cluster)) + 
   geom_point(alpha = 0.5, size = 0.5) +
-  geom_label_repel(aes(label = label_text), size = 1,max.overlaps = 15, fill = "#282A36", label.padding = 0.10, nudge_x = 0.25, nudge_y = 0.05) +
+  #geom_label_repel(aes(label = label_text), size = 1,max.overlaps = 15, fill = "#222222", label.padding = 0.10, nudge_x = 0.25, nudge_y = 0.05) +
   scale_color_discrete() +
   labs(title = "Company Segmentation: 2D Projection",
        subtitle = "UMAP 2D Projection with K-Means Cluster Assignment") +
@@ -199,7 +200,7 @@ umap_kmeans_results_tbl %>%
     panel.background = element_blank(),
     panel.border = element_rect(color = "white", fill = NA),
     legend.background = element_blank(),
-    plot.background = element_rect(fill = "#222222"),
+    plot.background = element_rect(fill = "#222222", color = "#222222"),
     line = element_line(color = "white"),
     text = element_text(color = "white"),
     axis.ticks = element_line(color = "white"),
